@@ -1,11 +1,12 @@
 export let SERVER_URL = "http://localhost:8000";
 let my_alert = console.info;
 export const login = async (username, password) => {
+  username = username || "dataentry";
   return {
     status: "ok",
     username,
     password,
-    type: username || "doctor",
+    type: username,
     apikey: "6l4s91dg",
   };
 };
@@ -195,7 +196,7 @@ export const getTests = async (apikey, patientId) => {
       name: "the test that passes all the time",
       description: "this test is a joke",
       result: "passed",
-      report: new Blob(["this is a report"], { type: "text/plain" }),
+      report: new Blob(["this is a report"], { type: "application/pdf" }),
     },
   ];
   return { status: "invalid apikey" };

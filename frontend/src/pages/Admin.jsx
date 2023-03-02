@@ -10,16 +10,26 @@ function Admin(props) {
   }, []);
   return (
     <>
-      <div className="fixed bg-slate-200 text-gray-700 w-full h-full overflow-y-scroll px-6">
+      <div className="fixed inset-0 bg-slate-200 text-gray-700 overflow-y-scroll px-6">
         {/* <div>Admin : {props.$user[0].apikey}</div> */}
-        <h1>
-          Admin:
-          <span className="text-gray-500"> {props.$user[0].username}</span>
-        </h1>
-        <div className="grid grid-cols-3 container mx-auto px-2 gap-x-2">
-          <h2 className="col-span-3">Add new user</h2>
+
+        <div className="container mx-auto px-2">
+          <div className="grid grid-cols-2 place-items-center">
+            <h1 className="justify-self-start text-gray-500 whitespace-nowrap">
+              Welcome {props.$user[0].username || "no username"}!
+            </h1>
+            <button
+              onClick={async () => {
+                props.$user[1](null);
+              }}
+              className=" justify-self-end red"
+            >
+              log out
+            </button>
+          </div>
+          <h2>Add new user</h2>
           <form
-            className="col-span-3 grid grid-cols-3 gap-x-2"
+            className="grid grid-cols-3 gap-x-2"
             onSubmit={async (e) => {
               e.preventDefault();
               await addUser(
@@ -84,13 +94,13 @@ function Admin(props) {
             />
             <button className="blue">add user</button>
           </form>
-          <div className="col-span-3 grid grid-cols-3 mb-2 mt-8 gap-3 ">
+          <div className="grid grid-cols-3 mb-2 mt-8 gap-3 ">
             <h2>Username</h2>
             <h2>Type</h2>
             <h2>Action</h2>
           </div>
 
-          <div className="col-span-3 flex flex-col gap-3 mb-16">
+          <div className="flex flex-col gap-3 mb-16">
             {users[0].map((user) => (
               <div className="grid grid-cols-3 gap-3" key={user.id}>
                 <div className="card">{user.username}</div>
