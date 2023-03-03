@@ -30,7 +30,7 @@ create table tests{
     test int FOREIGN KEY REFERENCES test(id),
 }
 
-create user{
+create table "user"{
     id int primary key auto_increment,
     user_name varchar(255) not null,
     user_password varchar(255) not null,
