@@ -3,8 +3,8 @@ import mysql from "mysql2";
 import { onApp } from "./auth.js";
 
 var connection = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root",
+  host: "10.5.18.71",
+  user: "20CS30008",
   password: "DakRR#2020",
   database: "rp",
 });
