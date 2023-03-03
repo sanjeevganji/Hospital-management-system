@@ -3,10 +3,10 @@ import mysql from "mysql2";
 import { onApp } from "./auth.js";
 
 var connection = mysql.createConnection({
-  host: "10.5.18.71",
-  user: "20CS30008",
-  password: "20CS30008",
-  database: "20CS30008",
+  host: "127.0.0.1",
+  user: "root",
+  password: "DakRR#2020",
+  database: "rp",
 });
 
 connection.connect(function (err) {
@@ -20,10 +20,11 @@ var PORT = 3000;
 // For parsing application/json
 app.use(express.json());
 
+console.log("hello");
 onApp(app, connection, (onGET) => {
   onGET("/users", (onUserType, onQuery, params) => {
     onUserType("admin", (id) => {
-      onQuery("SELECT 1");
+      onQuery("SELECT * FROM User;");
     });
   });
 

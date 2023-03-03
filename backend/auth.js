@@ -23,13 +23,15 @@ function isAuthorized(type, connection, req, res, next) {
 
   let query;
   query =
-    `select * from Users where username="` +
+    `select * from User where Username="` +
     username +
-    `" and password="` +
+    `" and Password="` +
     password +
-    `" and type="` +
+    `" and Type="` +
     type +
     `"`;
+    
+    console.log(query);
   connection.query(query, function (error, results, fields) {
     if (error) throw error;
     //check if user
