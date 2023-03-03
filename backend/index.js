@@ -1,12 +1,17 @@
 import express from "express";
-import mysql from "mysql";
+import mysql from "mysql2";
 import { onApp } from "./auth.js";
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "user",
+  host: "10.5.18.71",
+  user: "20CS30008",
+  password: "20CS30008",
+  database: "20CS30008",
+});
+
+connection.connect(function (err) {
+  if (err) throw err;
+  console.log("Connected!");
 });
 
 var app = express();
@@ -18,9 +23,10 @@ app.use(express.json());
 onApp(app, connection, (onGET) => {
   onGET("/users", (onUserType, onQuery, params) => {
     onUserType("admin", (id) => {
-      onQuery("SELECT * from Users");
+      onQuery("SELECT 1");
     });
   });
+
   onGET("/appointments", (onUserType, onQuery, params) => {
     onUserType("doctor", (id) => {
       onQuery(`SELECT * from Appointments where doctorId=${id}`, (results) => {
