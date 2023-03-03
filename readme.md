@@ -1,5 +1,4 @@
 # Hospital Management System - Mini Project
-
 This is a web application developed as a mini project for the course Web Application Development. It is a simple hospital management system that enables patients to book appointments with doctors, view their medical records, and also pay their medical bills.
 
 ## Technologies Used
