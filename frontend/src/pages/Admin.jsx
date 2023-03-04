@@ -13,7 +13,7 @@ function Admin(props) {
   return (
     <>
       <div className="fixed inset-0 bg-slate-200 text-gray-700 overflow-y-scroll px-6">
-        {/* <div>Admin : {props.$user[0].apikey}</div> */}
+        <div>Admin : {JSON.stringify(props.$user[0])}</div>
 
         <div className="container mx-auto px-2">
           <div className="grid grid-cols-2 place-items-center">
@@ -35,11 +35,18 @@ function Admin(props) {
             onSubmit={async (e) => {
               e.preventDefault();
               await addUser(
-                props.$user[0].apikey,
+                props.$user[0].username,
+                props.$user[0].password,
                 e.target.username.value,
                 e.target.password.value,
                 e.target.type.value
               );
+              getUsers(props.$user[0]).then((res) => {
+                if (res.status=="error"){
+                  return <div>{res.reason}</div>
+                }
+                users[1](res.data);
+              });
             }}
           >
             <div className="col-span-3 flex gap-4 py-2">
@@ -109,9 +116,12 @@ function Admin(props) {
                 <div className="card">{user.Type}</div>
                 <button
                   onClick={() => {
-                    deleteUser(props.$user[0].apikey, user.id);
-                    getUsers(props.$user[0].apikey).then((res) => {
-                      users[1](res.users);
+                    deleteUser(, user.id);
+                    getUsers(props.$user[0]).then((res) => {
+                      if (res.status=="error"){
+                        return <div>{res.reason}</div>
+                      }
+                      users[1](res.data);
                     });
                   }}
                   className="red"

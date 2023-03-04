@@ -231,10 +231,9 @@ export const getUsers = async ({ username, password }) => {
   let json = await response.json();
   return json;
 };
-export const addUser = async (adminUsername, adminPassword, password, type) => {
-  my_alert(
-    "API call: addUser(" + username + ", " + password + ", " + type + ")"
-  );
+export const addUser = async (adminUsername, adminPassword, username, password, type) => {
+
+ my_alert({adminUsername, adminPassword, username, password, type})
   let config = {
     method: "POST",
     headers: {
@@ -242,12 +241,13 @@ export const addUser = async (adminUsername, adminPassword, password, type) => {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
-    body: {
+    body: JSON.stringify({
       username: username,
       password: password,
       type: type,
-    },
+    }),
   };
+  console.log(config.body);
   let response = await fetch(SERVER_URL + "/users", config);
   let json = await response.json();
   return json;

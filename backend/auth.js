@@ -1,10 +1,9 @@
-function isAuth(connection, req, res,onSuccess,onError) {
+function isAuth(connection, req, res, onSuccess) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res
       .status(401)
       .json({ status: "error", reason: "Authorization header is missing" });
-      if( onError) onError("Authorization header is missing");
     return;
   }
   const encodedCredentials = authHeader.split(" ")[1];
@@ -23,7 +22,6 @@ function isAuth(connection, req, res,onSuccess,onError) {
       onSuccess(results[0]);
     } else {
       res.status(401).json({ status: "error", reason: "Unauthorized" });
-      if( onError) onError("Unauthorized");
     }
   });
 }

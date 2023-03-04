@@ -135,54 +135,43 @@ app.use(express.json());
 //     });
 //   });
 // });
-
+console.log("hello");
 app.get("/users", (req, res) => {
-  isAuth(
-    connection,
-    req,
-    res,
-    (user) => {
-      console.log("getting", user);
-      if (user.Type == "admin") {
-        let sql = `Select * from User;`;
-        connection.query(sql, function (err, result) {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-          console.log("Users fetched");
-          res.json({ status: "ok", data: result });
-        });
-        // res.json(user);
-      }
+  isAuth(connection, req, res, (user) => {
+    console.log("getting", user);
+    if (user.Type == "admin") {
+      let sql = `Select * from User;`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        console.log("Users fetched");
+        res.json({ status: "ok", data: result });
+      });
+      // res.json(user);
     }
-  );
+  });
 });
 
 app.get("/", (req, res) => {
-  isAuth(
-    connection,
-    req,
-    res,
-    (result) => {
-      res.json(result);
-    }
-  );
+  isAuth(connection, req, res, (result) => {
+    res.json(result);
+  });
 });
 
-// app.post("/users", (req, res) => {
-//   isAuth(connection, req, res,
-//     (user)=>{
-//       if(user.status=="ok" && user.type=="admin"){
-//         //sql query
-//         let sql = `INSERT INTO User (Userame, Password, Type) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}');`;
-//         connection.query(sql, function (err, result) {
-//           if (err) throw err;
-//           console.log("1 record inserted");
-//           res.json({ status: "ok" });
-//     }
-//     );
-// }});
+app.post("/users", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "admin") {
+      //sql query
+      let sql = `INSERT INTO User (Username, Password, Type) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}');`;
+      connection.query(sql, function (err, result) {
+        if (err) throw err;
+        res.json({ status: "ok" });
+      });
+    }
+  });
+});
 
 app.listen(PORT, function (err) {
   if (err) console.log(err);
