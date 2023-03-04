@@ -15,7 +15,7 @@ function App() {
     case "doctor":
       return <Doctor $user={$user} />;
     case "admin":
-      return <Admin $user={$user} />;
+      return <Admin $admin={$user} />;
     default:
       return (
         <Login

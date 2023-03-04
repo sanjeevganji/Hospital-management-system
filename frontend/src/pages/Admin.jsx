@@ -3,9 +3,9 @@ import { addUser, deleteUser, getUsers } from "../API";
 function Admin(props) {
   let users = React.useState([]);
   useEffect(() => {
-    getUsers(props.$user[0]).then((res) => {
-      if (res.status=="error"){
-        return <div>{res.reason}</div>
+    getUsers(props.$admin[0]).then((res) => {
+      if (res.status == "error") {
+        return <div>{res.reason}</div>;
       }
       users[1](res.data);
     });
@@ -13,16 +13,16 @@ function Admin(props) {
   return (
     <>
       <div className="fixed inset-0 bg-slate-200 text-gray-700 overflow-y-scroll px-6">
-        <div>Admin : {JSON.stringify(props.$user[0])}</div>
+        <div>Admin : {JSON.stringify(props.$admin[0])}</div>
 
         <div className="container mx-auto px-2">
           <div className="grid grid-cols-2 place-items-center">
             <h1 className="justify-self-start text-gray-500 whitespace-nowrap">
-              Welcome {props.$user[0].username || "no username"}!
+              Welcome {props.$admin[0].username || "no username"}!
             </h1>
             <button
               onClick={async () => {
-                props.$user[1](null);
+                props.$admin[1](null);
               }}
               className=" justify-self-end red"
             >
@@ -35,15 +35,15 @@ function Admin(props) {
             onSubmit={async (e) => {
               e.preventDefault();
               await addUser(
-                props.$user[0].username,
-                props.$user[0].password,
+                props.$admin[0].username,
+                props.$admin[0].password,
                 e.target.username.value,
                 e.target.password.value,
                 e.target.type.value
               );
-              getUsers(props.$user[0]).then((res) => {
-                if (res.status=="error"){
-                  return <div>{res.reason}</div>
+              getUsers(props.$admin[0]).then((res) => {
+                if (res.status == "error") {
+                  return <div>{res.reason}</div>;
                 }
                 users[1](res.data);
               });
@@ -116,10 +116,14 @@ function Admin(props) {
                 <div className="card">{user.Type}</div>
                 <button
                   onClick={() => {
-                    deleteUser(, user.id);
-                    getUsers(props.$user[0]).then((res) => {
-                      if (res.status=="error"){
-                        return <div>{res.reason}</div>
+                    deleteUser(
+                      props.$admin[0].username,
+                      props.$admin[0].password,
+                      user.username
+                    );
+                    getUsers(props.$admin[0]).then((res) => {
+                      if (res.status == "error") {
+                        return <div>{res.reason}</div>;
                       }
                       users[1](res.data);
                     });

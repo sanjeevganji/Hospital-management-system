@@ -4,7 +4,7 @@ import mysql from "mysql2";
 import isAuth from "./auth.js";
 
 var connection = mysql.createConnection({
-  host: "10.145.146.52",
+  host: "localhost",
   user: "root",
   database: "Hospital",
   password: "password",
@@ -156,6 +156,7 @@ app.get("/users", (req, res) => {
 
 app.get("/", (req, res) => {
   isAuth(connection, req, res, (result) => {
+    console.log(result);
     res.json(result);
   });
 });
@@ -166,8 +167,43 @@ app.post("/users", (req, res) => {
       //sql query
       let sql = `INSERT INTO User (Username, Password, Type) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}');`;
       connection.query(sql, function (err, result) {
-        if (err) throw err;
-        res.json({ status: "ok" });
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok" });
+        }
+      });
+    }
+  });
+});
+
+app.post("/doctor/patients", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "doctor") {
+      let sql = `SELECT Patient.ID, Name FROM Appointment, Patient WHERE Appointment.Patient = Patient.ID GROUP BY Patient.ID`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok" });
+        }
+      });
+    }
+  });
+});
+
+app.post("/users/delete", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "admin") {
+      //sql query
+      let sql = `DELETE FROM User WHERE Username='${req.body.username}';`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok" });
+        }
       });
     }
   });
