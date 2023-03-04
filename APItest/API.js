@@ -26,11 +26,23 @@ const login = async (username, password) => {
 };
 
 // 1. Patient  registration/discharge
-const registerPatient = async (apikey, name) => {
-  my_alert("API call: registerPatient(" + name + ")");
+const registerPatient = async (username, password, name) => {
+  my_alert("API call: registerPatient(" + username + ")");
   //server registers a new patient and returns the id
-  return { status: "ok", id: 1 };
-  return { status: "invalid apikey" };
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: name,
+    }),
+  };
+  let response = await fetch(SERVER_URL + "/register", config);
+  let json = await response.json();
+  return json;
 };
 //and doctor  appointment/testscheduling–information  about  new patients need to be registered, appointments based on availability and priority should be scheduled, doctor  should  be  notified  about  the  appointments  in  a  dashboard.
 const scheduleAppointment = async (
@@ -102,60 +114,26 @@ const getAppointments = async (username, password) => {
       "Access-Control-Allow-Origin": "*",
     },
   };
-  let response = await fetch(SERVER_URL + "/users", config);
+  let response = await fetch(SERVER_URL + "/doctor/appointment", config);
   let json = await response.json();
   return { status: "invalid apikey" };
 };
 
 // Doctor  may  also  query for  any patient  information.
 
-const getAllPatients = async (apikey) => {
+const getAllPatients = async ({username, password}) => {
   my_alert("API call: getAllPatients()");
-  return {
-    status: "ok",
-    patients: [
-      {
-        id: 1,
-        name: "Amitabh Bachchan",
-      },
-      {
-        id: 2,
-        name: "David Beckham",
-      },
-      {
-        id: 3,
-        name: "Daniel Craig",
-      },
-      {
-        id: 4,
-        name: "Tom Cruise",
-      },
-      {
-        id: 5,
-        name: "Tom Hanks",
-      },
-      {
-        id: 6,
-        name: "Tom Hardy",
-      },
-      {
-        id: 7,
-        name: "Tom Holland",
-      },
-      {
-        id: 8,
-        name: "Tommy Lee Jones",
-      },
-      {
-        id: 9,
-        name: "Tommy Wiseau",
-      },
-      {
-        id: 10,
-        name: "Tommy Lee",
-      },
-    ],
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
   };
+  let response = await fetch(SERVER_URL + "/doctor/patients", config);
+  let json = await response.json();
+  console.log({json});
+  return json;
 };
 //Doctor  should  be  able  to  record drugs/treatments prescribed to a patient.
 
@@ -284,12 +262,15 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 // });
 
 // login("Prabitra", "pass").then((user) => {
-//   console.log({ user });
-//   getAppointments(user).then((users) => {
-//     addUser(user.username, user.password, "ad", "pass", "doctor").then(
-//       (res) => {
-//         console.log(res);
-//       }
-//     );
+//   console.log({user});
+//   getAllPatients(user).then((patients) => {
+//     console.log({patients});
 //   });
 // });
+
+login("Rudrak", "pass").then((user) => {
+  console.log({ user });
+  registerPatient(user.username, user.password, "Atishay").then((res) => {
+    console.log({res});
+  });
+});

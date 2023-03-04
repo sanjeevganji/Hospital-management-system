@@ -156,7 +156,7 @@ app.get("/users", (req, res) => {
 
 app.get("/", (req, res) => {
   isAuth(connection, req, res, (result) => {
-    console.log(result);
+    console.log({login: result});
     res.json(result);
   });
 });
@@ -177,15 +177,19 @@ app.post("/users", (req, res) => {
   });
 });
 
-app.post("/doctor/patients", (req, res) => {
+app.get("/doctor/patients", (req, res) => {
+  console.log({body: req.headers});
   isAuth(connection, req, res, (user) => {
+    console.log({user});
     if (user.Type == "doctor") {
-      let sql = `SELECT Patient.ID, Name FROM Appointment, Patient WHERE Appointment.Patient = Patient.ID GROUP BY Patient.ID`;
+      let sql = `SELECT Patient.ID as ID, Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.username}' AND Appointment.Patient = Patient.ID GROUP BY Patient.ID`;
+      console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error" });
         } else {
-          res.json({ status: "ok" });
+          console.log(result);
+          res.json(result);
         }
       });
     }
@@ -203,6 +207,23 @@ app.post("/users/delete", (req, res) => {
           res.json({ status: "error" });
         } else {
           res.json({ status: "ok" });
+        }
+      });
+    }
+  });
+});
+
+app.post("/register", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      //sql query
+      let sql = `INSERT INTO Patient (Name) VALUES ('${req.body.name}');`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok", ID: result.insertId});
         }
       });
     }
