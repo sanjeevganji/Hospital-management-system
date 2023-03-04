@@ -4,7 +4,7 @@ import mysql from "mysql2";
 import isAuth from "./auth.js";
 
 var connection = mysql.createConnection({
-  host: "127.0.0.1",
+  host: "10.145.146.52",
   user: "root",
   database: "Hospital",
   password: "password",
