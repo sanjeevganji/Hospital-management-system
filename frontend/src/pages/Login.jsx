@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { login } from "../API";
 function Login(props) {
+  let [valid, setValid] = useState(true);
   return (
     <form
       onSubmit={async (e) => {
@@ -9,6 +10,10 @@ function Login(props) {
           e.target.username.value,
           e.target.password.value
         );
+        if(user.status == "error"){
+          setValid(false);
+          return;
+        }
         props.onUser(user);
       }}
       className="fixed w-screen h-screen grid place-content-center bg-slate-300 text-gray-700"
@@ -21,6 +26,7 @@ function Login(props) {
         <input type="text" name="username" autoComplete="off" />
         <label className="mt-2 text-gray-600">Password</label>
         <input type="password" name="password" autoComplete="off" />
+        {valid ? null : <div className="text-red-500">Invalid credentials</div>}
         <button
           type="submit"
           className="

@@ -1,13 +1,24 @@
-export let SERVER_URL = "http://localhost:8000";
-let my_alert = console.info;
+import { encode } from "base-64";
+export let SERVER_URL = "http://localhost:3000";
+let my_alert = console.log;
 export const login = async (username, password) => {
-  username = username || "dataentry";
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+  let response = await fetch(SERVER_URL + "/", config);
+  let json = await response.json();
+  if (json.status == "error") {
+    return { status: "error", reason: json.reason };
+  }
   return {
     status: "ok",
-    username,
-    password,
-    type: username,
-    apikey: "6l4s91dg",
+    username: username,
+    password: password,
+    type: json.Type,
   };
 };
 
@@ -206,26 +217,40 @@ export const getTests = async (apikey, patientId) => {
 
 //4. Database administration –should be able to add/delete new users
 //(bonus point: implement data security policy with suitable access control)
-export const getUsers = async (apikey) => {
+export const getUsers = async ({ username, password }) => {
   //wait for 1 second to simulate network latency
   my_alert("API call: getUsers()");
-  return {
-    status: "ok",
-    users: [
-      { id: 1, username: "admin1", type: "admin" },
-      { id: 2, username: "admin2", type: "admin" },
-      { id: 3, username: "Dr.Prakash", type: "doctor" },
-      { id: 4, username: "Hritu", type: "frontdesk" },
-      { id: 5, username: "Rajesh", type: "dataentry" },
-      { id: 6, username: "Payel", type: "dataentry" },
-    ],
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
   };
+  let response = await fetch(SERVER_URL + "/users", config);
+  let json = await response.json();
+  return json;
 };
-export const addUser = async (apikey, username, password, type) => {
+export const addUser = async (adminUsername, adminPassword, password, type) => {
   my_alert(
     "API call: addUser(" + username + ", " + password + ", " + type + ")"
   );
-  return { status: "ok" };
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(adminUsername + ":" + adminPassword),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: {
+      username: username,
+      password: password,
+      type: type,
+    },
+  };
+  let response = await fetch(SERVER_URL + "/users", config);
+  let json = await response.json();
+  return json;
 };
 export const deleteUser = async (apikey, id) => {
   my_alert("API call: deleteUser(" + id + ")");

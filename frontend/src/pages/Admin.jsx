@@ -3,9 +3,11 @@ import { addUser, deleteUser, getUsers } from "../API";
 function Admin(props) {
   let users = React.useState([]);
   useEffect(() => {
-    getUsers(props.$user[0].apikey).then((res) => {
-      console.log(res);
-      users[1](res.users);
+    getUsers(props.$user[0]).then((res) => {
+      if (res.status=="error"){
+        return <div>{res.reason}</div>
+      }
+      users[1](res.data);
     });
   }, []);
   return (
@@ -102,9 +104,9 @@ function Admin(props) {
 
           <div className="flex flex-col gap-3 mb-16">
             {users[0].map((user) => (
-              <div className="grid grid-cols-3 gap-3" key={user.id}>
-                <div className="card">{user.username}</div>
-                <div className="card">{user.type}</div>
+              <div className="grid grid-cols-3 gap-3" key={user.Username}>
+                <div className="card">{user.Username}</div>
+                <div className="card">{user.Type}</div>
                 <button
                   onClick={() => {
                     deleteUser(props.$user[0].apikey, user.id);
