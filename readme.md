@@ -37,4 +37,4 @@ This is a web application developed as a mini project for the course Web Applica
 -   [Atishay Jain](https://github.com/ati-jain)
 -   [Prakhar Singh]()
 -   [Rudrak Patra](https://github.com/rudrakpatra)
--   [Saras Pantulwar]()
+-   [Saras Pantulwar](https://github.com/pantulwars)
