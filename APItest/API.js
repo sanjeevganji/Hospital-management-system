@@ -86,18 +86,42 @@ const scheduleTest = async (apikey, patientId, datetime, testId) => {
 //For discharged patients information should be preserved but room occupancy should be updated.
 //The workflow should also support scheduling tests and treatments prescribed by doctors.
 
-const admitPatient = async (apikey, patientId) => {
+const admitPatient = async (username, password, patientId, roomType) => {
   my_alert("API call: admitPatient(" + patientId + ")");
   //server admits an existing patient to a room and returns the room number
-  return { status: "ok", room: 1 };
-  return { status: "not available" };
-  return { status: "invalid apikey" };
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      patientId: patientId,
+      type: roomType,
+    }),
+  };
+  let response = await fetch(SERVER_URL + "/admit", config);
+  let json = await response.json();
+  return json;
 };
 
-const dischargePatient = async (apikey, patientId) => {
+const dischargePatient = async (username, password, patientId) => {
   my_alert("API call: dischargePatient(" + patientId + ")");
-  return { status: "ok" };
-  return { status: "invalid apikey" };
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      patientId: patientId,
+    }),
+  };
+  let response = await fetch(SERVER_URL + "/discharge", config);
+  let json = await response.json();
+  return json;
 };
 
 //(bonus point: using a calendar to schedule)
@@ -108,6 +132,7 @@ const dischargePatient = async (apikey, patientId) => {
 //3. Doctor dashboard –all the records of the patients treated by a doctor should be displayed to her as a  dashboard.
 
 const getAppointments = async (username, password) => {
+  // get all pending appointments of a doctor
   my_alert("API call: getAppointments()");
   let config = {
     method: "GET",
@@ -116,9 +141,9 @@ const getAppointments = async (username, password) => {
       "Access-Control-Allow-Origin": "*",
     },
   };
-  let response = await fetch(SERVER_URL + "/doctor/appointment", config);
+  let response = await fetch(SERVER_URL + "/doctor/appointments", config);
   let json = await response.json();
-  return { status: "invalid apikey" };
+  return json;
 };
 
 // Doctor  may  also  query for  any patient  information.
@@ -279,15 +304,41 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 //   });
 // });
 
-login("Rudrak", "pass").then((user) => {
-  console.log({ user });
-  let priority = 5;
-  let ID = 2;
-  let date = new Date().toJSON().slice(0, 10);
-  console.log({date});
-  scheduleAppointment(user.username, user.password, ID, date, priority).then(
-    (res) => {
-      console.log({ res });
-    }
-  );
-});
+// login("Rudrak", "pass").then((user) => {
+//   console.log({ user });
+//   let priority = 5;
+//   let ID = 2;
+//   let date = new Date().toJSON().slice(0, 10);
+//   console.log({date});
+//   scheduleAppointment(user.username, user.password, ID, date, priority).then(
+//     (res) => {
+//       console.log({ res });
+//     }
+//   );
+// });
+
+// login("Pabitra", "pass").then((user) => {
+//   console.log({ user });
+//   getAppointments(user.username, user.password).then(
+//     (res) => {
+//       console.log({ res });
+//     }
+//   );
+// });
+
+// login("Rudrak", "pass").then((user) => {
+//   console.log({ user });
+//   let patient = 2;
+//   let type = 'Large';
+//   admitPatient(user.username, user.password, patient, type).then((res) => {
+//     console.log({ res });
+//   });
+// });
+
+// login("Rudrak", "pass").then((user) => {
+//   console.log({ user });
+//   let patient = 2;
+//   dischargePatient(user.username, user.password, patient).then((res) => {
+//     console.log({ res });
+//   });
+// });

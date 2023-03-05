@@ -144,8 +144,7 @@ app.get("/users", (req, res) => {
       let sql = `Select * from User;`;
       connection.query(sql, function (err, result) {
         if (err) {
-          console.log(err);
-          throw err;
+          res.json({ status: "error", data: err });
         }
         console.log("Users fetched");
         res.json({ status: "ok", data: result });
@@ -159,6 +158,26 @@ app.get("/", (req, res) => {
   isAuth(connection, req, res, (result) => {
     console.log({ login: result });
     res.json(result);
+  });
+});
+
+app.get("/doctor/appointments", (req, res) => {
+  console.log("getting appointments");
+  isAuth(connection, req, res, (user) => {
+    console.log({ user });
+    if (user.Type == "doctor") {
+      let date = new Date().toJSON().slice(0, 10);
+      let sql = `SELECT Appointment.ID, Patient.Name, Patient.ID FROM Appointment, Patient WHERE Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription = null and Appointment.Date = '${date}';`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          console.log(err);
+          res.json({ status: "error", data: err });
+        } else {
+          res.json({ status: "ok", data: result });
+        }
+      });
+    }
   });
 });
 
@@ -292,6 +311,138 @@ app.post("/test", (req, res) => {
       res.json({
         status: "error",
         message: "You must be a data entry person to add a test",
+      });
+    }
+  });
+});
+app.post("/discharge", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      //sql query
+      let date = new Date().toJSON();
+      let sql = `Select Admission.ID, Room from Admission, Patient_Admission WHERE Patient_Admission.ID = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else if (result.length == 0) {
+          res.json({ status: "error", message: "Patient is not admitted" });
+        } else {
+          sql = `UPDATE Admission SET Discharge_date = '${date}' WHERE ID = ${result[0].ID};`;
+          let roomNumber = result[0].Room;
+          console.log(sql);
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json(err);
+              return;
+            }
+            sql = `UPDATE Room SET Beds_avail = Beds_avail + 1 WHERE Number = ${roomNumber};`;
+            connection.query(sql, function (err, result) {
+              if (err) {
+                res.json(err);
+                return;
+              }
+              res.json({ status: "ok" });
+            });
+          });
+        }
+      });
+    }
+  });
+});
+
+app.post("/register", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      //sql query
+      let sql = `INSERT INTO Patient (Name) VALUES ('${req.body.name}');`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok", ID: result.insertId });
+        }
+      });
+    }
+  });
+});
+
+app.post("/admit", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    let date = new Date().toJSON();
+    if (user.Type == "frontdesk") {
+      //sql query
+      let sql = `SELECT Number FROM Room WHERE Type = '${req.body.type}' ORDER BY Beds_avail LIMIT 1;`;
+      connection.query(sql, function (err, result) {
+        console.log({ result });
+        if (err) {
+          res.json({ status: "error", data: err });
+          return;
+        }
+        if (result.length == 0 || result[0].Beds_avail == 0) {
+          res.json({ status: "error", data: "No rooms available" });
+          return;
+        }
+        let roomNumber = result[0].Number;
+        sql = `INSERT INTO Admission (Patient, Room, Admit_date) VALUES ('${req.body.patientId}', ${roomNumber}, '${date}');`;
+        console.log(sql);
+        connection.query(sql, function (err, result) {
+          if (err) {
+            res.json({ status: "error", data: err });
+            return;
+          }
+          let AdmitId = result.insertId;
+          sql = `UPDATE Room SET Beds_avail = Beds_avail - 1 WHERE Number = ${roomNumber};`;
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error", data: err });
+              return;
+            }
+            sql = `INSERT INTO Patient_Admission (ID, Admission) VALUES (${req.body.patientId}, ${AdmitId});`;
+            connection.query(sql, function (err, result) {
+              if (err) {
+                res.json({ status: "error", data: err });
+                return;
+              }
+              res.json({ status: "ok", Number: roomNumber, ID: AdmitId });
+            });
+          });
+        });
+      });
+    }
+  });
+});
+
+app.post("/schedule", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      //sql query
+      let sql = `(select Username from User where User.type="doctor" and User.Username not in (select Doctor from Appointment)) union (Select Doctor from Appointment where Date='${req.body.date}' group by Doctor order by count(*) limit 1)`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ err });
+        } else {
+          console.log({ result });
+          let doctorApp = result[0].Username;
+          sql = `INSERT INTO Appointment (Patient, Doctor, Date, Priority) VALUES ('${req.body.patientId}', '${doctorApp}', '${req.body.date}', '${req.body.priority}');`;
+          console.log({ schedule: sql });
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error" });
+            } else {
+              let AppId = result.insertId;
+              sql = `INSERT INTO Patient_Appointment (ID, Appointment) VALUES (${req.body.patientId}, ${AppId});`;
+              connection.query(sql, function (err, result) {
+                if (err) {
+                  res.json({ status: "error" });
+                } else {
+                  res.json({ status: "ok", AppId: AppId });
+                }
+              });
+            }
+          });
+        }
       });
     }
   });
