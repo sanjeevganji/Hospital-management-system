@@ -156,7 +156,7 @@ app.get("/users", (req, res) => {
 
 app.get("/", (req, res) => {
   isAuth(connection, req, res, (result) => {
-    console.log({login: result});
+    console.log({ login: result });
     res.json(result);
   });
 });
@@ -165,7 +165,7 @@ app.post("/users", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "admin") {
       //sql query
-      let sql = `INSERT INTO User (Username, Password, Type) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}');`;
+      let sql = `INSERT INTO User (Username, Password, Type, Name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}');`;
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error" });
@@ -178,9 +178,9 @@ app.post("/users", (req, res) => {
 });
 
 app.get("/doctor/patients", (req, res) => {
-  console.log({body: req.headers});
+  console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
-    console.log({user});
+    console.log({ user });
     if (user.Type == "doctor") {
       let sql = `SELECT Patient.ID as ID, Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.username}' AND Appointment.Patient = Patient.ID GROUP BY Patient.ID`;
       console.log(sql);
@@ -223,7 +223,33 @@ app.post("/register", (req, res) => {
         if (err) {
           res.json({ status: "error" });
         } else {
-          res.json({ status: "ok", ID: result.insertId});
+          res.json({ status: "ok", ID: result.insertId });
+        }
+      });
+    }
+  });
+});
+
+app.post("/schedule", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      //sql query
+      let sql = `(select Username from User where User.type="doctor" and User.Username not in (select Doctor from Appointment)) union (Select Doctor from Appointment where Date='${req.body.date}' group by Doctor order by count(*) limit 1)`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ err });
+        } else {
+          console.log({result});
+          let doctorApp = result[0].Username;
+          sql = `INSERT INTO Appointment (Patient, Doctor, Date, Priority) VALUES ('${req.body.patientId}', '${doctorApp}', '${req.body.date}', '${req.body.priority}');`;
+          console.log({ schedule: sql });
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error" });
+            } else {
+              res.json({ status: "ok", AppId: result.insertId });
+            }
+          });
         }
       });
     }

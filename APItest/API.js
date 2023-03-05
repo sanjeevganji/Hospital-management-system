@@ -46,30 +46,32 @@ const registerPatient = async (username, password, name) => {
 };
 //and doctor  appointment/testscheduling–information  about  new patients need to be registered, appointments based on availability and priority should be scheduled, doctor  should  be  notified  about  the  appointments  in  a  dashboard.
 const scheduleAppointment = async (
-  apikey,
+  username,
+  password,
   patientId,
-  doctorId,
-  datetime,
-  priority,
-  prescription
+  date,
+  priority
 ) => {
-  my_alert(
-    "API call: scheduleAppointment(" +
-      patientId +
-      "," +
-      doctorId +
-      "," +
-      datetime +
-      ", " +
-      priority +
-      ", " +
-      prescription +
-      ")"
-  );
+  my_alert("API call: scheduleAppointment()");
   //server
-  return { status: "ok" };
-  return { status: "not available" };
-  return { status: "invalid apikey" };
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      patientId: patientId,
+      date: date,
+      priority: priority,
+    }),
+  };
+  let response = await fetch(SERVER_URL + "/schedule", config);
+  console.log("response recv");
+  let json = await response.json();
+  console.log(json);
+  return json;
 };
 
 const scheduleTest = async (apikey, patientId, datetime, testId) => {
@@ -121,7 +123,7 @@ const getAppointments = async (username, password) => {
 
 // Doctor  may  also  query for  any patient  information.
 
-const getAllPatients = async ({username, password}) => {
+const getAllPatients = async ({ username, password }) => {
   my_alert("API call: getAllPatients()");
   let config = {
     method: "GET",
@@ -132,7 +134,7 @@ const getAllPatients = async ({username, password}) => {
   };
   let response = await fetch(SERVER_URL + "/doctor/patients", config);
   let json = await response.json();
-  console.log({json});
+  console.log({ json });
   return json;
 };
 //Doctor  should  be  able  to  record drugs/treatments prescribed to a patient.
@@ -202,6 +204,7 @@ const addUser = async (
   adminPassword,
   username,
   password,
+  name,
   type
 ) => {
   my_alert(adminUsername, adminPassword, username, password, type);
@@ -215,6 +218,7 @@ const addUser = async (
     body: JSON.stringify({
       username: username,
       password: password,
+      name: name,
       type: type,
     }),
   };
@@ -253,7 +257,7 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 // login("Admin", "pass").then((user) => {
 //   console.log({ user });
 //   getUsers(user).then((users) => {
-//     addUser(user.username, user.password, "ad", "pass", "doctor").then(
+//     addUser(user.username, user.password, "ad", "pass","Name", "doctor").then(
 //       (res) => {
 //         console.log(res);
 //       }
@@ -268,9 +272,22 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 //   });
 // });
 
+// login("Rudrak", "pass").then((user) => {
+//   console.log({ user });
+//   registerPatient(user.username, user.password, "Saras").then((res) => {
+//     console.log({res});
+//   });
+// });
+
 login("Rudrak", "pass").then((user) => {
   console.log({ user });
-  registerPatient(user.username, user.password, "Atishay").then((res) => {
-    console.log({res});
-  });
+  let priority = 5;
+  let ID = 2;
+  let date = new Date().toJSON().slice(0, 10);
+  console.log({date});
+  scheduleAppointment(user.username, user.password, ID, date, priority).then(
+    (res) => {
+      console.log({ res });
+    }
+  );
 });
