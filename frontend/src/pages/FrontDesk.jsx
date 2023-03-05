@@ -1,11 +1,25 @@
-import React from "react";
-
-function FrontDesk() {
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import User from "./User";
+function FrontDesk(props) {
+  console.log(props.user);
+  let navigate = useNavigate();
+  useEffect(() => {
+    if (
+      props.user &&
+      props.user.status == "ok" &&
+      props.user.type == "frontdesk"
+    ) {
+      //do something
+    } else {
+      //go back to home
+      navigate("/");
+    }
+  }, []);
   return (
-    <>
-      <div>user:{JSON.stringify(props.$user[0])}</div>
-      <div className="bg-slate-300 text-gray-700">Admin</div>
-    </>
+    <div className="my-container">
+      <User user={props.user} onLogout={props.onLogout} />
+    </div>
   );
 }
 

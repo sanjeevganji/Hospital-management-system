@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply mx-auto;
+}
+.my-container {
+  @apply mx-auto container my-2;
+}
+
 h1 {
   @apply font-bold text-3xl md:text-4xl my-5;
 }
