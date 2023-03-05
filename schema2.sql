@@ -2,6 +2,7 @@ create table User (
     `Username` varchar(256) primary key,
     `Password` text not null,
     `Type` varchar(16) not null,
+    `Name` varchar(256) not null,
     CHECK (`Type` IN ('frontdesk','admin','dataentry', 'doctor')) 
 );
 
@@ -44,6 +45,7 @@ create table Prescription_Treatment (
 create table Prescription_Test (
     `ID` int,
     `Test` int,
+    `Important` boolean default false not null,
     foreign key (`Test`) REFERENCES `Test`(`ID`)
 );
 
@@ -60,9 +62,10 @@ create table Admission (
 create table Appointment (
     `ID` int primary key auto_increment,
     `Prescription` int,
+    `Priority` int not null,
     `Patient` int,
     `Doctor` varchar(256),
-    `Date` datetime not null,
+    `Date` date not null,
     foreign key (`Prescription`) REFERENCES `Prescription`(`ID`),
     foreign key (`Patient`) REFERENCES `Patient`(`ID`),
     foreign key (`Doctor`) REFERENCES `User`(`Username`)
@@ -80,10 +83,21 @@ create table Patient_Admission (
     foreign key (`Admission`) REFERENCES `Admission`(`ID`)
 );
 
+drop table if exists `Patient_Admission`;
+drop table if exists `Patient_Appointment`;
+drop table if exists `Prescription_Treatment`;
+drop table if exists `Prescription_Test`;
+drop table if exists `Appointment`;
+drop table if exists `Prescription`;
+drop table if exists `Admission`;
+drop table if exists `Room`;
+drop table if exists `User`;
+drop table if exists `Test`;
+drop table if exists `Patient`;
+drop table if exists `Treatment`;
 
-
-insert into User (`Username`,`Password`,`Type`) values 
-('Admin', 'pass', 'admin'),
-('Prabitra', 'pass', 'doctor'),
-('Rudrak', 'pass', 'frontdesk'),
-('Akash', 'pass', 'dataentry');
+insert into User (`Username`,`Password`,`Name`,`Type`) values 
+('Admin', 'pass', 'Atishay','admin'),
+('Pabitra', 'pass','Pabitra', 'doctor'),
+('Rudrak', 'pass','Rudrak', 'frontdesk'),
+('Akash', 'pass','Akash', 'dataentry');
