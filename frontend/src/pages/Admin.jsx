@@ -8,11 +8,17 @@ function Admin(props) {
   let users = React.useState([]);
   useEffect(() => {
     if (props.user && props.user.status == "ok" && props.user.type == "admin") {
-      getUsers(props.user);
+      getUsers(props.user).then((res) => {
+        if (res.status == "error") {
+          return <div>{res.reason}</div>;
+        }
+        users[1](res.data);
+      });
     } else {
       navigate("/");
     }
   }, []);
+
   return (
     <div className="my-container">
       <User user={props.user} onLogout={props.onLogout} />
@@ -46,7 +52,7 @@ function Admin(props) {
               className="mx-1"
               defaultChecked
             />
-            doctor
+            Doctor
           </label>
           <label>
             <input
@@ -55,7 +61,7 @@ function Admin(props) {
               type="radio"
               className="mx-1"
             />
-            frontdesk
+            Frontdesk
           </label>
           <label>
             <input
@@ -64,11 +70,11 @@ function Admin(props) {
               type="radio"
               className="mx-1"
             />
-            dataentry
+            Dataentry
           </label>
           <label>
             <input name="type" value="admin" type="radio" className="mx-1" />
-            admin
+            Admin
           </label>
         </div>
         <input
@@ -97,12 +103,23 @@ function Admin(props) {
             <div className="card">{user.Username}</div>
             <div className="card">{user.Type}</div>
             <button
+              // disabled={user.Username == props.user.username}
+              style={{
+                opacity: user.Username == props.user.username ? 0.5 : 1,
+                filter: user.Username == props.user.username ? "saturate(0)" : "",
+              }}
               onClick={() => {
                 deleteUser(
                   props.user.username,
                   props.user.password,
-                  user.username
+                  user.Username
                 );
+                if (user.Username == props.user.username) {
+                  props.onLogout();
+                  //go back to home
+                  navigate("/");
+                  return;
+                }
                 getUsers(props.user).then((res) => {
                   if (res.status == "error") {
                     return <div>{res.reason}</div>;
@@ -112,7 +129,9 @@ function Admin(props) {
               }}
               className="red"
             >
-              delete user
+              {user.Username == props.user.username
+                ? "Delete and Logout"
+                : "Delete"}
             </button>
           </div>
         ))}

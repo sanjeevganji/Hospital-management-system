@@ -5,9 +5,6 @@ function User(props) {
   let navigate = useNavigate();
   return (
     <div className="flex flex-col">
-      <div>
-        {props.user.type} : {JSON.stringify(props.user)}
-      </div>
       <div className="grid grid-cols-2 place-items-center">
         <h1 className="justify-self-start text-gray-500 whitespace-nowrap">
           Welcome {props.user.username || "no username"}!
@@ -20,7 +17,7 @@ function User(props) {
           }}
           className=" justify-self-end red"
         >
-          log out
+          Log out
         </button>
       </div>
     </div>

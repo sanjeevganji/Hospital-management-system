@@ -127,7 +127,7 @@ app.post("/users/delete", (req, res) => {
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
-          res.json({ status: "error" });
+          res.json({ status: "error" , err});
         } else {
           res.json({ status: "ok" });
         }
