@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
+import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -204,6 +205,89 @@ app.post("/users/delete", (req, res) => {
         } else {
           res.json({ status: "ok" });
         }
+      });
+    }
+  });
+});
+
+app.get("/test/:id", (req, res) => {
+  let id = req.params.id;
+  //DUMMY TEST DATA
+  // let test = {
+  //   ID: id,
+  //   Name: "Test 1",
+  //   Date: "2021-05-01 10:00:00",
+  //   Result: "Positive",
+  //   Report:
+  //     "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+  // };
+  // res.json(test);
+
+  // let report = new Blob(["Hello, world!"], { type: "text/plain" });
+  // res.type(blob.type);
+  // blob.arrayBuffer().then((buf) => {
+  //   res.send(Buffer.from(buf));
+  // });
+  // res.json({ id });
+  // isAuth(connection, req, res, (user) => {
+  //   if (user.Type == "doctor") {
+  //     // res.json({ user });
+  //     let sql = `SELECT * FROM Test WHERE ID=${id}`;
+  //     connection.query(sql, (err, result) => {
+  //       if (err) {
+  //         data = err;
+  //         res.json(err);
+  //       } else {
+  //         res.json(result);
+  //       }
+  //     });
+  //   } else {
+  //     res.json({
+  //       status: "error",
+  //       message: "You must be a doctor to get this data",
+  //     });
+  //   }
+  // });
+});
+
+app.post("/test", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    // res.json({ user });
+    if (user.Type == "dataentry") {
+      // res.json({ body: req.body });
+      let { ID, Name, Date, Result, Report } = req.body;
+      res.json({ ID, Name, Date, Result, Report });
+      //sql query for inserting into test with report
+      let sql;
+      if (Report) {
+        sql = `INSERT INTO Test (ID, Name, Date, Result, Report) VALUES (${ID}, '${Name}', '${Date}', '${Result}', '${Report}');`;
+        //query
+        connection.query(sql, (err, result) => {
+          if (err) {
+            res.json(err);
+            console.log("sql error");
+          } else {
+            //sending
+            res.json({ status: "ok", message: "Test added with report" });
+          }
+        });
+      } else {
+        sql = `INSERT INTO Test (ID, Name, Date, Result) VALUES (${ID}, '${Name}', '${Date}', '${Result}');`;
+        //query
+        connection.query(sql, (err, result) => {
+          if (err) {
+            res.json(err);
+            console.log("sql error");
+          } else {
+            //sending
+            res.json({ status: "ok", message: "Test added without report" });
+          }
+        });
+      }
+    } else {
+      res.json({
+        status: "error",
+        message: "You must be a data entry person to add a test",
       });
     }
   });
