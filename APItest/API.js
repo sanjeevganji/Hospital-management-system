@@ -1,4 +1,5 @@
 let base = require("base-64");
+let fetch = require("node-fetch");
 let encode = base.encode;
 let SERVER_URL = "http://localhost:3000";
 let my_alert = console.log;
@@ -12,7 +13,7 @@ const login = async (username, password) => {
   };
   let response = await fetch(SERVER_URL + "/", config);
   let json = await response.json();
-  console.log({ json });
+  console.log("login:", { json });
   if (json.status && json.status == "error") {
     return { status: "error", reason: json.reason };
   }
@@ -27,7 +28,7 @@ const login = async (username, password) => {
 
 // 1. Patient  registration/discharge
 const registerPatient = async (username, password, name) => {
-  my_alert("API call: registerPatient(" + username + ")");
+  my_alert("API call: registerPatient(" + name + ")");
   //server registers a new patient and returns the id
   let config = {
     method: "POST",
@@ -67,19 +68,11 @@ const scheduleAppointment = async (
       priority: priority,
     }),
   };
-  let response = await fetch(SERVER_URL + "/schedule", config);
+  let response = await fetch(SERVER_URL + "/appointment/schedule", config);
   console.log("response recv");
   let json = await response.json();
   console.log(json);
   return json;
-};
-
-const scheduleTest = async (apikey, patientId, datetime, testId) => {
-  my_alert(
-    "API call: scheduleTest(" + patientId + "," + datetime + ", " + testId + ")"
-  );
-  return { status: "ok" };
-  return { status: "invalid apikey" };
 };
 
 //For  admitted  patients  a  room should be assigned based on available room capacity.
@@ -342,3 +335,60 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 //     console.log({ res });
 //   });
 // });
+
+login("Rudrak", "pass").then((user) => {
+  console.log({ user });
+  let prescriptionId = 4;
+  let testName = "Blood_Test";
+  let date = new Date().toJSON().slice(0, 10);
+  let important = 1;
+  scheduleTest(
+    user.username,
+    user.password,
+    prescriptionId,
+    testName,
+    date,
+    important
+  ).then((res) => {
+    console.log({ res });
+  });
+});
+const scheduleTest = async (
+  username,
+  password,
+  prescriptionId,
+  testName,
+  date,
+  important
+) => {
+  console.log("API call: scheduleTest()");
+  console.log({
+    username,
+    password,
+    prescriptionId,
+    testName,
+    date,
+    important,
+  });
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prescriptionId,
+      testName,
+      date,
+      important,
+    }),
+  };
+  // console.log("config", config);
+  let response = await fetch(SERVER_URL + "/test/schedule", config);
+  let json = await response.json();
+  console.log({ json });
+  return json;
+};
+
+console.log("end of script");

@@ -16,7 +16,9 @@ var connection = mysql.createConnection({
 });
 
 connection.connect(function (err) {
-  if (err) throw err;
+  if (err) {
+    console.log("connect error");
+  }
   console.log("Connected!");
 });
 
@@ -37,105 +39,6 @@ app.use(cors());
 // For parsing application/json
 app.use(express.json());
 
-// onApp(app, connection, (onGET) => {
-//   onGET("/", (onUserType, onQuery, params,res) => {
-//     console.log("login request");
-//     onUserType("admin", (id) => {
-//       res.json({ status: "ok", data: { id: id, type: "admin" }})
-//     });
-//     onUserType("doctor", (id) => {
-//       res.json({ status: "ok", data: { id: id, type: "doctor" }})
-//     }
-//     );
-//     onUserType("frontend", (id) => {
-//       res.json({ status: "ok", data: { id: id, type: "patient" }})
-//     }
-//     );
-//     onUserType("dataentry", (id) => {
-//       res.json({ status: "ok", data: { id: id, type: "patient" }})
-//     }
-//     );
-//   });
-
-//   onGET("/users", (onUserType, onQuery, params) => {
-//     console.log("users");
-//     onUserType("admin", (id) => {
-//       onQuery("SELECT * FROM User;");
-//     });
-//   });
-
-//   onGET("/appointments", (onUserType, onQuery, params) => {
-//     onUserType("doctor", (id) => {
-//       onQuery(`SELECT * from Appointments where doctorId=${id}`, (results) => {
-//         let appointments = [
-//           {
-//             id: 1,
-//             patientId: 1,
-//             patientName: "Amitabh Bachchan",
-//             datetime: "2021-05-01 10:00:00",
-//             priority: 10,
-//             prescription: {
-//               treatments: [1],
-//               tests: [1, 2],
-//             },
-//           },
-//           {
-//             id: 2,
-//             patientId: 2,
-//             patientName: "David Beckham",
-//             datetime: "2021-05-02 10:00:00",
-//             priority: 5,
-//             prescription: {
-//               treatments: [1, 2],
-//               tests: [1],
-//             },
-//           },
-//         ];
-//         return appointments;
-//       });
-//     });
-//   });
-
-//   onGET("/patient/:number/treatments", (onUserType, onQuery, params) => {
-//     onUserType("doctor", (id) => {
-//       onQuery(`SELECT 1`, (results) => {
-//         let patientId = params.number;
-//         return [
-//           {
-//             id: 1,
-//             name: "end of all problems",
-//             drug: "heroine",
-//             dosage: "before dying",
-//           },
-//           {
-//             id: 2,
-//             name: "valentine's day",
-//             drug: "love",
-//             dosage: "take in little amounts",
-//           },
-//         ];
-//       });
-//     });
-//   });
-
-//   onGET("/patient/:number/tests", (onUserType, onQuery, params) => {
-//     onUserType("doctor", (id) => {
-//       onQuery(`SELECT 1`, (results) => {
-//         let tests = [
-//           {
-//             id: 1,
-//             name: "Test 1",
-//           },
-//           {
-//             id: 2,
-//             name: "Test 2",
-//           },
-//         ];
-//         return tests;
-//       });
-//     });
-//   });
-// });
 console.log("hello");
 app.get("/users", (req, res) => {
   isAuth(connection, req, res, (user) => {
@@ -233,46 +136,47 @@ app.post("/users/delete", (req, res) => {
   });
 });
 
+//not tested
 app.get("/test/:id", (req, res) => {
   let id = req.params.id;
-  //DUMMY TEST DATA
-  // let test = {
-  //   ID: id,
-  //   Name: "Test 1",
-  //   Date: "2021-05-01 10:00:00",
-  //   Result: "Positive",
-  //   Report:
-  //     "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
-  // };
-  // res.json(test);
+  // DUMMY TEST DATA
+  let test = {
+    ID: id,
+    Name: "Test 1",
+    Date: "2021-05-01 10:00:00",
+    Result: "Positive",
+    Report:
+      "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+  };
+  res.json(test);
 
-  // let report = new Blob(["Hello, world!"], { type: "text/plain" });
-  // res.type(blob.type);
-  // blob.arrayBuffer().then((buf) => {
-  //   res.send(Buffer.from(buf));
-  // });
-  // res.json({ id });
-  // isAuth(connection, req, res, (user) => {
-  //   if (user.Type == "doctor") {
-  //     // res.json({ user });
-  //     let sql = `SELECT * FROM Test WHERE ID=${id}`;
-  //     connection.query(sql, (err, result) => {
-  //       if (err) {
-  //         data = err;
-  //         res.json(err);
-  //       } else {
-  //         res.json(result);
-  //       }
-  //     });
-  //   } else {
-  //     res.json({
-  //       status: "error",
-  //       message: "You must be a doctor to get this data",
-  //     });
-  //   }
-  // });
+  let report = new Blob(["Hello, world!"], { type: "text/plain" });
+  res.type(blob.type);
+  blob.arrayBuffer().then((buf) => {
+    res.send(Buffer.from(buf));
+  });
+  res.json({ id });
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "doctor") {
+      // res.json({ user });
+      let sql = `SELECT * FROM Test WHERE ID=${id}`;
+      connection.query(sql, (err, result) => {
+        if (err) {
+          data = err;
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    } else {
+      res.json({
+        status: "error",
+        message: "You must be a doctor to get this data",
+      });
+    }
+  });
 });
-
+//not tested
 app.post("/test", (req, res) => {
   isAuth(connection, req, res, (user) => {
     // res.json({ user });
@@ -315,6 +219,7 @@ app.post("/test", (req, res) => {
     }
   });
 });
+
 app.post("/discharge", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
@@ -414,7 +319,7 @@ app.post("/admit", (req, res) => {
   });
 });
 
-app.post("/schedule", (req, res) => {
+app.post("/appointment/schedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
@@ -440,6 +345,33 @@ app.post("/schedule", (req, res) => {
                   res.json({ status: "ok", AppId: AppId });
                 }
               });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+app.post("/test/schedule", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `insert into Test (Name,Date) values("${req.body.testName}","${req.body.date}");`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "test" });
+        } else {
+          console.log({ result });
+          let insertId = result.insertId;
+          sql = `INSERT INTO Prescription_Test (ID, Test, Important) VALUES ('${req.body.prescriptionId}', '${insertId}', '${req.body.important}');`;
+          console.log({ insert: sql });
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error", reason: "prescription" });
+            } else {
+              res.json({ status: "ok", TestId: insertId });
             }
           });
         }
