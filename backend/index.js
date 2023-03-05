@@ -354,7 +354,7 @@ app.post("/appointment/schedule", (req, res) => {
 });
 app.post("/test/schedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
-    if (user.Type == "frontdesk") {
+    if (user.Type == "dataentry") {
       console.log({ body: req.body });
       //sql query
       let sql = `insert into Test (Name,Date) values("${req.body.testName}","${req.body.date}");`;
@@ -366,7 +366,7 @@ app.post("/test/schedule", (req, res) => {
           console.log({ result });
           let insertId = result.insertId;
           sql = `INSERT INTO Prescription_Test (ID, Test, Important) VALUES ('${req.body.prescriptionId}', '${insertId}', '${req.body.important}');`;
-          console.log({ insert: sql });
+          console.log({ insert_test: sql });
           connection.query(sql, function (err, result) {
             if (err) {
               res.json({ status: "error", reason: "prescription" });
@@ -374,6 +374,104 @@ app.post("/test/schedule", (req, res) => {
               res.json({ status: "ok", TestId: insertId });
             }
           });
+        }
+      });
+    }
+  });
+});
+
+app.post("/treatment", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "dataentry") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `insert into Treatment (Date, Name, Dosage) values("${req.body.date}","${req.body.treatmentName}", "${req.body.dosage}");`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "treatment" });
+        } else {
+          console.log({ result });
+          let insertId = result.insertId;
+          console.log({ insertId });
+          sql = `INSERT INTO Prescription_Treatment (ID, Treatment) VALUES ('${req.body.prescriptionId}', '${insertId}');`;
+          console.log({ insert_treatment: sql });
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error", reason: "prescription" });
+            } else {
+              res.json({ status: "ok", TestId: insertId });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+app.post("/prescription", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "dataentry") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `insert into Prescription () values();`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "treatment" });
+        } else {
+          console.log({ result });
+          let insertId = result.insertId;
+          console.log({ insertId });
+          sql = `UPDATE Appointment SET Prescription = '${insertId}' WHERE ID = '${req.body.appointmentId}';`;
+          console.log({ update_appointment: sql });
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error", reason: "update_appoinement" });
+            } else {
+              res.json({ status: "ok", TestId: insertId });
+            }
+          });
+        }
+      });
+    }
+  });
+});
+
+app.post("/getTreatment", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "doctor") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `select Appointment.ID , Treatment.ID , Treatment.Name, Treatment.Dosage, Treatment.Date from Treatment, Prescription_Treatment, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Treatment.ID and Appointment.Date = Treatment.Date and Prescription_Treatment.Treatment = Treatment.ID;`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "getTreatment" });
+        } else {
+          console.log({ result });
+          let insertId = result.insertId;
+          res.json({ status: "ok", TestId: insertId });
+        }
+      });
+    }
+  });
+});
+
+app.post("/getTest", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "doctor") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `select Appointment.ID , Test.ID , Test.Name,  Test.Date, Test.Result, Test.Report from Test, Prescription_Test, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Test.ID and Appointment.Date = Test.Date and Prescription_Test.Test = Test.ID;`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "getTest" });
+        } else {
+          console.log({ result });
+          let insertId = result.insertId;
+          res.json({ status: "ok", result });
         }
       });
     }

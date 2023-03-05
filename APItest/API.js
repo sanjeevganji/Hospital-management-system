@@ -155,46 +155,6 @@ const getAllPatients = async ({ username, password }) => {
   console.log({ json });
   return json;
 };
-//Doctor  should  be  able  to  record drugs/treatments prescribed to a patient.
-
-const getTreatments = async (apikey, patientId) => {
-  my_alert("API call: getTreatments()");
-  return [
-    {
-      id: 1,
-      name: "end of all problems",
-      drug: "heroine",
-      dosage: "before dying",
-    },
-    {
-      id: 2,
-      name: "valentine's day",
-      drug: "love",
-      dosage: "take in little amounts",
-    },
-  ];
-  return { status: "invalid apikey" };
-};
-
-const getTests = async (apikey, patientId) => {
-  my_alert("API call: getTests()");
-  return [
-    {
-      id: 1,
-      name: "the test that fails all the time",
-      description: "this test is a joke",
-      result: "failed",
-    },
-    {
-      id: 2,
-      name: "the test that passes all the time",
-      description: "this test is a joke",
-      result: "passed",
-      report: new Blob(["this is a report"], { type: "application/pdf" }),
-    },
-  ];
-  return { status: "invalid apikey" };
-};
 
 //(bonus point: sending automated email reports to a doctor about the health information of patients treated by her on a weekly basis, high priority events may be emailed in an emergency manner)
 
@@ -336,7 +296,8 @@ const deleteUser = async (adminUsername, adminPassword, username) => {
 //   });
 // });
 
-login("Rudrak", "pass").then((user) => {
+// tested: ok
+login("Akash", "pass").then((user) => {
   console.log({ user });
   let prescriptionId = 4;
   let testName = "Blood_Test";
@@ -391,4 +352,194 @@ const scheduleTest = async (
   return json;
 };
 
-console.log("end of script");
+// console.log("end of script");
+
+//tested: ok
+// login("Akash", "pass").then((user) => {
+//   console.log({ user });
+//   let prescriptionId = 4;
+//   let treatmentName = "Paracetamol";
+//   let dosage = "one tablet after lunch and dinner";
+//   let date = new Date().toJSON().slice(0, 10);
+//   let important = 1;
+//   treatment(
+//     user.username,
+//     user.password,
+//     prescriptionId,
+//     treatmentName,
+//     dosage,
+//     date
+//   ).then((res) => {
+//     console.log({ res });
+//   });
+// });
+
+// const treatment = async (
+//   username,
+//   password,
+//   prescriptionId,
+//   treatmentName,
+//   dosage,
+//   date
+// ) => {
+//   console.log("API call: scheduleTest()");
+//   console.log({
+//     username,
+//     password,
+//     prescriptionId,
+//     treatmentName,
+//     dosage,
+//     date
+//   });
+//   let config = {
+//     method: "POST",
+//     headers: {
+//       Authorization: "Basic " + encode(username + ":" + password),
+//       "Access-Control-Allow-Origin": "*",
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       prescriptionId,
+//       treatmentName,
+//       dosage,
+//       date,
+//     }),
+//   };
+//   // console.log("config", config);
+//   let response = await fetch(SERVER_URL + "/treatment", config);
+//   let json = await response.json();
+//   console.log({ json });
+//   return json;
+// };
+// console.log("end of script");
+
+//tested: ok
+// login("Akash", "pass").then((user) => {
+//   console.log({ user });
+//   appointmentId = 5;
+//   prescription(
+//     user.username,
+//     user.password,
+//     appointmentId
+//   ).then((res) => {
+//     console.log({ res });
+//   });
+// });
+// const prescription = async (
+//   username,
+//   password,
+//   appointmentId
+// ) => {
+//   console.log("API call: scheduleTest()");
+//   console.log({
+//     username,
+//     password,
+//     appointmentId
+//   });
+//   let config = {
+//     method: "POST",
+//     headers: {
+//       Authorization: "Basic " + encode(username + ":" + password),
+//       "Access-Control-Allow-Origin": "*",
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       appointmentId,
+//     }),
+//   };
+//   // console.log("config", config);
+//   let response = await fetch(SERVER_URL + "/prescription", config);
+//   let json = await response.json();
+//   console.log({ json });
+//   return json;
+// };
+// console.log("end of script");
+
+
+//Doctor  should  be  able  to  record drugs/treatments prescribed to a patient.
+// login("Pabitra", "pass").then((user) => {
+//   console.log({ user });
+//   let patientId = 2;
+//   getTreatment(
+//     user.username,
+//     user.password,
+//     patientId
+//   ).then((res) => {
+//     console.log({ res });
+//   });
+// });
+// const getTreatment = async (
+//   username,
+//   password,
+//   patientId
+// ) => {
+//   console.log("API call: scheduleTest()");
+//   console.log({
+//     username,
+//     password,
+//     patientId
+//   });
+//   let config = {
+//     method: "POST",
+//     headers: {
+//       Authorization: "Basic " + encode(username + ":" + password),
+//       "Access-Control-Allow-Origin": "*",
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       patientId,
+//     }),
+//   };
+//   // console.log("config", config);
+//   let response = await fetch(SERVER_URL + "/getTreatment", config);
+//   let json = await response.json();
+//   console.log({ json });
+//   return json;
+// };
+// console.log("end of script");
+
+//Doctor  should  be  able  to  record tests prescribed to a patient.
+// login("Pabitra", "pass").then((user) => {
+//   console.log({ user });
+//   let patientId = 2;
+//   getTest(
+//     user.username,
+//     user.password,
+//     patientId
+//   ).then((res) => {
+//     console.log({ res });
+//   });
+// });
+// const getTest = async (
+//   username,
+//   password,
+//   patientId
+// ) => {
+//   console.log("API call: scheduleTest()");
+//   console.log({
+//     username,
+//     password,
+//     patientId
+//   });
+//   let config = {
+//     method: "POST",
+//     headers: {
+//       Authorization: "Basic " + encode(username + ":" + password),
+//       "Access-Control-Allow-Origin": "*",
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({
+//       patientId,
+//     }),
+//   };
+//   // console.log("config", config);
+//   let response = await fetch(SERVER_URL + "/getTest", config);
+//   let json = await response.json();
+//   console.log({ json });
+//   return json;
+// };
+// console.log("end of script");
+
+
+
+
