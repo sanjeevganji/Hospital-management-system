@@ -102,7 +102,19 @@ app.post("/users/delete", (req, res) => {
         if (err) {
           res.json({ status: "error", err });
         } else {
-          res.json({ status: "ok" });
+          let sql2 = `SELECT Type FROM User WHERE Username='${req.body.username}'`;
+          connection.query(sql2, function(err, result){
+            if(err)
+            {
+              res.json({status: "error", err})
+            }
+            else if(result[0] && result[0].Type == 'admin')
+            {
+              res.json({status: "warning", reason: "unauthorized: can't delete admin"})
+            }
+            else res.json({ status: "ok" });
+          });
+
         }
       });
     }
