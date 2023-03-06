@@ -40,6 +40,21 @@ app.use(cors());
 app.use(express.json());
 
 console.log("hello");
+
+
+// on SUBMIT
+
+app.get("/", (req, res) => {
+  isAuth(connection, req, res, (result) => {
+    console.log({ login: result });
+    res.json(result);
+  });
+});
+
+// ADMIN
+
+// getting user data
+
 app.get("/users", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log("getting", user);
@@ -57,12 +72,44 @@ app.get("/users", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  isAuth(connection, req, res, (result) => {
-    console.log({ login: result });
-    res.json(result);
+// admin-uesr
+
+app.post("/users", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "admin") {
+      //sql query
+      let sql = `INSERT INTO User (Username, Password, Type, Name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}');`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          res.json({ status: "ok" });
+        }
+      });
+    }
   });
 });
+
+// admin-delete
+
+app.post("/users/delete", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "admin") {
+      //sql query
+      let sql = `DELETE FROM User WHERE Username='${req.body.username}' AND Type NOT IN {"admin"};`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", err });
+        } else {
+          res.json({ status: "ok" });
+        }
+      });
+    }
+  });
+});
+
+
 
 app.get("/doctor/appointments", (req, res) => {
   console.log("getting appointments");
@@ -84,21 +131,9 @@ app.get("/doctor/appointments", (req, res) => {
   });
 });
 
-app.post("/users", (req, res) => {
-  isAuth(connection, req, res, (user) => {
-    if (user.Type == "admin") {
-      //sql query
-      let sql = `INSERT INTO User (Username, Password, Type, Name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}');`;
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error" });
-        } else {
-          res.json({ status: "ok" });
-        }
-      });
-    }
-  });
-});
+
+
+
 
 app.get("/frontdesk/patients", (req, res) => {
   console.log({ body: req.headers });
@@ -106,7 +141,14 @@ app.get("/frontdesk/patients", (req, res) => {
     console.log({ user });
     if (user.Type == "frontdesk") {
       //todo: change the query to get if patient is in Admission and Discharge Date is > current date
-      let sql = `SELECT * From Patient;`;
+      let sql = `SELECT Patient.*,
+          CASE WHEN Admission.ID IS NOT NULL AND Admission.Discharge_date IS NULL
+            THEN true
+            ELSE false
+          END AS admitted
+        FROM Patient
+        LEFT JOIN Admission ON Patient.ID = Admission.Patient;
+      `;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -139,22 +181,7 @@ app.get("/doctor/patients", (req, res) => {
   });
 });
 
-app.post("/users/delete", (req, res) => {
-  isAuth(connection, req, res, (user) => {
-    if (user.Type == "admin") {
-      //sql query
-      let sql = `DELETE FROM User WHERE Username='${req.body.username}';`;
-      console.log(sql);
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error", err });
-        } else {
-          res.json({ status: "ok" });
-        }
-      });
-    }
-  });
-});
+
 
 //not tested
 app.get("/test/:id", (req, res) => {
