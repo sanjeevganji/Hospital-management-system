@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser, tryLoggingOut } from "../log";
+import { getUser, tryLoggingOut } from "./log";
 
 const ProtectedRoute = (props: any) => {
   let [user, setUser] = React.useState<any>(null);

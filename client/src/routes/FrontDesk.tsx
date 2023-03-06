@@ -9,10 +9,14 @@ import {
   scheduleAppointment,
 } from "../API";
 import ScheduleAppointmentPopUp from "../components/ScheduleAppointment";
+import AdmitPatientPopUp from "../components/AdmitPatient";
+import DischargePatientPopUp from "../components/DischargePatient";
 import { getUser, tryLoggingOut } from "../log";
 
 function FrontDesk() {
-  const navigate = useNavigate();
+  let [get1, set1] = React.useState(null);
+  let [get2, set2] = React.useState(null);
+  let [get3, set3] = React.useState(null);
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -20,6 +24,7 @@ function FrontDesk() {
   }, []);
   //fetch the users from the server
   let [fetchedPatients, setFetchedPatients] = React.useState<any>(null);
+
   useEffect(() => {
     if (user)
       fetchAllPatients(user).then((res) => {
@@ -28,14 +33,14 @@ function FrontDesk() {
   }, [user]);
 
   useEffect(() => {
-    console.log(fetchedPatients);
+    console.log({ fetchedPatients });
   }, [fetchedPatients]);
 
   return (
     <div className="px-6">
       <h2 className="mt-8 mb-2 shadow-lg ">Register Patient</h2>
       <form
-        className="grid grid-cols-3 gap-x-3"
+        className="grid grid-cols-2 gap-x-3"
         onSubmit={async (e) => {
           e.preventDefault();
           await registerPatient(
@@ -44,21 +49,15 @@ function FrontDesk() {
             (e.target as any).name.value
           );
           fetchAllPatients(user).then((res) => {
-            setFetchedPatients(res.json);
+            setFetchedPatients(res);
           });
         }}
       >
-        <div className="col-span-3 flex gap-4 py-2 "></div>
+        <div className="col-span-2 flex gap-4 py-2 "></div>
         <input
           type="text"
           placeholder="patient name"
           name="name"
-          autoComplete="off"
-        />
-        <input
-          type="password"
-          placeholder="password"
-          name="password"
           autoComplete="off"
         />
         <button className="blue">Register Patient </button>
@@ -76,53 +75,70 @@ function FrontDesk() {
               {fetchedPatient.Name}
             </div>
             {fetchedPatient.admitted || true ? (
-              <button
-                className="col-span-2 red"
-                onClick={async () => {
-                  await deleteUser(
-                    user.username,
-                    user.password,
-                    fetchedPatient.Username
-                  );
-                  if (user.username == fetchedPatient.Username) {
-                    tryLoggingOut(navigate);
-                  }
-                  fetchUsers(user).then((res) => {
-                    setFetchedPatients(res.json);
-                  });
-                }}
-              >
-                admit
-              </button>
+              <>
+                <button
+                  className="col-span-2 blue"
+                  onClick={async () => {
+                    set1(fetchedPatient.ID);
+                  }}
+                >
+                  admit
+                </button>
+                <AdmitPatientPopUp
+                  patientId={fetchedPatient.ID}
+                  open={fetchedPatient.ID === get1}
+                  onClose={() => {
+                    set1(null);
+                    fetchAllPatients(user).then((res) => {
+                      setFetchedPatients(res);
+                    });
+                  }}
+                />
+              </>
             ) : (
-              <button
-                className="col-span-2 red"
-                onClick={async () => {
-                  await deleteUser(
-                    user.username,
-                    user.password,
-                    fetchedPatient.Username
-                  );
-                  if (user.username == fetchedPatient.Username) {
-                    tryLoggingOut(navigate);
-                  }
-                  fetchUsers(user).then((res) => {
-                    setFetchedPatients(res.json);
-                  });
-                }}
-              >
-                discharge
-              </button>
+              <>
+                <button
+                  className="col-span-2 blue"
+                  onClick={async () => {
+                    set2(fetchedPatient.ID);
+                    fetchAllPatients(user).then((res) => {
+                      setFetchedPatients(res);
+                    });
+                    //discharge
+                  }}
+                >
+                  discharge
+                </button>
+                <DischargePatientPopUp
+                  patientId={fetchedPatient.ID}
+                  open={fetchedPatient.ID === get2}
+                  onClose={() => {
+                    set2(null);
+                    fetchAllPatients(user).then((res) => {
+                      setFetchedPatients(res);
+                    });
+                  }}
+                />
+              </>
             )}
             <button
               onClick={() => {
-                open("google.com");
+                set3(fetchedPatient.ID);
               }}
               className={"col-span-6 orange"}
             >
               appoint
-              <ScheduleAppointmentPopUp patientId={fetchedPatient.ID} />
             </button>
+            <ScheduleAppointmentPopUp
+              patientId={fetchedPatient.ID}
+              open={fetchedPatient.ID === get3}
+              onClose={() => {
+                set3(null);
+                fetchAllPatients(user).then((res) => {
+                  setFetchedPatients(res);
+                });
+              }}
+            />
           </div>
         ))}
       </div>

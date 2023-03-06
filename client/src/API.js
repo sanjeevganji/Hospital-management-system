@@ -52,6 +52,7 @@ export const scheduleAppointment = async (
   priority
 ) => {
   my_alert("API call: scheduleAppointment()");
+  console.log(username, password, patientId, date, priority);
   //server
   let config = {
     method: "POST",

@@ -6,7 +6,7 @@ import Doctor from "./routes/Doctor";
 import DataEntry from "./routes/DataEntry";
 import FrontDesk from "./routes/FrontDesk";
 import Admin from "./routes/Admin";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function App() {
   const router = createBrowserRouter([
