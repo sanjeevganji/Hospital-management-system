@@ -70,7 +70,7 @@ export const scheduleAppointment = async (
   let response = await fetch(SERVER_URL + "/appointment/schedule", config);
   console.log("response recv");
   let json = await response.json();
-  console.log(json);
+  console.log({ schedule: json });
   return json;
 };
 
@@ -80,6 +80,7 @@ export const scheduleAppointment = async (
 
 export const admitPatient = async (username, password, patientId, roomType) => {
   my_alert("API call: admitPatient(" + patientId + ")");
+  console.log(username, password, patientId, roomType);
   //server admits an existing patient to a room and returns the room number
   let config = {
     method: "POST",
@@ -94,7 +95,9 @@ export const admitPatient = async (username, password, patientId, roomType) => {
     }),
   };
   let response = await fetch(SERVER_URL + "/admit", config);
+  console.log("get:/admit response recv");
   let json = await response.json();
+  console.log({ response: json });
   return json;
 };
 

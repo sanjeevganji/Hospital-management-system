@@ -5,7 +5,7 @@ import { getUser } from "../log";
 function ScheduleAppointment(props: any) {
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
-
+  let [tries, setTrys] = useState(0);
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
@@ -27,23 +27,29 @@ function ScheduleAppointment(props: any) {
           className="grid grid-cols-2 gap-x-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            await scheduleAppointment(
+            let s = await scheduleAppointment(
               user.username,
               user.password,
               patientId,
               (e.target as any).scheduleDate.value,
               (e.target as any).priority.value
             );
+            if (s.err) {
+              setTrys(tries + 1);
+              return;
+            }
             onClose();
           }}
         >
-          <div className="col-span-2 flex flex-col gap-2 py-2 ">
+          <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
             <label className="text-gray-500">Schedule Date</label>
             <input
+              min={new Date().toISOString().split("T")[0]}
               type="date"
               placeholder="patient name"
               name="scheduleDate"
               autoComplete="off"
+              required
             />
             <label className="text-gray-500 mt-2">Priority</label>
             <input
@@ -51,14 +57,29 @@ function ScheduleAppointment(props: any) {
               placeholder="priority"
               name="priority"
               autoComplete="off"
+              required
             />
           </div>
-          <button
-            type="submit"
-            className=" col-span-2 orange w-fit place-self-end"
+          <div
+            className="text-red-500 mt-1 col-span-2"
+            style={{ opacity: tries == 0 ? "0" : "1" }}
           >
-            Appoint
-          </button>
+            Invalid details
+          </div>
+          <div className="flex col-span-2 justify-end">
+            <span
+              onClick={() => {
+                onClose();
+              }}
+              className="underline h-10 leading-10 mx-4 cursor-pointer"
+            >
+              {" "}
+              cancel
+            </span>
+            <button type="submit" className="orange w-fit ">
+              Appoint
+            </button>
+          </div>
         </form>
       </span>
     </div>

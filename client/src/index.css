@@ -44,6 +44,13 @@ input[type="password"] {
             focus:outline-2 
             focus:outline-gray-500;
 }
+select {
+  height: 26px;
+  @apply bg-slate-50 outline outline-2 outline-slate-300 rounded-sm px-2
+            focus:outline 
+            focus:outline-2 
+            focus:outline-gray-500;
+}
 
 button.blue {
   @apply text-blue-900

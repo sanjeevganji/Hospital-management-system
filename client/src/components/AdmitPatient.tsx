@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getTreatments, scheduleAppointment } from "../API";
+import { admitPatient, getTreatments, scheduleAppointment } from "../API";
 import { getUser } from "../log";
 
 function AdmitPatient(props: any) {
+  let [tries, setTrys] = useState(0);
+  let [errorMessage, setErrorMessage] = useState("Unknown Error");
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -21,26 +23,63 @@ function AdmitPatient(props: any) {
     >
       <h1 className="ml-4">Admit Patient {patientId}</h1>
       <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
-        <div className="grid grid-cols-7 gap-3 mb-2 mt-4">
-          <h3 className="cell col-span-2">Name</h3>
-          <h3 className="cell col-span-2">Drug</h3>
-          <h3 className="cell col-span-3">Dosage</h3>
-        </div>
-        <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
-          {/* {$treatments[0].map((treatment) => (
-            <div className="grid grid-cols-7 gap-3" key={treatment.id}>
-              <div className="cell col-span-2">{treatment.name}</div>
-              <div className="cell col-span-2">{treatment.drug}</div>
-              <div className="cell col-span-3">{treatment.dosage}</div>
-            </div>
-          ))} */}
-        </div>
-        <button
-          type="submit"
-          className=" col-span-2 orange w-fit place-self-end"
+        <form
+          className="grid grid-cols-2 gap-x-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            let s = await admitPatient(
+              user.username,
+              user.password,
+              patientId,
+              (e.target as any).roomType.value
+            );
+            if (s.status === "error") {
+              setErrorMessage(s.data);
+              setTrys(tries + 1);
+              return;
+            }
+            onClose();
+          }}
         >
-          Admit
-        </button>
+          <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
+            <label className="text-gray-500">Admit Date</label>
+            <input
+              min={new Date().toISOString().split("T")[0]}
+              type="date"
+              placeholder="patient name"
+              name="scheduleDate"
+              autoComplete="off"
+              required
+            />
+            <label className="text-gray-500 mt-2">Room Type</label>
+            <select name="roomType">
+              <option value="General">General</option>
+              <option value="HDU">HDU</option>
+              <option value="Cabin">Cabin</option>
+              <option value="ICU">ICU</option>
+            </select>
+          </div>
+          <div
+            className="text-red-500 mt-1 col-span-2"
+            style={{ opacity: tries == 0 ? "0" : "1" }}
+          >
+            {errorMessage}
+          </div>
+          <div className="flex col-span-2 justify-end">
+            <span
+              onClick={() => {
+                onClose();
+              }}
+              className="underline h-10 leading-10 mx-4 cursor-pointer"
+            >
+              {" "}
+              cancel
+            </span>
+            <button type="submit" className="orange w-fit ">
+              Appoint
+            </button>
+          </div>
+        </form>
       </span>
     </div>
   );
