@@ -100,6 +100,26 @@ app.post("/users", (req, res) => {
   });
 });
 
+app.get("/frontdesk/patients", (req, res) => {
+  console.log({ body: req.headers });
+  isAuth(connection, req, res, (user) => {
+    console.log({ user });
+    if (user.Type == "frontdesk") {
+      //todo: change the query to get if patient is in Admission and Discharge Date is > current date
+      let sql = `SELECT * From Patient;`;
+      console.log(sql);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
 app.get("/doctor/patients", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
@@ -127,7 +147,7 @@ app.post("/users/delete", (req, res) => {
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
-          res.json({ status: "error" , err});
+          res.json({ status: "error", err });
         } else {
           res.json({ status: "ok" });
         }

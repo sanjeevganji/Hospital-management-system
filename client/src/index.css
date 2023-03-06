@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply mx-auto;
+}
+.my-container {
+  @apply mx-auto container my-2;
+}
+
+h1 {
+  @apply font-bold text-3xl md:text-4xl my-5;
+}
+h2 {
+  @apply font-bold text-lg md:text-xl;
+}
+h3 {
+  @apply font-semibold text-sm md:text-base;
+}
+
+input[type="text"] {
+  @apply outline outline-2 outline-slate-300 rounded-sm px-2
+            focus:outline 
+            focus:outline-2 
+            focus:outline-gray-500;
+}
+input[type="password"] {
+  @apply outline outline-2 outline-slate-300 rounded-sm px-2
+            focus:outline 
+            focus:outline-2 
+            focus:outline-gray-500;
+}
+
+button.blue {
+  @apply text-blue-900
+            outline outline-2 outline-blue-300
+            bg-blue-300 hover:bg-blue-200 rounded-sm p-2 
+            focus:outline 
+            focus:outline-2 
+            focus:outline-blue-500;
+}
+
+button.red {
+  @apply text-red-900
+            outline outline-2 outline-red-300
+            bg-red-300 hover:bg-red-200 rounded-sm p-2 
+            focus:outline 
+            focus:outline-2 
+            focus:outline-red-500;
+}
+
+button.orange {
+  @apply text-orange-900
+            outline outline-2 outline-orange-300
+            bg-orange-300 hover:bg-orange-200 rounded-sm p-2 
+            focus:outline 
+            focus:outline-2 
+            focus:outline-orange-500;
+}
+.card {
+  @apply p-2 
+        bg-slate-100
+        outline outline-2
+            outline-slate-100
+        rounded-sm  
+        overflow-hidden
+        overflow-ellipsis;
+}
+.cell {
+  @apply py-2 overflow-hidden
+  overflow-ellipsis;
+}
