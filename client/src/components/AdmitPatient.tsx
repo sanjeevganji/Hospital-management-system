@@ -17,11 +17,10 @@ function AdmitPatient(props: any) {
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-slate-300 text-gray-700 px-6
+    bg-black text-gray-700 px-6 bg-opacity-30
     "
       style={{ display: open ? "grid" : "none" }}
     >
-      <h1 className="ml-4">Admit Patient {patientId}</h1>
       <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
         <form
           className="grid grid-cols-2 gap-x-3"
@@ -42,15 +41,6 @@ function AdmitPatient(props: any) {
           }}
         >
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
-            <label className="text-gray-500">Admit Date</label>
-            <input
-              min={new Date().toISOString().split("T")[0]}
-              type="date"
-              placeholder="patient name"
-              name="scheduleDate"
-              autoComplete="off"
-              required
-            />
             <label className="text-gray-500 mt-2">Room Type</label>
             <select name="roomType">
               <option value="General">General</option>
@@ -73,10 +63,10 @@ function AdmitPatient(props: any) {
               className="underline h-10 leading-10 mx-4 cursor-pointer"
             >
               {" "}
-              cancel
+              Cancel
             </span>
             <button type="submit" className="orange w-fit ">
-              Appoint
+              Confirm
             </button>
           </div>
         </form>

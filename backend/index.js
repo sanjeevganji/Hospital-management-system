@@ -137,6 +137,7 @@ app.get("/doctor/appointments", (req, res) => {
           console.log(err);
           res.json({ status: "error", data: err });
         } else {
+          console.log("124result" + result);
           res.json({ status: "ok", data: result });
         }
       });
