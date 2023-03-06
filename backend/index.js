@@ -143,7 +143,7 @@ app.get("/doctor/appointments", (req, res) => {
     }
   });
 });
-
+//TODO;
 app.get("/frontdesk/patients", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
@@ -156,7 +156,8 @@ app.get("/frontdesk/patients", (req, res) => {
             ELSE false
           END AS admitted
         FROM Patient
-        LEFT JOIN Admission ON Patient.ID = Admission.Patient;
+        LEFT JOIN Admission ON Patient.ID = Admission.Patient
+        ORDER BY Patient.ID DESC;
       `;
       console.log(sql);
       connection.query(sql, function (err, result) {
@@ -329,7 +330,8 @@ app.post("/register", (req, res) => {
 
 app.post("/admit", (req, res) => {
   isAuth(connection, req, res, (user) => {
-    let date = new Date().toJSON();
+    let date = new Date().toISOString().slice(0, 19).replace("T", " ");
+    console.log({ date });
     if (user.Type == "frontdesk") {
       //sql query
       let sql = `SELECT Number FROM Room WHERE Type = '${req.body.type}' ORDER BY Beds_avail LIMIT 1;`;
@@ -377,7 +379,8 @@ app.post("/appointment/schedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
-      let sql = `(select Username from User where User.type="doctor" and User.Username not in (select Doctor from Appointment)) union (Select Doctor from Appointment where Date='${req.body.date}' group by Doctor order by count(*) limit 1)`;
+      let sql = `(select Username from User where User.Type="doctor" and User.Username not in (select Doctor from Appointment where Date='${req.body.date}') limit 1) union (Select Doctor from Appointment where Date='${req.body.date}' group by Doctor order by count(*) limit 1);`;
+      console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ err });
