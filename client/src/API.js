@@ -224,7 +224,9 @@ export const addUser = async (
 };
 
 export const deleteUser = async (adminUsername, adminPassword, username) => {
-  console.log("API call: deleteUser(" + username + ")");
+  console.log(
+    "API call: deleteUser(" + adminUsername + adminPassword + username + ")"
+  );
   let config = {
     method: "POST",
     headers: {
@@ -239,7 +241,7 @@ export const deleteUser = async (adminUsername, adminPassword, username) => {
   let response = await fetch(SERVER_URL + "/users/delete", config);
   let json = await response.json();
   console.log({ json });
-  return { status: "ok" };
+  return json;
 };
 
 // login("Admin", "pass").then((user) => {

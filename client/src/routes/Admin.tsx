@@ -4,6 +4,7 @@ import { addUser, deleteUser, getUsers as fetchUsers } from "../API";
 import { getUser, tryLoggingOut } from "../log";
 
 function Admin() {
+  let [confirm, setConfirm] = React.useState(null);
   const navigate = useNavigate();
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
@@ -30,7 +31,7 @@ function Admin() {
         className="grid grid-cols-4 gap-x-3"
         onSubmit={async (e) => {
           e.preventDefault();
-          await addUser(
+          let s = await addUser(
             user.username,
             user.password,
             (e.target as any).username.value,
@@ -38,6 +39,10 @@ function Admin() {
             (e.target as any).name.value,
             (e.target as any).type.value
           );
+          console.log(s);
+          if (s.status === "error") {
+            alert(s.reason);
+          }
           fetchUsers(user).then((res) => {
             setFetchedUsers(res.data);
           });
@@ -106,28 +111,33 @@ function Admin() {
             <div className="card whitespace-nowrap">{fetchedUser.Name}</div>
             <div className="card whitespace-nowrap">{fetchedUser.Type}</div>
             <button
-              // disabled={user.Username == user.username}
-              className={
-                "col-span-2 " +
-                (user.username == fetchedUser.Username ? "orange" : "red")
-              }
+              disabled={fetchedUser.Type === "admin"}
+              className={"col-span-2 orange"}
+              style={{
+                filter: `${
+                  confirm === fetchedUser.Username ? "hue-rotate(-40deg)" : ""
+                }`,
+              }}
               onClick={async () => {
-                await deleteUser(
+                if (confirm !== fetchedUser.Username) {
+                  setConfirm(fetchedUser.Username);
+                  return;
+                }
+                setConfirm(null);
+                let s = await deleteUser(
                   user.username,
                   user.password,
                   fetchedUser.Username
                 );
-                if (user.username == fetchedUser.Username) {
-                  tryLoggingOut(navigate);
+                if (s.status === "error") {
+                  alert(s.reason);
                 }
                 fetchUsers(user).then((res) => {
                   setFetchedUsers(res.data);
                 });
               }}
             >
-              {user.username == fetchedUser.Username
-                ? "Delete and Logout"
-                : "Delete"}
+              {confirm === fetchedUser.Username ? "Confirm?" : "Delete User"}
             </button>
           </div>
         ))}

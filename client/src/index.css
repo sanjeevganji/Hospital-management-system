@@ -78,6 +78,16 @@ button.orange {
             focus:outline-2 
             focus:outline-orange-500;
 }
+button:disabled {
+  @apply text-slate-900
+        outline outline-2 outline-slate-300
+        bg-slate-300 rounded-sm p-2 opacity-50;
+}
+button:disabled:hover {
+  @apply text-slate-900
+        outline outline-2 outline-slate-300
+        bg-slate-300 rounded-sm p-2 opacity-50;
+}
 .card {
   @apply p-2 
         bg-slate-100

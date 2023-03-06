@@ -41,7 +41,6 @@ app.use(express.json());
 
 console.log("hello");
 
-
 // on SUBMIT
 
 app.get("/", (req, res) => {
@@ -81,7 +80,7 @@ app.post("/users", (req, res) => {
       let sql = `INSERT INTO User (Username, Password, Type, Name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}');`;
       connection.query(sql, function (err, result) {
         if (err) {
-          res.json({ status: "error" });
+          res.json({ status: "error", reason: "username must be unique" });
         } else {
           res.json({ status: "ok" });
         }
@@ -96,32 +95,34 @@ app.post("/users/delete", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "admin") {
       //sql query
-      let sql = `DELETE FROM User WHERE Username='${req.body.username}' AND Type NOT IN {"admin"};`;
+      let sql = `DELETE FROM User WHERE Username='${req.body.username}' AND Type NOT IN ("admin");`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
-          res.json({ status: "error", err });
+          res.json({
+            status: "error",
+            reason: "deleting user is not possible",
+          });
         } else {
           let sql2 = `SELECT Type FROM User WHERE Username='${req.body.username}'`;
-          connection.query(sql2, function(err, result){
-            if(err)
-            {
-              res.json({status: "error", err})
-            }
-            else if(result[0] && result[0].Type == 'admin')
-            {
-              res.json({status: "warning", reason: "unauthorized: can't delete admin"})
-            }
-            else res.json({ status: "ok" });
+          connection.query(sql2, function (err, result) {
+            if (err) {
+              res.json({
+                status: "error",
+                reason: "username might not be present ",
+              });
+            } else if (result[0] && result[0].Type == "admin") {
+              res.json({
+                status: "warning",
+                reason: "unauthorized: can't delete admin",
+              });
+            } else res.json({ status: "ok" });
           });
-
         }
       });
     }
   });
 });
-
-
 
 app.get("/doctor/appointments", (req, res) => {
   console.log("getting appointments");
@@ -142,10 +143,6 @@ app.get("/doctor/appointments", (req, res) => {
     }
   });
 });
-
-
-
-
 
 app.get("/frontdesk/patients", (req, res) => {
   console.log({ body: req.headers });
@@ -192,8 +189,6 @@ app.get("/doctor/patients", (req, res) => {
     }
   });
 });
-
-
 
 //not tested
 app.get("/test/:id", (req, res) => {

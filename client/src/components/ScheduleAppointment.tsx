@@ -73,7 +73,6 @@ function ScheduleAppointment(props: any) {
               }}
               className="underline h-10 leading-10 mx-4 cursor-pointer"
             >
-              {" "}
               cancel
             </span>
             <button type="submit" className="orange w-fit ">
