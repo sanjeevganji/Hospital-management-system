@@ -5,14 +5,14 @@ import isAuth from "./auth.js";
 import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "password",
   host: "localhost",
   user: "root",
   database: "Hospital",
-  password: "DakRR#2020",
+  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -186,7 +186,7 @@ app.get("/dataentry/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Name FROM Appointment, Patient WHERE Prescription IS NULL AND Patient=Appointment.ID;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -363,6 +363,79 @@ app.post("/register", (req, res) => {
         } else {
           res.json({ status: "ok", ID: result.insertId });
         }
+      });
+    }
+  });
+});
+
+app.post("/dataentry/appointments", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "dataentry") {
+      //sql query
+      tests = req.body.tests;
+      treatments = req.body.treatments;
+      let sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
+      let imps = tests.forEach((test) => {
+        sql += `('${test.name}', '${test.date}', '${test.result}', ${
+          test.report ? test.report : null
+        }), `;
+        return test.important;
+      });
+      sql.slice(0, -2);
+      sql += ";";
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+        let testIds = result.insertId;
+        let testNo = result.affectedRows;
+        sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
+        treatments.forEach((treatment) => {
+          sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
+        });
+        sql.slice(0, -2);
+        sql += ";";
+        connection.query(sql, function (err, result) {
+          if (err) {
+            res.json({ status: "error" });
+            return;
+          }
+          let treatmentIds = result.insertId;
+          let treatmentNo = result.affectedRows;
+          sql = `INSERT INTO Prescription VALUES ();`;
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error" });
+              return;
+            }
+            let prescriptionId = result.insertId;
+            sql = `INSERT INTO Prescription_Test VALUES `;
+            let i = 0;
+            imps.forEach((imp) => {
+              sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
+              i += 1;
+            });
+            sql.slice(0, -2);
+            connection.query(sql, function (err, result) {
+              if (err) {
+                res.json({ status: "error" });
+                return;
+              }
+              sql = `INSERT INTO Presctiption_Treatment VALUES `;
+              for (i = 0; i < treatmentNo; i++) {
+                sql += `(${prescriptionId}, ${treatmentIds + i}), `;
+              }
+              sql.slice(0, -2);
+              connection.query(sql, function (err, result) {
+                if (err) {
+                  res.json({ status: "error" });
+                  return;
+                }
+              });
+            });
+          });
+        });
       });
     }
   });
