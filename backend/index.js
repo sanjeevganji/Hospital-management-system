@@ -368,6 +368,79 @@ app.post("/register", (req, res) => {
   });
 });
 
+app.post("/dataentry/appointments", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "dataentry") {
+      //sql query
+      tests = req.body.tests;
+      treatments = req.body.treatments;
+      let sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
+      let imps = tests.forEach((test) => {
+        sql += `('${test.name}', '${test.date}', '${test.result}', ${
+          test.report ? test.report : null
+        }), `;
+        return test.important;
+      });
+      sql.slice(0, -2);
+      sql += ";";
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+        var testIds = result.insertId;
+        var testNo = result.affectedRows;
+      });
+      sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
+      treatments.forEach((treatment) => {
+        sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
+      });
+      sql.slice(0, -2);
+      sql += ";";
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+        var treatmentIds = result.insertId;
+        var treatmentNo = result.affectedRows;
+      });
+      sql = `INSERT INTO Prescription VALUES ();`;
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+        var prescriptionId = result.insertId;
+      });
+      sql = `INSERT INTO Prescription_Test VALUES `;
+      let i = 0;
+      imps.forEach((imp) => {
+        sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
+        i += 1;
+      });
+      sql.slice(0, -2);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+      });
+      sql = `INSERT INTO Presctiption_Treatment VALUES `;
+      for (var i = 0; i < treatmentNo; i++) {
+        sql += `(${prescriptionId}, ${treatmentIds + i}), `;
+      }
+      sql.slice(0, -2);
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+          return;
+        }
+      });
+    }
+  });
+});
+
 app.post("/admit", (req, res) => {
   isAuth(connection, req, res, (user) => {
     let date = new Date().toISOString().slice(0, 19).replace("T", " ");
