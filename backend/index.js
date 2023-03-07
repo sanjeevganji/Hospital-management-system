@@ -131,7 +131,7 @@ app.get("/doctor/appointments", (req, res) => {
     if (user.Type == "doctor") {
       let date = new Date().toJSON().slice(0, 10);
       //CORRECT THIS
-      let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL;`;
+      let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
       let sql2 = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}';`
 
       console.log({ sql });
@@ -185,7 +185,7 @@ app.get("/doctor/patients", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "doctor") {
-      let sql = `SELECT Patient.ID as ID, Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.username}' AND Appointment.Patient = Patient.ID GROUP BY Patient.ID`;
+      let sql = `SELECT Patient.ID as ID, Patient.Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -203,7 +203,7 @@ app.get("/doctor/patients", (req, res) => {
               Name: "Saras",
             },
           ];
-          res.json(dummy);
+          res.json(result);
         }
       });
     }
