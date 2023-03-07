@@ -5,14 +5,14 @@ import isAuth from "./auth.js";
 import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "password",
   host: "localhost",
   user: "root",
   database: "Hospital",
-  password: "DakRR#2020",
+  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -186,7 +186,7 @@ app.get("/dataentry/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Name FROM Appointment, Patient WHERE Prescription IS NULL AND Patient=Appointment.ID;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -388,54 +388,54 @@ app.post("/dataentry/appointments", (req, res) => {
           res.json({ status: "error" });
           return;
         }
-        var testIds = result.insertId;
-        var testNo = result.affectedRows;
-      });
-      sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
-      treatments.forEach((treatment) => {
-        sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
-      });
-      sql.slice(0, -2);
-      sql += ";";
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error" });
-          return;
-        }
-        var treatmentIds = result.insertId;
-        var treatmentNo = result.affectedRows;
-      });
-      sql = `INSERT INTO Prescription VALUES ();`;
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error" });
-          return;
-        }
-        var prescriptionId = result.insertId;
-      });
-      sql = `INSERT INTO Prescription_Test VALUES `;
-      let i = 0;
-      imps.forEach((imp) => {
-        sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
-        i += 1;
-      });
-      sql.slice(0, -2);
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error" });
-          return;
-        }
-      });
-      sql = `INSERT INTO Presctiption_Treatment VALUES `;
-      for (var i = 0; i < treatmentNo; i++) {
-        sql += `(${prescriptionId}, ${treatmentIds + i}), `;
-      }
-      sql.slice(0, -2);
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error" });
-          return;
-        }
+        let testIds = result.insertId;
+        let testNo = result.affectedRows;
+        sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
+        treatments.forEach((treatment) => {
+          sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
+        });
+        sql.slice(0, -2);
+        sql += ";";
+        connection.query(sql, function (err, result) {
+          if (err) {
+            res.json({ status: "error" });
+            return;
+          }
+          let treatmentIds = result.insertId;
+          let treatmentNo = result.affectedRows;
+          sql = `INSERT INTO Prescription VALUES ();`;
+          connection.query(sql, function (err, result) {
+            if (err) {
+              res.json({ status: "error" });
+              return;
+            }
+            let prescriptionId = result.insertId;
+            sql = `INSERT INTO Prescription_Test VALUES `;
+            let i = 0;
+            imps.forEach((imp) => {
+              sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
+              i += 1;
+            });
+            sql.slice(0, -2);
+            connection.query(sql, function (err, result) {
+              if (err) {
+                res.json({ status: "error" });
+                return;
+              }
+              sql = `INSERT INTO Presctiption_Treatment VALUES `;
+              for (i = 0; i < treatmentNo; i++) {
+                sql += `(${prescriptionId}, ${treatmentIds + i}), `;
+              }
+              sql.slice(0, -2);
+              connection.query(sql, function (err, result) {
+                if (err) {
+                  res.json({ status: "error" });
+                  return;
+                }
+              });
+            });
+          });
+        });
       });
     }
   });
