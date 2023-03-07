@@ -8,7 +8,11 @@ var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   database: "Hospital",
-  password: "DakRR#2020",
+  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -17,7 +21,8 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) {
-    console.log("connect error");
+    console.log({ err });
+    return;
   }
   console.log("Connected!");
 });
@@ -132,7 +137,6 @@ app.get("/doctor/appointments", (req, res) => {
       let date = new Date().toJSON().slice(0, 10);
       //CORRECT THIS
       let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
-      let sql2 = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}';`
 
       console.log({ sql });
       connection.query(sql, function (err, result) {
@@ -140,10 +144,6 @@ app.get("/doctor/appointments", (req, res) => {
           console.log(err);
           res.json({ status: "error", data: err });
         } else {
-          let dummy = [
-            { appID: 1, pID: 1, pName: "Saras", date: "1234", priority: 100 },
-            { appID: 2, pID: 1, pName: "Saras", date: "1234", priority: 100 },
-          ];
           console.log(result);
           res.json({ status: "ok", data: result });
         }
@@ -170,6 +170,27 @@ app.get("/frontdesk/patients", (req, res) => {
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.get("/dataentry/appointments", (req, res) => {
+  console.log({ body: req.headers });
+  isAuth(connection, req, res, (user) => {
+    console.log({ user });
+    if (user.Type == "dataentry") {
+      // get all the patients that have some test pending`
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Name FROM Appointment, Patient WHERE Prescription IS NULL AND Patient=Appointment.ID;`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          console.log({ err });
           res.json({ status: "error" });
         } else {
           console.log(result);
@@ -211,45 +232,45 @@ app.get("/doctor/patients", (req, res) => {
 });
 
 //not tested
-app.get("/test/:id", (req, res) => {
-  let id = req.params.id;
-  // DUMMY TEST DATA
-  let test = {
-    ID: id,
-    Name: "Test 1",
-    Date: "2021-05-01 10:00:00",
-    Result: "Positive",
-    Report:
-      "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
-  };
-  res.json(test);
+// app.get("/test/:id", (req, res) => {
+//   let id = req.params.id;
+//   // DUMMY TEST DATA
+//   let test = {
+//     ID: id,
+//     Name: "Test 1",
+//     Date: "2021-05-01 10:00:00",
+//     Result: "Positive",
+//     Report:
+//       "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+//   };
+//   res.json(test);
 
-  let report = new Blob(["Hello, world!"], { type: "text/plain" });
-  res.type(blob.type);
-  blob.arrayBuffer().then((buf) => {
-    res.send(Buffer.from(buf));
-  });
-  res.json({ id });
-  isAuth(connection, req, res, (user) => {
-    if (user.Type == "doctor") {
-      // res.json({ user });
-      let sql = `SELECT * FROM Test WHERE ID=${id}`;
-      connection.query(sql, (err, result) => {
-        if (err) {
-          data = err;
-          res.json(err);
-        } else {
-          res.json(result);
-        }
-      });
-    } else {
-      res.json({
-        status: "error",
-        message: "You must be a doctor to get this data",
-      });
-    }
-  });
-});
+//   let report = new Blob(["Hello, world!"], { type: "text/plain" });
+//   res.type(blob.type);
+//   blob.arrayBuffer().then((buf) => {
+//     res.send(Buffer.from(buf));
+//   });
+//   res.json({ id });
+//   isAuth(connection, req, res, (user) => {
+//     if (user.Type == "doctor") {
+//       // res.json({ user });
+//       let sql = `SELECT * FROM Test WHERE ID=${id}`;
+//       connection.query(sql, (err, result) => {
+//         if (err) {
+//           data = err;
+//           res.json(err);
+//         } else {
+//           res.json(result);
+//         }
+//       });
+//     } else {
+//       res.json({
+//         status: "error",
+//         message: "You must be a doctor to get this data",
+//       });
+//     }
+//   });
+// });
 //not tested
 app.post("/test", (req, res) => {
   isAuth(connection, req, res, (user) => {
@@ -529,14 +550,12 @@ app.post("/getTreatment", (req, res) => {
           //PROBLEM
           result = [
             {
-              appointmentID: 5,
-              treatmentID: 4,
+              treatmentID: 1,
               treatmentName: "Paracetamol",
               Dosage: "after lunch",
               Date: "12:02:2022",
             },
             {
-              appointmentID: 1,
               treatmentID: 4,
               treatmentName: "AdonMent",
               Dosage: "after lunch",
@@ -563,7 +582,18 @@ app.post("/getTest", (req, res) => {
         } else {
           console.log({ result });
           let insertId = result.insertId;
-          res.json({ status: "ok", result });
+          let test = [
+            {
+              ID: 1,
+              Name: "Test 1",
+              Date: "2021-05-01 10:00:00",
+              Result: "Positive",
+              Report:
+                "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+            },
+          ];
+
+          res.json({ status: "ok", result: test });
         }
       });
     }

@@ -1,5 +1,6 @@
 import { encode } from "base-64";
-let SERVER_URL = "http://localhost:3000";
+let SERVER_URL = "http://localhost:3000"; //
+// SERVER_URL = "http://10.145.179.195:3000";
 let my_alert = console.warn;
 export const login = async (username, password) => {
   let config = {
@@ -153,6 +154,44 @@ export const getAllPatientsForFrontDesk = async ({ username, password }) => {
   let response = await fetch(SERVER_URL + "/frontdesk/patients", config);
   let json = await response.json();
   console.log({ json });
+  return json;
+};
+
+export const getAppointmentListForDataEntry = async ({
+  username,
+  password,
+}) => {
+  my_alert("API call: getAppointmentListForDataEntry()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+  let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
+  let json = await response.json();
+  console.log({ json });
+  json = [
+    {
+      //appointment
+      appID: 1,
+      p: 2,
+      pName: "patient",
+      d: 12,
+      dName: "roopak",
+      date: "10-12-2001",
+    },
+    {
+      //appointment
+      appID: 2,
+      p: 2,
+      pName: "patient",
+      d: 12,
+      dName: "roopak",
+      date: "10-12-2001",
+    },
+  ];
   return json;
 };
 
@@ -490,7 +529,7 @@ export const scheduleTest = async (
 //   });
 // });
 export const getTreatments = async (username, password, patientId) => {
-  console.log("API call: scheduleTest()");
+  console.log("API call: getTreatments()");
   console.log({ username, password, patientId });
   let config = {
     method: "POST",
@@ -525,7 +564,7 @@ export const getTreatments = async (username, password, patientId) => {
 // });
 
 export const getTests = async (username, password, patientId) => {
-  console.log("API call: scheduleTest()");
+  console.log("API call: getTests()");
   console.log({ username, password, patientId });
   let config = {
     method: "POST",

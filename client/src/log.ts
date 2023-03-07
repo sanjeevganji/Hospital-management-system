@@ -6,6 +6,7 @@ export let tryLoggingIn = async (
   password: string,
   navigate?: NavigateFunction
 ) => {
+  console.log("hello");
   let user = await login(username, password);
   if (user.status === "error") return "error";
   await localStorage.setItem("user", JSON.stringify(user));
