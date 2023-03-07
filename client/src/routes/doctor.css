@@ -1,0 +1,29 @@
+.search{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.id,
+.name{
+    margin: 10px;
+}
+
+.input,
+.button{
+    margin: 10px;
+}
+
+.button{
+    background-color: #c7331c;
+    color: #fff;
+    padding: 4px 10px;
+    border: 4px;
+    border-radius: 4px;
+    margin: 8px;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: #aa6756;
+}

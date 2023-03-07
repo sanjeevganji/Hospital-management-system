@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { getAllPatientsForDoctor, getAppointments } from "../API";
-
 import Tests from "../components/Tests";
 import Treatments from "./Treatments";
-
 import { getUser } from "../log";
+import './doctor.css'
+
 function Doctor() {
   let [appointments, setAppointments] = React.useState([]);
   let [patients, setPatients] = React.useState([]);
@@ -87,15 +87,15 @@ function Doctor() {
     <>
       <div className="px-6">
         <h2 className="mt-8 mb-2 shadow-lg ">Dashboard</h2>
-        <div>
-          <label> search by id
-            <input type="number" value={searchid > 0 ? searchid : ""} onChange={handleSearchId}/>
-            <button onClick={handlesubmitId}>clear</button>
+        <div className="search">
+          <label className="id"> Search by ID:
+            <input className="input" type="number" value={searchid > 0 ? searchid : ""} onChange={handleSearchId}/>
+            <button className="button" onClick={handlesubmitId}>clear</button>
           </label>
           <br />
-          <label> search by name
-            <input type="text" value={searchname} onChange={handleSearchName}/>
-            <button onClick={handlesubmitName}>clear</button>
+          <label className="name"> Search by Name:
+            <input className="input" type="text" value={searchname} onChange={handleSearchName}/>
+            <button className="button" onClick={handlesubmitName}>clear</button>
           </label>
         </div>
         <div className="grid grid-cols-7 gap-3 mb-2 mt-4 text-center">
@@ -122,15 +122,15 @@ function Doctor() {
           ))}
         </div>
         <h2 className="mt-8 mb-2 shadow-lg "> Patient Info </h2>
-        <div>
-          <label> search by id
-            <input type="number" value={searchid2 > 0 ? searchid2 : ""} onChange={handleSearchId2}/>
-            <button onClick={handlesubmitId2}>clear</button>
+        <div className="search">
+          <label className="id"> Search by ID:
+            <input className="input" type="number" value={searchid2 > 0 ? searchid2 : ""} onChange={handleSearchId2}/>
+            <button className="button" onClick={handlesubmitId2}>clear</button>
           </label>
           <br />
-          <label> search by name
-            <input type="text" value={searchname2} onChange={handleSearchName2}/>
-            <button onClick={handlesubmitName2}>clear</button>
+          <label className="name"> Search by Name:
+            <input className="input" type="text" value={searchname2} onChange={handleSearchName2}/>
+            <button className="button" onClick={handlesubmitName2}>clear</button>
           </label>
         </div>
         <div className=" flex flex-col mb-16 ">
