@@ -8,7 +8,11 @@ var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   database: "Hospital",
-  password: "DakRR#2020",
+  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -132,7 +136,7 @@ app.get("/doctor/appointments", (req, res) => {
       let date = new Date().toJSON().slice(0, 10);
       //CORRECT THIS
       let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL;`;
-      let sql2 = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}';`
+      let sql2 = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}';`;
 
       console.log({ sql });
       connection.query(sql, function (err, result) {
