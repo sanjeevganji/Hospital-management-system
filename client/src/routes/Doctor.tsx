@@ -35,12 +35,12 @@ function Doctor() {
   function handleSearchId(e:any)
   {
     const id = parseInt(e.target.value);
-    if(id < 0 || id == undefined)
+    if(id < 0 || id.toString() == 'NaN')
     {
       // alert("can't be less than 0");
+      setSearchid(0);
       return;
     }
-    console.log(id);
     setSearchid(id);
   }
   function handleSearchName(e:any)
@@ -61,12 +61,12 @@ function Doctor() {
   function handleSearchId2(e:any)
   {
     const id = parseInt(e.target.value);
-    if(id < 0 || id == undefined)
+    if(id < 0 || id.toString() == 'NaN')
     {
       // alert("can't be less than 0");
+      setSearchid2(0);
       return;
     }
-    console.log(id);
     setSearchid2(id);
   }
   function handleSearchName2(e:any)
@@ -142,7 +142,7 @@ function Doctor() {
           <div className="flex flex-col gap-3 whitespace-nowrap">
             { patients.sort((a:any, b:any) => a.ID - b.ID) && patients.map((patient: any) => (
               ((searchid2 == 0 && searchname2 == "") || (searchid2 != 0 && patient.ID.toString().startsWith(searchid2.toString())) ||(searchname2 != "" && patient.Name.startsWith(searchname2))) &&
-              <div className="grid grid-cols-5 gap-3" key={patient.ID}>
+              <div className="grid grid-cols-7 gap-3" key={patient.ID}>
                 <div className="card col-span-1 ">{patient.ID}</div>
                 <div className="card col-span-4">{patient.Name}</div>
                 <button
