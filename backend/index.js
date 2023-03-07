@@ -5,14 +5,14 @@ import isAuth from "./auth.js";
 import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "password",
   // host: "localhost",
   // user: "root",
   // database: "Hospital",
-  // password: "DakRR#2020",
+  // password: "password",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
