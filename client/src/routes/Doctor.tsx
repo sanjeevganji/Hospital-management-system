@@ -65,7 +65,7 @@ function Doctor() {
                 <div className="card col-span-4">{patient.Name}</div>
                 <button
                   onClick={async () => {
-                    setPop1(patient.id);
+                    setPop1(patient.ID);
                   }}
                   className=" blue"
                 >
@@ -73,12 +73,28 @@ function Doctor() {
                 </button>
                 <button
                   onClick={async () => {
-                    setPop2(patient.id);
+                    setPop2(patient.ID);
                   }}
                   className="orange"
                 >
                   tests
                 </button>
+                <Treatments
+                  user={user}
+                  open={pop1 == patient.ID}
+                  patientId={patient.ID}
+                  onClose={() => {
+                    setPop1(null);
+                  }}
+                />
+                <Tests
+                  user={user}
+                  open={pop2 == patient.ID}
+                  patientId={patient.ID}
+                  onClose={() => {
+                    setPop2(null);
+                  }}
+                />
               </div>
             ))}
           </div>

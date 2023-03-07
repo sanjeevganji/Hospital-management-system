@@ -185,7 +185,7 @@ app.get("/frontdesk/patients", (req, res) => {
   });
 });
 
-app.get("/dataentry/patients", (req, res) => {
+app.get("/dataentry/appointments", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
     console.log({ user });

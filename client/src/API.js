@@ -157,8 +157,11 @@ export const getAllPatientsForFrontDesk = async ({ username, password }) => {
   return json;
 };
 
-export const getAllPatientsForDataEntry = async ({ username, password }) => {
-  my_alert("API call: getAllPatients()");
+export const getAppointmentListForDataEntry = async ({
+  username,
+  password,
+}) => {
+  my_alert("API call: getAppointmentListForDataEntry()");
   let config = {
     method: "GET",
     headers: {
@@ -166,9 +169,29 @@ export const getAllPatientsForDataEntry = async ({ username, password }) => {
       "Access-Control-Allow-Origin": "*",
     },
   };
-  let response = await fetch(SERVER_URL + "/dataentry/patients", config);
+  let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
   let json = await response.json();
   console.log({ json });
+  json = [
+    {
+      //appointment
+      appID: 1,
+      p: 2,
+      pName: "patient",
+      d: 12,
+      dName: "roopak",
+      date: "10-12-2001",
+    },
+    {
+      //appointment
+      appID: 2,
+      p: 2,
+      pName: "patient",
+      d: 12,
+      dName: "roopak",
+      date: "10-12-2001",
+    },
+  ];
   return json;
 };
 

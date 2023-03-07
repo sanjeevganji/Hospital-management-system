@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { getUser } from "../log";
-import { getAllPatientsForDataEntry } from "../API";
+import { getAppointmentListForDataEntry } from "../API";
 
 function DataEntry() {
-  let [patients, setPatients] = React.useState([]);
+  let [appointments, setAppointments] = React.useState([]);
   let [pop1, setPop1] = React.useState(null);
 
   //get the user who is logged in
@@ -15,32 +15,39 @@ function DataEntry() {
   useEffect(() => {
     if (!user) return;
     console.log({ user });
-    getAllPatientsForDataEntry(user).then((res) => {
-      setPatients(res);
+    getAppointmentListForDataEntry(user).then((res) => {
+      setAppointments(res);
     });
   }, [user]);
 
   return (
     <>
       <div className="px-6">
-        <h2 className="mt-8 mb-2 shadow-lg ">Dashboard</h2>
-        <div className="grid grid-cols-6 gap-3 mb-2 mt-4 text-center">
-          <h3 className="col-span-1">Patient Name</h3>
-          <h3 className="col-span-4">ID</h3>
-          <h3 className="col-span-1">Add</h3>
+        <h2 className="mt-8 mb-2 shadow-lg ">Appointments</h2>
+        <div className="grid grid-cols-10 gap-3 mb-2 mt-4 text-center">
+          <h3 className="col-span-1">ID</h3>
+          <h3 className="col-span-2">Patient</h3>
+          <h3 className="col-span-2">Doctor</h3>
+          <h3 className="col-span-2">Date</h3>
+          <h3 className="col-span-3">Actions</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
-          {patients.map((patients: any) => (
-            <div className="grid grid-cols-6 gap-3" key={patients.appID}>
-              <div className="card col-span-1">{patients.pID}</div>
-              <div className="card col-span-4">{patients.Name}</div>
+          {appointments.map((app: any) => (
+            <div
+              className="grid grid-cols-10 gap-3 text-center"
+              key={app.appID}
+            >
+              <div className="col-span-1">{app.appID}</div>
+              <div className="col-span-2">{app.pName}</div>
+              <div className="col-span-2">{app.dName}</div>
+              <div className="col-span-2">{app.date}</div>
               <button
+                className=" blue col-span-3"
                 onClick={async () => {
-                  setPop1(patients.pID);
+                  setPop1(app.pID);
                 }}
-                className="blue"
               >
-                Enter
+                Add Prescription
               </button>
             </div>
           ))}
