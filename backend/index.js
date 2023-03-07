@@ -209,45 +209,45 @@ app.get("/doctor/patients", (req, res) => {
 });
 
 //not tested
-app.get("/test/:id", (req, res) => {
-  let id = req.params.id;
-  // DUMMY TEST DATA
-  let test = {
-    ID: id,
-    Name: "Test 1",
-    Date: "2021-05-01 10:00:00",
-    Result: "Positive",
-    Report:
-      "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
-  };
-  res.json(test);
+// app.get("/test/:id", (req, res) => {
+//   let id = req.params.id;
+//   // DUMMY TEST DATA
+//   let test = {
+//     ID: id,
+//     Name: "Test 1",
+//     Date: "2021-05-01 10:00:00",
+//     Result: "Positive",
+//     Report:
+//       "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+//   };
+//   res.json(test);
 
-  let report = new Blob(["Hello, world!"], { type: "text/plain" });
-  res.type(blob.type);
-  blob.arrayBuffer().then((buf) => {
-    res.send(Buffer.from(buf));
-  });
-  res.json({ id });
-  isAuth(connection, req, res, (user) => {
-    if (user.Type == "doctor") {
-      // res.json({ user });
-      let sql = `SELECT * FROM Test WHERE ID=${id}`;
-      connection.query(sql, (err, result) => {
-        if (err) {
-          data = err;
-          res.json(err);
-        } else {
-          res.json(result);
-        }
-      });
-    } else {
-      res.json({
-        status: "error",
-        message: "You must be a doctor to get this data",
-      });
-    }
-  });
-});
+//   let report = new Blob(["Hello, world!"], { type: "text/plain" });
+//   res.type(blob.type);
+//   blob.arrayBuffer().then((buf) => {
+//     res.send(Buffer.from(buf));
+//   });
+//   res.json({ id });
+//   isAuth(connection, req, res, (user) => {
+//     if (user.Type == "doctor") {
+//       // res.json({ user });
+//       let sql = `SELECT * FROM Test WHERE ID=${id}`;
+//       connection.query(sql, (err, result) => {
+//         if (err) {
+//           data = err;
+//           res.json(err);
+//         } else {
+//           res.json(result);
+//         }
+//       });
+//     } else {
+//       res.json({
+//         status: "error",
+//         message: "You must be a doctor to get this data",
+//       });
+//     }
+//   });
+// });
 //not tested
 app.post("/test", (req, res) => {
   isAuth(connection, req, res, (user) => {
@@ -527,14 +527,12 @@ app.post("/getTreatment", (req, res) => {
           //PROBLEM
           result = [
             {
-              appointmentID: 5,
-              treatmentID: 4,
+              treatmentID: 1,
               treatmentName: "Paracetamol",
               Dosage: "after lunch",
               Date: "12:02:2022",
             },
             {
-              appointmentID: 1,
               treatmentID: 4,
               treatmentName: "AdonMent",
               Dosage: "after lunch",
@@ -561,7 +559,18 @@ app.post("/getTest", (req, res) => {
         } else {
           console.log({ result });
           let insertId = result.insertId;
-          res.json({ status: "ok", result });
+          let test = [
+            {
+              ID: 1,
+              Name: "Test 1",
+              Date: "2021-05-01 10:00:00",
+              Result: "Positive",
+              Report:
+                "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
+            },
+          ];
+
+          res.json({ status: "ok", result: test });
         }
       });
     }

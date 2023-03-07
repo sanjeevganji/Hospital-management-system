@@ -490,7 +490,7 @@ export const scheduleTest = async (
 //   });
 // });
 export const getTreatments = async (username, password, patientId) => {
-  console.log("API call: scheduleTest()");
+  console.log("API call: getTreatments()");
   console.log({ username, password, patientId });
   let config = {
     method: "POST",
@@ -525,7 +525,7 @@ export const getTreatments = async (username, password, patientId) => {
 // });
 
 export const getTests = async (username, password, patientId) => {
-  console.log("API call: scheduleTest()");
+  console.log("API call: getTests()");
   console.log({ username, password, patientId });
   let config = {
     method: "POST",
