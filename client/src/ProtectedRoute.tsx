@@ -8,7 +8,8 @@ const ProtectedRoute = (props: any) => {
   useEffect(() => {
     getUser().then((user: any) => {
       setUser(user);
-      if (user === undefined || user.type !== props.type) {
+      console.log("protected route user", user);
+      if (user === undefined || user === null || user.type !== props.type) {
         console.warn("redirecting to /login");
         navigate("/login");
       } else {

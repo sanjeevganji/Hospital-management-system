@@ -15,7 +15,7 @@ function DischargePatient(props: any) {
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-slate-300 text-gray-700 px-6
+    bg-black text-gray-700 px-6 bg-opacity-30
     "
       style={{ display: open ? "grid" : "none" }}
     >

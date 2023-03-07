@@ -130,15 +130,20 @@ app.get("/doctor/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "doctor") {
       let date = new Date().toJSON().slice(0, 10);
+      //CORRECT THIS
       let sql = `SELECT Appointment.ID, Patient.Name, Patient.ID FROM Appointment, Patient WHERE Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription = null and Appointment.Date = '${date}';`;
+
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
           console.log(err);
           res.json({ status: "error", data: err });
         } else {
-          console.log("124result" + result);
-          res.json({ status: "ok", data: result });
+          let dummy = [
+            { appID: 1, pID: 1, pName: "Saras", date: "1234", priority: 100 },
+            { appID: 2, pID: 1, pName: "Saras", date: "1234", priority: 100 },
+          ];
+          res.json({ status: "ok", data: dummy });
         }
       });
     }
@@ -185,7 +190,18 @@ app.get("/doctor/patients", (req, res) => {
           res.json({ status: "error" });
         } else {
           console.log(result);
-          res.json(result);
+
+          let dummy = [
+            {
+              ID: 1,
+              Name: "Saras",
+            },
+            {
+              ID: 2,
+              Name: "Saras",
+            },
+          ];
+          res.json(dummy);
         }
       });
     }
