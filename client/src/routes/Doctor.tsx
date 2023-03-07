@@ -27,12 +27,10 @@ function Doctor() {
       setPatients(res);
     });
   }, [user]);
-
-  console.log({ appointments, patients });
   return (
     <>
-      <div className="container mx-auto px-2">
-        <h2>Dashboard</h2>
+      <div className="px-6">
+        <h2 className="mt-8 mb-2 shadow-lg ">Dashboard</h2>
         <div className="grid grid-cols-5 gap-3 mb-2 mt-4 text-center">
           <h3 className="col-span-2">Patient Name</h3>
           <h3 className="col-span-2">Date</h3>
@@ -47,7 +45,7 @@ function Doctor() {
             </div>
           ))}
         </div>
-        <h2>Patients</h2>
+        <h2 className="mt-8 mb-2 shadow-lg "> Patient Info </h2>
         <div className=" flex flex-col mb-16 ">
           <div className="grid grid-cols-5 gap-3 mb-2 mt-4">
             <h3 className=" col-span-1 ">ID</h3>

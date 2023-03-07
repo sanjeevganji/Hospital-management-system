@@ -506,7 +506,7 @@ export const getTreatments = async (username, password, patientId) => {
   // console.log("config", config);
   let response = await fetch(SERVER_URL + "/getTreatment", config);
   let json = await response.json();
-  console.log({ json });
+  console.log("treatments", { json });
   return json;
 };
 // console.log("end of script");

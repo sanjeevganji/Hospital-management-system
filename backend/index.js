@@ -515,7 +515,7 @@ app.post("/prescription", (req, res) => {
 app.post("/getTreatment", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "doctor") {
-      console.log({ body: req.body });
+      console.log("getTreatment");
       //sql query
       let sql = `select Appointment.ID , Treatment.ID , Treatment.Name, Treatment.Dosage, Treatment.Date from Treatment, Prescription_Treatment, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Treatment.ID and Appointment.Date = Treatment.Date and Prescription_Treatment.Treatment = Treatment.ID;`;
       console.log({ sql });
@@ -524,8 +524,24 @@ app.post("/getTreatment", (req, res) => {
           res.json({ status: "error", reason: "getTreatment" });
         } else {
           console.log({ result });
-          let insertId = result.insertId;
-          res.json({ status: "ok", TestId: insertId });
+          //PROBLEM
+          result = [
+            {
+              appointmentID: 5,
+              treatmentID: 4,
+              treatmentName: "Paracetamol",
+              Dosage: "after lunch",
+              Date: "12:02:2022",
+            },
+            {
+              appointmentID: 1,
+              treatmentID: 4,
+              treatmentName: "AdonMent",
+              Dosage: "after lunch",
+              Date: "12:02:2022",
+            },
+          ];
+          res.json({ status: "ok", result });
         }
       });
     }

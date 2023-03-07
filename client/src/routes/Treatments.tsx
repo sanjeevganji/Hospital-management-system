@@ -5,16 +5,15 @@ function Treatments(props: any) {
   let { user, open, onClose } = props;
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "unset";
-  }, [open]);
-  let [treatments, setTreatments] = React.useState<any>([]);
-  React.useEffect(() => {
     if (!user) return;
     getTreatments(user.username, user.password, props.patientId).then(
       (treatments) => {
-        setTreatments(treatments);
+        console.log({ treatments });
+        setTreatments(treatments.result);
       }
     );
-  }, []);
+  }, [open]);
+  let [treatments, setTreatments] = React.useState<any>([]);
   return (
     <div
       className="fixed inset-0 grid place-content-center 
@@ -31,7 +30,10 @@ function Treatments(props: any) {
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
           {treatments.map((treatment: any) => (
-            <div className="grid grid-cols-7 gap-3" key={treatment.id}>
+            <div
+              className="grid grid-cols-7 gap-3"
+              key={treatment.appointmentID}
+            >
               <div className="cell col-span-2">{treatment.name}</div>
               <div className="cell col-span-2">{treatment.drug}</div>
               <div className="cell col-span-3">{treatment.dosage}</div>
