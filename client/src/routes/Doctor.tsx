@@ -14,6 +14,8 @@ function Doctor() {
   let [searchname, setSearchname] = React.useState("");
   let [searchid2, setSearchid2] = React.useState(0);
   let [searchname2, setSearchname2] = React.useState("");
+  let [searchdate, setSearchdate] = React.useState(null);
+
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -57,7 +59,6 @@ function Doctor() {
     setSearchname("");
   }
 
-
   function handleSearchId2(e:any)
   {
     const id = parseInt(e.target.value);
@@ -82,6 +83,12 @@ function Doctor() {
   {
     setSearchname2("");
   }
+  function handleDate(e:any)
+  {
+    const date = (e.target.value)
+    setSearchdate(date)
+    console.log(searchdate);
+  }
 
   return (
     <>
@@ -97,12 +104,22 @@ function Doctor() {
             <input className="input" type="text" value={searchname} onChange={handleSearchName}/>
             <button className="button" onClick={handlesubmitName}>clear</button>
           </label>
+          <label className="name">Search By Date: </label>
+            <input
+              onChange={handleDate}
+              min={new Date().toISOString().split("T")[0]}
+              type="date"
+              placeholder="patient name"
+              name="scheduleDate"
+              autoComplete="off"
+
+            />
         </div>
         <div className="grid grid-cols-7 gap-3 mb-2 mt-4 text-center">
           <h3 className="col-span-1">Patient ID</h3>
-          <h3 className="col-span-2">Patient Name</h3>
+          <h3 className="col-span-3">Patient Name</h3>
           <h3 className="col-span-2">Date</h3>
-          <h3 className="col-span-2">Priority</h3>
+          <h3 className="col-span-1">Priority</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
           {appointments.sort((a:any, b:any) => {
@@ -111,12 +128,12 @@ function Doctor() {
            return b.priority - a.priority})
 
            && appointments.map((appointment: any) => (
-            ((searchid == 0 && searchname == "") || (searchid != 0 && appointment.pID.toString().startsWith(searchid.toString())) || (searchname != "" && appointment.pName.startsWith(searchname))) &&
+            ((searchdate != null && searchdate != "") ?  (searchdate == appointment.date.slice(0,10)): ((searchid == 0 && searchname == "") || (searchid != 0 && appointment.pID.toString().startsWith(searchid.toString())) || (searchname != "" && appointment.pName.toLowerCase().startsWith(searchname.toLowerCase())))) &&
             (<div className="grid grid-cols-7 gap-3" key={appointment.appID}>
               <div className="card col-span-1">{appointment.pID}</div>
-              <div className="card col-span-2">{appointment.pName}</div>
+              <div className="card col-span-3">{appointment.pName}</div>
               <div className="card col-span-2">{appointment.date.slice(0,10)}</div>
-              <div className="card col-span-2">{appointment.priority}</div>
+              <div className="card col-span-1">{appointment.priority}</div>
             </div>)
 
           ))}
@@ -141,7 +158,7 @@ function Doctor() {
           </div>
           <div className="flex flex-col gap-3 whitespace-nowrap">
             { patients.sort((a:any, b:any) => a.ID - b.ID) && patients.map((patient: any) => (
-              ((searchid2 == 0 && searchname2 == "") || (searchid2 != 0 && patient.ID.toString().startsWith(searchid2.toString())) ||(searchname2 != "" && patient.Name.startsWith(searchname2))) &&
+              ((searchid2 == 0 && searchname2 == "") || (searchid2 != 0 && patient.ID.toString().startsWith(searchid2.toString())) ||(searchname2 != "" && patient.Name.toLowerCase().startsWith(searchname2.toLowerCase()))) &&
               <div className="grid grid-cols-7 gap-3" key={patient.ID}>
                 <div className="card col-span-1 ">{patient.ID}</div>
                 <div className="card col-span-4">{patient.Name}</div>

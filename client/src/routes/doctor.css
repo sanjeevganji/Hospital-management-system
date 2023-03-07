@@ -15,15 +15,17 @@
 }
 
 .button{
-    background-color: #c7331c;
-    color: #fff;
-    padding: 4px 10px;
-    border: 4px;
-    border-radius: 4px;
-    margin: 8px;
-    cursor: pointer;
+        border-radius: 0.25rem;
+        --tw-bg-opacity: 1;
+        background-color: rgb(252 165 165 / var(--tw-bg-opacity));
+        padding: 0.25rem;
+        --tw-text-opacity: 1;
+        color: rgb(127 29 29 / var(--tw-text-opacity));
+        outline-style: solid;
+        outline-width: 2px;
+        outline-color: #fca5a5;
 }
 
 .button:hover{
-    background-color: #d4b56c;
+    background-color: #fbd5d5;
 }
