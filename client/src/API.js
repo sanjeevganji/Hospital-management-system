@@ -171,23 +171,21 @@ export const getAppointmentListForDataEntry = async ({
   };
   let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
   let json = await response.json();
-  console.log({ json });
+  console.log({ CURRENT: json });
   json = [
     {
       //appointment
       appID: 1,
-      p: 2,
+      pID: 2,
       pName: "patient",
-      d: 12,
       dName: "roopak",
       date: "10-12-2001",
     },
     {
       //appointment
       appID: 2,
-      p: 2,
+      pID: 2,
       pName: "patient",
-      d: 12,
       dName: "roopak",
       date: "10-12-2001",
     },
