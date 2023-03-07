@@ -31,17 +31,19 @@ function Doctor() {
     <>
       <div className="px-6">
         <h2 className="mt-8 mb-2 shadow-lg ">Dashboard</h2>
-        <div className="grid grid-cols-5 gap-3 mb-2 mt-4 text-center">
+        <div className="grid grid-cols-7 gap-3 mb-2 mt-4 text-center">
+          <h3 className="col-span-1">Patient ID</h3>
           <h3 className="col-span-2">Patient Name</h3>
           <h3 className="col-span-2">Date</h3>
-          <h3 className="col-span-1">Priority</h3>
+          <h3 className="col-span-2">Priority</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
-          {appointments.map((appointment: any) => (
-            <div className="grid grid-cols-5 gap-3" key={appointment.appID}>
+          {appointments.sort((a, b) => b.priority - a.priority) && appointments.map((appointment: any) => (
+            <div className="grid grid-cols-7 gap-3" key={appointment.appID}>
+              <div className="card col-span-1">{appointment.pID}</div>
               <div className="card col-span-2">{appointment.pName}</div>
-              <div className="card col-span-2">{appointment.date}</div>
-              <div className="card col-span-1">{appointment.priority}</div>
+              <div className="card col-span-2">{appointment.date.slice(0,10)}</div>
+              <div className="card col-span-2">{appointment.priority}</div>
             </div>
           ))}
         </div>

@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   database: "Hospital",
-  password: "password",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -131,7 +131,8 @@ app.get("/doctor/appointments", (req, res) => {
     if (user.Type == "doctor") {
       let date = new Date().toJSON().slice(0, 10);
       //CORRECT THIS
-      let sql = `SELECT Appointment.ID, Patient.Name, Patient.ID FROM Appointment, Patient WHERE Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription = null and Appointment.Date = '${date}';`;
+      let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL;`;
+      let sql2 = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}';`
 
       console.log({ sql });
       connection.query(sql, function (err, result) {
@@ -143,7 +144,8 @@ app.get("/doctor/appointments", (req, res) => {
             { appID: 1, pID: 1, pName: "Saras", date: "1234", priority: 100 },
             { appID: 2, pID: 1, pName: "Saras", date: "1234", priority: 100 },
           ];
-          res.json({ status: "ok", data: dummy });
+          console.log(result);
+          res.json({ status: "ok", data: result });
         }
       });
     }
