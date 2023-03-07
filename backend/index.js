@@ -21,7 +21,8 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) {
-    console.log("connect error");
+    console.log({ err });
+    return;
   }
   console.log("Connected!");
 });
@@ -174,6 +175,27 @@ app.get("/frontdesk/patients", (req, res) => {
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
+        }
+      });
+    }
+  });
+});
+
+app.get("/dataentry/patients", (req, res) => {
+  console.log({ body: req.headers });
+  isAuth(connection, req, res, (user) => {
+    console.log({ user });
+    if (user.Type == "dataentry") {
+      // get all the patients that have some test pending`
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Name FROM Appointment, Patient WHERE Prescription IS NULL AND Patient=Appointment.ID;`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          console.log({ err });
           res.json({ status: "error" });
         } else {
           console.log(result);

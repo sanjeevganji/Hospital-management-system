@@ -19,6 +19,7 @@ function Doctor() {
 
   useEffect(() => {
     if (!user) return;
+    console.log({ user });
     getAppointments(user.username, user.password).then((res) => {
       console.log({ res });
       setAppointments(res.data);
@@ -52,49 +53,32 @@ function Doctor() {
         </div>
         <h2 className="mt-8 mb-2 shadow-lg "> Patient Info </h2>
         <div className=" flex flex-col mb-16 ">
-          <div className="grid grid-cols-5 gap-3 mb-2 mt-4">
+          <div className="grid grid-cols-7 gap-3 mb-2 mt-4 text-center">
             <h3 className=" col-span-1 ">ID</h3>
             <h3 className=" col-span-4 ">Name</h3>
+            <h3 className="col-span-2">Actions</h3>
           </div>
           <div className="flex flex-col gap-3 whitespace-nowrap">
             {patients.map((patient: any) => (
-              <div className="grid grid-cols-5 gap-3" key={patient.ID}>
+              <div className="grid grid-cols-7 gap-3" key={patient.ID}>
                 <div className="card col-span-1 ">{patient.ID}</div>
-                <div className=" col-span-4 flex gap-3">
-                  <div className=" card flex-1">{patient.Name}</div>
-                  <button
-                    onClick={async () => {
-                      setPop1(patient.ID);
-                    }}
-                    className=" blue"
-                  >
-                    treatments
-                  </button>
-                  <button
-                    onClick={async () => {
-                      setPop2(patient.ID);
-                    }}
-                    className="orange"
-                  >
-                    tests
-                  </button>
-                  <Treatments
-                    user={user}
-                    open={pop1 == patient.ID}
-                    patientId={patient.ID}
-                    onClose={() => {
-                      setPop1(null);
-                    }}
-                  />
-                  <Tests
-                    user={user}
-                    open={pop2 == patient.ID}
-                    patientId={patient.ID}
-                    onClose={() => {
-                      setPop2(null);
-                    }}
-                  />
-                </div>
+                <div className="card col-span-4">{patient.Name}</div>
+                <button
+                  onClick={async () => {
+                    setPop1(patient.id);
+                  }}
+                  className=" blue"
+                >
+                  treatments
+                </button>
+                <button
+                  onClick={async () => {
+                    setPop2(patient.id);
+                  }}
+                  className="orange"
+                >
+                  tests
+                </button>
               </div>
             ))}
           </div>

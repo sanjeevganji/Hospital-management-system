@@ -9,6 +9,7 @@ export const login = async (username, password) => {
       "Access-Control-Allow-Origin": "*",
     },
   };
+  console.log("logging");
   let response = await fetch(SERVER_URL + "/", config);
   let json = await response.json();
   console.log("login:", { json });

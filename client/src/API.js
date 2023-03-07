@@ -157,6 +157,21 @@ export const getAllPatientsForFrontDesk = async ({ username, password }) => {
   return json;
 };
 
+export const getAllPatientsForDataEntry = async ({ username, password }) => {
+  my_alert("API call: getAllPatients()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+  let response = await fetch(SERVER_URL + "/dataentry/patients", config);
+  let json = await response.json();
+  console.log({ json });
+  return json;
+};
+
 // Doctor  may  also  query for  any patient  information.
 
 export const getAllPatientsForDoctor = async ({ username, password }) => {
