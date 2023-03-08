@@ -31,7 +31,7 @@ function Tests(props: any) {
           {tests.map((test: any) => (
             <div className="grid grid-cols-6 gap-3" key={test.ID}>
               <div className="cell col-span-2">{test.Name}</div>
-              <div className="cell col-span-2">{test.Date}</div>
+              <div className="cell col-span-2">{test.Date.slice(0, 19).replace('T', ' ')}</div>
               <div className="cell col-span-1">{test.Result}</div>
               {test.report ? (
                 <button

@@ -5,14 +5,14 @@ import isAuth from "./auth.js";
 import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "password",
   // host: "localhost",
   // user: "root",
   // database: "Hospital",
-  // password: "DakRR#2020",
+  // password: "password",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -207,7 +207,7 @@ app.get("/doctor/patients", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "doctor") {
-      let sql = `SELECT Patient.ID as ID, Patient.Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID`;
+      let sql = `SELECT DISTINCT Patient.ID as ID, Patient.Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -612,30 +612,24 @@ app.post("/prescription", (req, res) => {
 app.post("/getTreatment", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "doctor") {
-      console.log("getTreatment");
+      // console.log("getTreatment");
       //sql query
-      let sql = `select Appointment.ID , Treatment.ID , Treatment.Name, Treatment.Dosage, Treatment.Date from Treatment, Prescription_Treatment, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Treatment.ID and Appointment.Date = Treatment.Date and Prescription_Treatment.Treatment = Treatment.ID;`;
-      console.log({ sql });
+      let sql = `select Appointment.ID AS appID,
+                        Treatment.ID AS treatmentID,
+                        Treatment.Name AS treatmentName,
+                        Treatment.Dosage AS Dosage,
+                        Treatment.Date AS Date
+                from Treatment, Prescription_Treatment,Appointment
+                where Appointment.Patient = '${req.body.patientId}' and Appointment.Prescription = Prescription_Treatment.ID and Prescription_Treatment.Treatment = Treatment.ID;`
+      // console.log({ sql });
+
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error", reason: "getTreatment" });
         } else {
-          console.log({ result });
+          console.log({result})
+          // console.log({ result });
           //PROBLEM
-          result = [
-            {
-              treatmentID: 1,
-              treatmentName: "Paracetamol",
-              Dosage: "after lunch",
-              Date: "12:02:2022",
-            },
-            {
-              treatmentID: 4,
-              treatmentName: "AdonMent",
-              Dosage: "after lunch",
-              Date: "12:02:2022",
-            },
-          ];
           res.json({ status: "ok", result });
         }
       });
@@ -648,26 +642,16 @@ app.post("/getTest", (req, res) => {
     if (user.Type == "doctor") {
       console.log({ body: req.body });
       //sql query
-      let sql = `select Appointment.ID , Test.ID , Test.Name,  Test.Date, Test.Result, Test.Report from Test, Prescription_Test, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Test.ID and Appointment.Date = Test.Date and Prescription_Test.Test = Test.ID;`;
+      let sql = `select Appointment.ID AS appID, Test.ID AS ID , Test.Name AS Name,  Test.Date AS Date, Test.Result AS Result, Test.Report AS Report from Test, Prescription_Test, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Test.ID and Prescription_Test.Test = Test.ID;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error", reason: "getTest" });
         } else {
           console.log({ result });
-          let insertId = result.insertId;
-          let test = [
-            {
-              ID: 1,
-              Name: "Test 1",
-              Date: "2021-05-01 10:00:00",
-              Result: "Positive",
-              Report:
-                "x'89504E470D0A1A0A0000000D494844520000001000000010080200000090916836000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA8640000001E49444154384F6350DAE843126220493550F1A80662426C349406472801006AC91F1040F796BD0000000049454E44AE426082'",
-            },
-          ];
+          // let insertId = result.insertId;
 
-          res.json({ status: "ok", result: test });
+          res.json({ status: "ok", result });
         }
       });
     }

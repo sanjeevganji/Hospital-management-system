@@ -33,9 +33,9 @@ function Treatments(props: any) {
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
           {treatments.map((treatment: any) => (
-            <div className="grid grid-cols-7 gap-3" key={treatment.treatmentID}>
+            <div className="grid grid-cols-7 gap-5" key={treatment.treatmentID}>
               <div className="cell col-span-2">{treatment.treatmentName}</div>
-              <div className="cell col-span-2">{treatment.Date}</div>
+              <div className="cell col-span-2">{treatment.Date.slice(0, 19).replace('T', ' ')}</div>
               <div className="cell col-span-3">{treatment.Dosage}</div>
             </div>
           ))}
