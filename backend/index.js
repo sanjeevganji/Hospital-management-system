@@ -11,10 +11,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "password",
   // host: "dbms-hostpital.mysql.database.azure.com",
   // user: "atishay",
   // password: "pass@123",
@@ -25,10 +25,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "DakRR#2020",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -153,7 +153,8 @@ app.get("/doctor/appointments", (req, res) => {
     if (user.Type == "doctor") {
       let date = formatDate(new Date());
       //CORRECT THIS
-      let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
+      let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority, Patient.Contact AS Contact, Patient.Email AS Email
+               FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
 
       console.log({ sql });
       connection.query(sql, function (err, result) {
@@ -176,13 +177,14 @@ app.get("/frontdesk/patients", (req, res) => {
     if (user.Type == "frontdesk") {
       //todo: change the query to get if patient is in Admission and Discharge Date is > current date
 
-      let sql = `SELECT DISTINCT Patient.*,
-          CASE WHEN Patient.ID IN (SELECT Patient FROM Admission WHERE Discharge_date IS NULL)
+      let sql = `SELECT Patient.*, Admission.Room AS Room, Room.Type AS Type,
+          CASE WHEN Admission.ID IS NOT NULL AND Admission.Discharge_date IS NULL
             THEN true
             ELSE false
           END AS admitted
-        FROM Patient, Admission
-        WHERE Patient.ID = Admission.Patient
+	      FROM Patient
+	      LEFT JOIN Admission ON Patient.ID = Admission.Patient AND Admission.Discharge_date IS NULL
+        LEFT JOIN Room ON Room.Number = Admission.Room
         ORDER BY Patient.ID DESC;
       `;
       //DISCHARGE kiya par admitted phir bhi true aa raha hai
@@ -225,7 +227,8 @@ app.get("/doctor/patients", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "doctor") {
-      let sql = `SELECT DISTINCT Patient.ID as ID, Patient.Name FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID`;
+      let sql = `SELECT DISTINCT Patient.ID as ID, Patient.Name AS Name, Patient.Address AS Address,Patient.Contact AS Contact, Patient.Email AS Email
+               FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -249,6 +252,31 @@ app.get("/doctor/patients", (req, res) => {
     }
   });
 });
+
+
+app.get("/getAdmissionHistory", (req, res) => {
+  console.log({ body: req.headers });
+  isAuth(connection, req, res, (user) => {
+    console.log({user});
+    if(user.Type == "frontdesk")
+    {
+      let sql = `SELECT Admission.ID AS appID, Admission.Room AS Room,Admission.Admit_date As Admit_date, Admission.Discharge_date AS Discharge_Date,
+              Patient.Name AS Name, Patient.ID AS Patient
+              FROM Admission
+              JOIN Patient ON Admission.Patient = Patient.ID
+              ORDER BY Admission.ID DESC LIMIT 100;`;
+      console.log(sql);
+      connection.query(sql, function(err, result){
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
+        }
+      })
+    }
+  });
+})
 
 //not tested
 // app.get("/test/:id", (req, res) => {
@@ -339,7 +367,7 @@ app.post("/discharge", (req, res) => {
     if (user.Type == "frontdesk") {
       //sql query
       let date = formatDate(new Date());
-      let sql = `Select Admission.ID, Room from Admission, Patient_Admission WHERE Patient_Admission.ID = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
+      let sql = `Select Admission.ID, Admission.Room AS Room from Admission WHERE Admission.Patient = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {

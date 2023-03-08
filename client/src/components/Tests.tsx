@@ -12,6 +12,7 @@ function Tests(props: any) {
       setTests(tests.result);
     });
   }, [open]);
+  const textDecoder = new TextDecoder();
   return (
     <div
       className="fixed inset-0 grid place-content-center
@@ -33,20 +34,21 @@ function Tests(props: any) {
               <div className="cell col-span-2">{test.Name}</div>
               <div className="cell col-span-2">{test.Date.slice(0, 19).replace('T', ' ')}</div>
               <div className="cell col-span-1">{test.Result}</div>
-              {!test.Report  ?(
+              {test.Report  ?(
                 <button
                   onClick={() => {
-                    const blob = new Blob([test.report], { type: 'application/pdf' });
+                    const decodedString = String.fromCharCode(...test.Report.data)
+                    const blob = new Blob([decodedString], { type: 'text/plain' });
                     const url = URL.createObjectURL(blob);
                     window.open(url, '_blank');
-                    setTimeout(() => URL.revokeObjectURL(url), 5000);
+                    // setTimeout(() => URL.revokeObjectURL(url), 5000);
                   }}
                   className="orange col-span-1"
                 >
                   open
                 </button>
               ) : (
-                <div className="cell col-span-1"> {test.Report.toString('utf-8')}</div>
+                <div className="cell col-span-1"> None</div>
               )}
             </div>
           ))}

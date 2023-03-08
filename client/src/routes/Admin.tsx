@@ -30,7 +30,40 @@ function Admin() {
       <form
         className="shadow-lg grid grid-cols-4 gap-x-3"
         onSubmit={async (e) => {
-          e.preventDefault();
+
+          if((e.target as any).username.value.length < 6)
+          {
+            alert(
+              "The length of Username must be atleast 6"
+            )
+            e.preventDefault();
+            return;
+          }
+          console.log((e.target as any).username.value.charAt(0));
+          if(! /[a-zA-Z]$/.test((e.target as any).username.value.charAt(0)))
+          {
+            alert(
+              "first charecter of Username must be an Alphabet"
+            )
+            e.preventDefault();
+            return;
+          }
+          if((e.target as any).password.value.length < 8)
+          {
+            alert(
+              "your password is weak, length must be atleast 8"
+            )
+            e.preventDefault();
+            return;
+          }
+          if(! /(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/.test((e.target as any).password.value))
+          {
+            alert(
+              "password must contain both alphabet and number\nstarts with an Alphabet\nMust not contain spaces"
+            )
+            e.preventDefault();
+            return;
+          }
           let s = await addUser(
             user.username,
             user.password,

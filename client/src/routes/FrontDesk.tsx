@@ -7,6 +7,7 @@ import {
   getUsers as fetchUsers,
   registerPatient,
   scheduleAppointment,
+  fetchAdmissionHistory,
 } from "../API";
 import ScheduleAppointmentPopUp from "../components/ScheduleAppointment";
 import AdmitPatientPopUp from "../components/AdmitPatient";
@@ -23,6 +24,9 @@ function FrontDesk() {
   let [searchid, setSearchid] = React.useState(0);
   let [searchname, setSearchname] = React.useState("");
   const [selectedOption, setSelectedOption] = React.useState(0);
+  const [selectedPanel, setSelectedPanel] = React.useState(0);
+  let [history, setHistory] = React.useState<any>(null);
+
 
 
   useEffect(() => {
@@ -35,6 +39,13 @@ function FrontDesk() {
     if (user)
       fetchAllPatients(user).then((res) => {
         setFetchedPatients(res);
+      });
+  }, [user]);
+
+  useEffect(() => {
+    if (user)
+      fetchAdmissionHistory(user).then((res) => {
+        setHistory(res);
       });
   }, [user]);
 
@@ -79,6 +90,7 @@ function FrontDesk() {
 
   return (
     <div className="px-6">
+      <>
       <h2 className="mt-8 mb-2 shadow-lg ">Register Patient</h2>
       <form
         className="grid grid-cols-2 gap-x-3"
@@ -86,6 +98,7 @@ function FrontDesk() {
           if((e.target as any).name.value == "" && (e.target as any).Address.value == "")
           {
             e.preventDefault();
+            alert("name and Address can't be null")
             return;
           }
           await registerPatient(
@@ -141,8 +154,51 @@ function FrontDesk() {
         <button className="blue">Register Patient </button>
         <div className="col-span-2 flex flex-col gap-4 py-2 "></div>
       </form>
+  
+      <select
+      className="mt-8 mb-2 shadow-lg font-bold"
+      onChange={(event:any) => {
+        if (event.target.value === "Panel") {
+          setSelectedPanel(0);
+        } else {
+            setSelectedPanel(1);
+        }
+      }}>
+          <option value="Panel" className="">Control Panel</option>
+          <option value="History" className="">Admission History</option>
+      </select>
 
-      <h2 className="mt-8 mb-2 shadow-lg ">Panel</h2>
+      {selectedPanel == 1 ?
+      (
+        <>
+        <div className="grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
+          <h2 className=" col-span-2">Appointment ID</h2>
+          <h2 className=" col-span-2">Patient ID</h2>
+          <h2 className=" col-span-2">Patient Name</h2>
+          <h2 className=" col-span-2">Admit Date</h2>
+          <h2 className=" col-span-2">Discharge Date</h2>
+          <h2 className=" col-span-2">Room Number</h2>
+        </div>
+        <div className=" mb-16 mt-6 flex flex-col gap-3 ">
+          {history?.map((Admission: any) => (
+            <div className="grid grid-cols-12 gap-3">
+              <div className=" col-span-2">{Admission.appID}</div>
+              <div className=" col-span-2">{Admission.Patient}</div>
+              <div className=" col-span-2">{Admission.Name}</div>
+              <div className=" col-span-2">{Admission.Admit_date.slice(0,19).replace("T", " ")}</div>
+              {Admission.Discharge_Date ?
+              (<div className=" col-span-2">{Admission.Discharge_Date.slice(0,19).replace("T", " ")}</div>)
+              :
+              (<div className=" col-span-2">-</div>)
+              }
+              <div className=" col-span-2">{Admission.Room}</div>
+            </div>
+          ))}
+        </div>
+        </>
+      )
+      :
+      (<>
       <div className="search">
         <label className="id"> Search by ID:
           <input className="input" type="number" value={searchid > 0 ? searchid : ""} onChange={handleSearchId}/>
@@ -168,7 +224,7 @@ function FrontDesk() {
         <h2 className=" col-span-3">Actions</h2>
       </div>
       <div className=" mb-16 mt-6 flex flex-col gap-3 ">
-        {fetchedPatients?.map((fetchedPatient: any) => (
+      {fetchedPatients?.map((fetchedPatient: any) => (
           ((searchid == 0 && searchname == "") || (searchid != 0 && fetchedPatient.ID.toString().startsWith(searchid.toString())) ||(searchname != "" && fetchedPatient.Name.toLowerCase().startsWith(searchname.toLowerCase()))) &&
           <div className="grid grid-cols-12 gap-3" key={fetchedPatient.ID}>
             <div className="card col-span-1 whitespace-nowrap">{fetchedPatient.ID}</div>
@@ -197,6 +253,9 @@ function FrontDesk() {
                     set1(null);
                     fetchAllPatients(user).then((res) => {
                       setFetchedPatients(res);
+                    });
+                    fetchAdmissionHistory(user).then((res) => {
+                      setHistory(res);
                     });
                   }}
                 />
@@ -227,6 +286,9 @@ function FrontDesk() {
                     set2(null);
                     fetchAllPatients(user).then((res) => {
                       setFetchedPatients(res);
+                    });
+                    fetchAdmissionHistory(user).then((res) => {
+                      setHistory(res);
                     });
                   }}
                 />
@@ -271,6 +333,8 @@ function FrontDesk() {
           </div>
         ))}
       </div>
+      </>)}
+      </>
     </div>
   );
 }

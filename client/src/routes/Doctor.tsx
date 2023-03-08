@@ -16,6 +16,8 @@ function Doctor() {
   let [searchid2, setSearchid2] = React.useState(0);
   let [searchname2, setSearchname2] = React.useState("");
   let [searchdate, setSearchdate] = React.useState(null);
+  const [selectedPanel, setSelectedPanel] = React.useState(0);
+
   const formatDate = (date: Date) => {
     let d = moment(date);
     return d.format("YYYY-MM-DD");
@@ -86,7 +88,23 @@ function Doctor() {
   return (
     <>
       <div className="px-6">
-        <h2 className="mt-8 mb-2 shadow-lg ">Dashboard</h2>
+        <h2 className="mt-8 mb-2">Dashboard</h2>
+        <div>Hello sir, you have {appointments.length} upcoming Appointments!</div>
+        <select name="select"
+          className="mt-8 mb-2 shadow-lg font-bold"
+          onChange={(event:any) => {
+          if (event.target.value === "Appointment") {
+            setSelectedPanel(0);
+          } else {
+            setSelectedPanel(1);
+          }
+        }}>
+            <option value="Appointment">Appointment</option>
+            <option value="Patient Info">Patient Info</option>
+          </select>
+        {
+        (selectedPanel == 0) ?
+        (<>
         <div className="search">
           <label className="id">
             {" "}
@@ -125,9 +143,11 @@ function Doctor() {
             autoComplete="off"
           />
         </div>
-        <div className="grid grid-cols-5 gap-3 mb-2 mt-4 text-center">
+        <div className="grid grid-cols-7 gap-3 mb-2 mt-4 shadow-lg text-center">
           <h3 className="col-span-1">Patient ID</h3>
-          <h3 className="col-span-3">Patient Name</h3>
+          <h3 className="col-span-2">Patient Name</h3>
+          <h3 className="col-span-1">Contact</h3>
+          <h3 className="col-span-2">Email</h3>
           <h3 className="col-span-1">Date</h3>
           {/* <h3 className="col-span-2">Priority</h3> */}
         </div>
@@ -141,12 +161,14 @@ function Doctor() {
               (appointment: any) =>
                 ((searchdate != null && searchdate != "") ?  (searchdate == appointment.date.slice(0,10)): ((searchid == 0 && searchname == "") || (searchid != 0 && appointment.pID.toString().startsWith(searchid.toString())) || (searchname != "" && appointment.pName.toLowerCase().startsWith(searchname.toLowerCase())))) &&(
                   <div
-                    className="grid grid-cols-5 gap-3"
+                    className="grid grid-cols-7 gap-3"
                     key={appointment.appID}
                   >
                     <div className="card col-span-1">{appointment.pID}</div>
                     <div className="card col-span-2">{appointment.pName}</div>
-                    <div className="card col-span-2">
+                    <div className="card col-span-1">{appointment.Contact}</div>
+                    <div className="card col-span-2">{appointment.Email}</div>
+                    <div className="card col-span-1">
                       {formatDate(appointment.date)}
                     </div>
                     {/* <div className="card col-span-2">{appointment.priority}</div> */}
@@ -154,7 +176,9 @@ function Doctor() {
                 )
             )}
         </div>
-        <h2 className="mt-8 mb-2 shadow-lg "> Patient Info </h2>
+        </>
+        ):(
+          <>
         <div className="search">
           <label className="id">
             {" "}
@@ -185,9 +209,11 @@ function Doctor() {
           </label>
         </div>
         <div className=" flex flex-col mb-16 ">
-          <div className="grid grid-cols-7 gap-3 mb-2 mt-4 text-center">
+          <div className="grid grid-cols-8 gap-3 mb-2 mt-4 shadow-lg text-center">
             <h3 className=" col-span-1 ">ID</h3>
-            <h3 className=" col-span-4 ">Name</h3>
+            <h3 className=" col-span-2 ">Name</h3>
+            <h3 className=" col-span-1">Contact</h3>
+            <h3 className=" col-span-2 ">Email</h3>
             <h3 className="col-span-2">Actions</h3>
           </div>
           <div className="flex flex-col gap-3 whitespace-nowrap">
@@ -199,9 +225,11 @@ function Doctor() {
                       patient.ID.toString().toLowerCase().startsWith(searchid2.toString().toLowerCase())) ||
                     (searchname2 != "" &&
                       patient.Name.toLowerCase().startsWith(searchname2.toLowerCase()))) && (
-                    <div className="grid grid-cols-7 gap-3" key={patient.ID}>
+                    <div className="grid grid-cols-8 gap-3" key={patient.ID}>
                       <div className="card col-span-1 ">{patient.ID}</div>
-                      <div className="card col-span-4">{patient.Name}</div>
+                      <div className="card col-span-2">{patient.Name}</div>
+                      <div className="card col-span-1">{patient.Contact}</div>
+                      <div className="card col-span-2">{patient.Email}</div>
                       <button
                         onClick={async () => {
                           setPop1(patient.ID);
@@ -239,6 +267,9 @@ function Doctor() {
               )}
           </div>
         </div>
+        </>
+        )
+        }
       </div>
     </>
   );

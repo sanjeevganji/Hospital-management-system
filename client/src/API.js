@@ -593,3 +593,20 @@ export const getTests = async (username, password, patientId) => {
 };
 
 // console.log("end of script");
+
+
+export const fetchAdmissionHistory = async ({username, password}) => {
+  console.log("API call: fetchAdmissionHistory()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+  }
+  let response = await fetch(SERVER_URL + "/getAdmissionHistory", config);
+  let json = await response.json();
+  console.log({ json });
+  return json;
+}
