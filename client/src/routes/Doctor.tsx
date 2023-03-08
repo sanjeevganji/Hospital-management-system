@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAllPatientsForDoctor, getAppointments } from "../API";
 import Tests from "../components/Tests";
 import Treatments from "./Treatments";
+import moment from "moment";
 import { getUser } from "../log";
 import "./doctor.css";
 
@@ -15,7 +16,10 @@ function Doctor() {
   let [searchid2, setSearchid2] = React.useState(0);
   let [searchname2, setSearchname2] = React.useState("");
   let [searchdate, setSearchdate] = React.useState(null);
-
+  const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+  };
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -73,10 +77,9 @@ function Doctor() {
   function handlesubmitName2() {
     setSearchname2("");
   }
-  function handleDate(e:any)
-  {
-    const date = (e.target.value)
-    setSearchdate(date)
+  function handleDate(e: any) {
+    const date = e.target.value;
+    setSearchdate(date);
     console.log(searchdate);
   }
 
@@ -113,15 +116,14 @@ function Doctor() {
             </button>
           </label>
           <label className="name">Search By Date: </label>
-            <input
-              onChange={handleDate}
-              min={new Date().toISOString().split("T")[0]}
-              type="date"
-              placeholder="patient name"
-              name="scheduleDate"
-              autoComplete="off"
-
-            />
+          <input
+            onChange={handleDate}
+            min={new Date().toISOString().split("T")[0]}
+            type="date"
+            placeholder="patient name"
+            name="scheduleDate"
+            autoComplete="off"
+          />
         </div>
         <div className="grid grid-cols-5 gap-3 mb-2 mt-4 text-center">
           <h3 className="col-span-1">Patient ID</h3>
@@ -143,9 +145,9 @@ function Doctor() {
                     key={appointment.appID}
                   >
                     <div className="card col-span-1">{appointment.pID}</div>
-                    <div className="card col-span-3">{appointment.pName}</div>
-                    <div className="card col-span-1">
-                      {appointment.date.slice(0, 10)}
+                    <div className="card col-span-2">{appointment.pName}</div>
+                    <div className="card col-span-2">
+                      {formatDate(appointment.date)}
                     </div>
                     {/* <div className="card col-span-2">{appointment.priority}</div> */}
                   </div>

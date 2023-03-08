@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import moment from "moment";
 import { getUser } from "../log";
 import { getAppointmentListForDataEntry } from "../API";
 import EntryData from "../components/EntryData";
@@ -6,6 +7,11 @@ import EntryData from "../components/EntryData";
 function DataEntry() {
   let [appointments, setAppointments] = React.useState([]);
   let [pop1, setPop1] = React.useState(null);
+
+  const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+  };
 
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
@@ -41,7 +47,7 @@ function DataEntry() {
               <div className="card col-span-1">{app.appID}</div>
               <div className="card col-span-2">{app.pName}</div>
               <div className="card col-span-2">{app.dName}</div>
-              <div className="card col-span-2">{app.date.slice(0, 10)}</div>
+              <div className="card col-span-2">{formatDate(app.date)}</div>
               <button
                 className=" blue col-span-3"
                 onClick={async () => {
@@ -52,9 +58,14 @@ function DataEntry() {
               </button>
               <EntryData
                 appID={app.appID}
+                appDate={formatDate(app.date)}
                 open={pop1 == app.appID}
                 onClose={() => {
                   setPop1(null);
+                  //update the list of appointments
+                  getAppointmentListForDataEntry(user).then((res) => {
+                    setAppointments(res);
+                  });
                 }}
               />
             </div>
