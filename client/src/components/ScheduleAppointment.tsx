@@ -12,12 +12,12 @@ function ScheduleAppointment(props: any) {
   let { patientId, open, onClose } = props;
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-black text-gray-700 px-6 bg-opacity-30
+    bg-black text-gray-700 px-6 bg-opacity-30 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >

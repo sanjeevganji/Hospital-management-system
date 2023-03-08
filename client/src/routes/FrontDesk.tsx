@@ -49,6 +49,7 @@ function FrontDesk() {
             (e.target as any).name.value
           );
           fetchAllPatients(user).then((res) => {
+            console.log("FETCHED", res);
             setFetchedPatients(res);
           });
         }}
@@ -64,20 +65,20 @@ function FrontDesk() {
       </form>
       <div className=" grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
         <h2>ID</h2>
-        <h2 className=" col-span-7">Patient</h2>
-        <h2 className=" col-span-4">Actions</h2>
+        <h2 className=" col-span-5">Patient</h2>
+        <h2 className=" col-span-6">Actions</h2>
       </div>
       <div className=" mb-16 mt-6 flex flex-col gap-3 ">
         {fetchedPatients?.map((fetchedPatient: any) => (
           <div className="grid grid-cols-12 gap-3" key={fetchedPatient.ID}>
             <div className="card whitespace-nowrap">{fetchedPatient.ID}</div>
-            <div className="card col-span-7 whitespace-nowrap">
+            <div className="card col-span-5 whitespace-nowrap">
               {fetchedPatient.Name}
             </div>
-            {fetchedPatient.admitted || true ? (
+            {fetchedPatient.admitted == 0 ? (
               <>
                 <button
-                  className="col-span-2 blue"
+                  className="col-span-3 blue"
                   onClick={async () => {
                     set1(fetchedPatient.ID);
                   }}
@@ -98,7 +99,7 @@ function FrontDesk() {
             ) : (
               <>
                 <button
-                  className="col-span-2 blue"
+                  className="col-span-3 red"
                   onClick={async () => {
                     set2(fetchedPatient.ID);
                     fetchAllPatients(user).then((res) => {
@@ -125,7 +126,7 @@ function FrontDesk() {
               onClick={() => {
                 set3(fetchedPatient.ID);
               }}
-              className={"col-span-2 orange"}
+              className={"col-span-3 orange"}
             >
               appoint
             </button>

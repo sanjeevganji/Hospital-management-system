@@ -117,6 +117,7 @@ export const dischargePatient = async (username, password, patientId) => {
   };
   let response = await fetch(SERVER_URL + "/discharge", config);
   let json = await response.json();
+  console.log({ discharge: json });
   return json;
 };
 
@@ -171,25 +172,49 @@ export const getAppointmentListForDataEntry = async ({
   };
   let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
   let json = await response.json();
-  console.log({ CURRENT: json });
-  json = [
-    {
-      //appointment
-      appID: 1,
-      pID: 2,
-      pName: "patient",
-      dName: "roopak",
-      date: "10-12-2001",
+  console.log({ getAppointmentListForDataEntry: json });
+  return json;
+};
+
+//MASTER DATAENTRY
+
+export const masterDATAENTRY = async (props) => {
+  my_alert("API call: masterDATAENTRY()");
+  console.log({ PROPS: props });
+  console.log({ stringified: JSON.stringify(props) });
+  //DONE:
+  let WhatGoesAsBody = {
+    appID: 1,
+    username: "de",
+    password: "pass",
+    tests: [
+      {
+        name: "abc",
+        result: "123",
+        date: "2023-03-09",
+        report: {}, //FILE,
+      },
+    ],
+    treatments: [
+      {
+        name: "123",
+        dosage: "123",
+        date: "2023-03-18",
+      },
+    ],
+  };
+
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
     },
-    {
-      //appointment
-      appID: 2,
-      pID: 2,
-      pName: "patient",
-      dName: "roopak",
-      date: "10-12-2001",
-    },
-  ];
+    body: JSON.stringify(props),
+  };
+  let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
+  let json = await response.json();
+  console.log({ masterDATAENTRY: json });
   return json;
 };
 

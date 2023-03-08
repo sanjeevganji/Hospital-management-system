@@ -151,7 +151,7 @@ app.get("/doctor/appointments", (req, res) => {
     }
   });
 });
-//TODO;
+
 app.get("/frontdesk/patients", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
@@ -167,6 +167,7 @@ app.get("/frontdesk/patients", (req, res) => {
         LEFT JOIN Admission ON Patient.ID = Admission.Patient
         ORDER BY Patient.ID DESC;
       `;
+      //DISCHARGE kiya par admitted phir bhi true aa raha hai
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -186,7 +187,7 @@ app.get("/dataentry/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -319,7 +320,7 @@ app.post("/discharge", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
-      let date = new Date().toJSON();
+      let date = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
       let sql = `Select Admission.ID, Room from Admission, Patient_Admission WHERE Patient_Admission.ID = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
       console.log(sql);
       connection.query(sql, function (err, result) {

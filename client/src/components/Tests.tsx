@@ -5,7 +5,7 @@ function Tests(props: any) {
   let { user, open, onClose } = props;
   let [tests, setTests] = React.useState<any>([]);
   React.useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
     if (!user) return;
     getTests(user.username, user.password, props.patientId).then((tests) => {
       console.log(tests);
@@ -15,7 +15,7 @@ function Tests(props: any) {
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-slate-300 text-gray-700 px-6
+    bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >

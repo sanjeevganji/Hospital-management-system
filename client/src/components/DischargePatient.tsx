@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTreatments, scheduleAppointment } from "../API";
+import { getTreatments, scheduleAppointment, dischargePatient } from "../API";
 import { getUser } from "../log";
 
 function DischargePatient(props: any) {
@@ -10,37 +10,49 @@ function DischargePatient(props: any) {
   }, []);
   let { patientId, open, onClose } = props;
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-black text-gray-700 px-6 bg-opacity-30
+    bg-black text-gray-700 px-6 bg-opacity-30 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >
-      <h1 className="ml-4">Discharge Patient {patientId}</h1>
-      <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
-        <div className="grid grid-cols-7 gap-3 mb-2 mt-4">
-          <h3 className="cell col-span-2">Name</h3>
-          <h3 className="cell col-span-2">Drug</h3>
-          <h3 className="cell col-span-3">Dosage</h3>
+      <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto ">
+        <h2 className="text-center m-2 mb-4">Confirm?</h2>
+        <div className="flex justify-end">
+          <span
+            onClick={() => {
+              onClose();
+            }}
+            className="underline h-10 leading-10 mx-4 cursor-pointer"
+          >
+            {" "}
+            Cancel
+          </span>
+          <button
+            type="submit"
+            className="orange w-fit "
+            onClick={async () => {
+              let t = setTimeout(() => {
+                alert("server is not responding");
+                onClose();
+              }, 3000);
+
+              let s = await dischargePatient(
+                user.username,
+                user.password,
+                patientId
+              );
+              //revoke the time out
+              clearTimeout(t);
+              if (s.status == "ok") onClose();
+            }}
+          >
+            Confirm
+          </button>
         </div>
-        <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
-          {/* {$treatments[0].map((treatment) => (
-            <div className="grid grid-cols-7 gap-3" key={treatment.id}>
-              <div className="cell col-span-2">{treatment.name}</div>
-              <div className="cell col-span-2">{treatment.drug}</div>
-              <div className="cell col-span-3">{treatment.dosage}</div>
-            </div>
-          ))} */}
-        </div>
-        <button
-          type="submit"
-          className=" col-span-2 orange w-fit place-self-end"
-        >
-          Admit
-        </button>
       </span>
     </div>
   );
