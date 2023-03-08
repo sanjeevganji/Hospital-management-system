@@ -20,8 +20,7 @@ function DischargePatient(props: any) {
       style={{ display: open ? "grid" : "none" }}
     >
       <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
-        <h1 className="ml-4">Discharge Patient {patientId}</h1>
-        <br />
+        <h1 className="mx-4">Discharge Patient {patientId}</h1>
         <div className="grid grid-cols-10 gap-3">
           <h3 className="cell col-span-4">Name</h3>
           <h3 className="cell col-span-3">Room Number</h3>
@@ -33,6 +32,7 @@ function DischargePatient(props: any) {
           <div className="col-span-3">{Room}</div>
           <div className="col-span-3">{Type}</div>
         </div>
+        <br />
         <div className="grid grid-cols-10">
 
           <button

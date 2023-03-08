@@ -137,13 +137,7 @@ function Doctor() {
           }) &&
             appointments.map(
               (appointment: any) =>
-                ((searchid == 0 && searchname == "") ||
-                  (searchid != 0 &&
-                    appointment.pID
-                      .toString()
-                      .startsWith(searchid.toString())) ||
-                  (searchname != "" &&
-                    appointment.pName.startsWith(searchname))) && (
+                ((searchdate != null && searchdate != "") ?  (searchdate == appointment.date.slice(0,10)): ((searchid == 0 && searchname == "") || (searchid != 0 && appointment.pID.toString().startsWith(searchid.toString())) || (searchname != "" && appointment.pName.toLowerCase().startsWith(searchname.toLowerCase())))) &&(
                   <div
                     className="grid grid-cols-5 gap-3"
                     key={appointment.appID}
@@ -200,9 +194,9 @@ function Doctor() {
                 (patient: any) =>
                   ((searchid2 == 0 && searchname2 == "") ||
                     (searchid2 != 0 &&
-                      patient.ID.toString().startsWith(searchid2.toString())) ||
+                      patient.ID.toString().toLowerCase().startsWith(searchid2.toString().toLowerCase())) ||
                     (searchname2 != "" &&
-                      patient.Name.startsWith(searchname2))) && (
+                      patient.Name.toLowerCase().startsWith(searchname2.toLowerCase()))) && (
                     <div className="grid grid-cols-7 gap-3" key={patient.ID}>
                       <div className="card col-span-1 ">{patient.ID}</div>
                       <div className="card col-span-4">{patient.Name}</div>

@@ -180,8 +180,8 @@ function FrontDesk() {
             }
             {!fetchedPatient.admitted ? (
               <>
-              <div className="card col-span-1 whitespace-nowrap"></div>
-              <div className="card col-span-1 whitespace-nowrap"></div>
+              <div className="card col-span-1 whitespace-nowrap">-</div>
+              <div className="card col-span-1 whitespace-nowrap">-</div>
                 <button
                   className="col-span-1 blue"
                   onClick={async () => {
@@ -239,6 +239,24 @@ function FrontDesk() {
               className={"col-span-1 orange"}
             >
               appoint
+            </button>
+            <ScheduleAppointmentPopUp
+              patientId={fetchedPatient.ID}
+              open={fetchedPatient.ID === get3}
+              onClose={() => {
+                set3(null);
+                fetchAllPatients(user).then((res) => {
+                  setFetchedPatients(res);
+                });
+              }}
+            />
+            <button
+              onClick={() => {
+                set3(fetchedPatient.ID);
+              }}
+              className={"col-span-1 red"}
+            >
+              Test
             </button>
             <ScheduleAppointmentPopUp
               patientId={fetchedPatient.ID}

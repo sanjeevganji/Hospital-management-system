@@ -14,7 +14,7 @@ function Tests(props: any) {
   }, [open]);
   return (
     <div
-      className="fixed inset-0 grid place-content-center 
+      className="fixed inset-0 grid place-content-center
     bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
@@ -33,20 +33,20 @@ function Tests(props: any) {
               <div className="cell col-span-2">{test.Name}</div>
               <div className="cell col-span-2">{test.Date.slice(0, 19).replace('T', ' ')}</div>
               <div className="cell col-span-1">{test.Result}</div>
-              {test.report ? (
+              {!test.Report  ?(
                 <button
                   onClick={() => {
-                    var fileURL = URL.createObjectURL(test.report);
-                    window.open(fileURL);
-                    //revoke it after 5 seconds
-                    setTimeout(() => URL.revokeObjectURL(fileURL), 5000);
+                    const blob = new Blob([test.report], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
                   }}
                   className="orange col-span-1"
                 >
                   open
                 </button>
               ) : (
-                <div className="cell col-span-1"> not available</div>
+                <div className="cell col-span-1"> {test.Report.toString('utf-8')}</div>
               )}
             </div>
           ))}
