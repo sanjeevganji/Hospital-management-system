@@ -26,9 +26,10 @@ export const login = async (username, password) => {
 };
 
 // 1. Patient  registration/discharge
-export const registerPatient = async (username, password, name) => {
+export const registerPatient = async (username, password, name, Address, contact, email) => {
   my_alert("API call: registerPatient(" + name + ")");
   //server registers a new patient and returns the id
+  console.log(name);
   let config = {
     method: "POST",
     headers: {
@@ -38,6 +39,9 @@ export const registerPatient = async (username, password, name) => {
     },
     body: JSON.stringify({
       name: name,
+      Address: Address,
+      contact: contact,
+      email: email,
     }),
   };
   let response = await fetch(SERVER_URL + "/register", config);
@@ -117,6 +121,7 @@ export const dischargePatient = async (username, password, patientId) => {
   };
   let response = await fetch(SERVER_URL + "/discharge", config);
   let json = await response.json();
+  console.log(json)
   return json;
 };
 

@@ -16,11 +16,11 @@ function AdmitPatient(props: any) {
   }, [open]);
   return (
     <div
-      className="fixed inset-0 grid place-content-center 
+      className="fixed inset-0 grid place-content-center
     bg-black text-gray-700 px-6 bg-opacity-30
     "
       style={{ display: open ? "grid" : "none" }}
-    >
+    >dischargePatient
       <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
         <form
           className="grid grid-cols-2 gap-x-3"
@@ -63,7 +63,7 @@ function AdmitPatient(props: any) {
               className="underline h-10 leading-10 mx-4 cursor-pointer"
             >
               {" "}
-              Cancel
+              Close
             </span>
             <button type="submit" className="orange w-fit ">
               Confirm

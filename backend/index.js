@@ -158,13 +158,14 @@ app.get("/frontdesk/patients", (req, res) => {
     console.log({ user });
     if (user.Type == "frontdesk") {
       //todo: change the query to get if patient is in Admission and Discharge Date is > current date
-      let sql = `SELECT Patient.*,
+      let sql = `SELECT Patient.*, Admission.Room AS Room, Room.Type AS Type,
           CASE WHEN Admission.ID IS NOT NULL AND Admission.Discharge_date IS NULL
             THEN true
             ELSE false
           END AS admitted
-        FROM Patient
-        LEFT JOIN Admission ON Patient.ID = Admission.Patient
+	      FROM Patient
+	      LEFT JOIN Admission ON Patient.ID = Admission.Patient AND Admission.Discharge_date IS NULL
+        LEFT JOIN Room ON Room.Number = Admission.Room
         ORDER BY Patient.ID DESC;
       `;
       console.log(sql);
@@ -320,7 +321,7 @@ app.post("/discharge", (req, res) => {
     if (user.Type == "frontdesk") {
       //sql query
       let date = new Date().toJSON();
-      let sql = `Select Admission.ID, Room from Admission, Patient_Admission WHERE Patient_Admission.ID = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
+      let sql = `Select Admission.ID AS ID, Admission.Room AS Room from Admission WHERE Admission.Patient = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -328,7 +329,7 @@ app.post("/discharge", (req, res) => {
         } else if (result.length == 0) {
           res.json({ status: "error", message: "Patient is not admitted" });
         } else {
-          sql = `UPDATE Admission SET Discharge_date = '${date}' WHERE ID = ${result[0].ID};`;
+          sql = `UPDATE Admission SET Discharge_date = '${date.slice(0,10)}' WHERE ID = ${result[0].ID};`;
           let roomNumber = result[0].Room;
           console.log(sql);
           connection.query(sql, function (err, result) {
@@ -355,7 +356,7 @@ app.post("/register", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
-      let sql = `INSERT INTO Patient (Name) VALUES ('${req.body.name}');`;
+      let sql = `INSERT INTO Patient (Name, Address, Contact, Email) VALUES ('${req.body.name}', '${req.body.Address}', '${req.body.contact}', '${req.body.email}');`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
