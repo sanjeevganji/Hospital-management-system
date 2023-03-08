@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { getUser } from "../log";
 import { getAppointmentListForDataEntry } from "../API";
+import EntryData from "../components/EntryData";
 
 function DataEntry() {
   let [appointments, setAppointments] = React.useState([]);
@@ -37,18 +38,25 @@ function DataEntry() {
               className="grid grid-cols-10 gap-3 text-center"
               key={app.appID}
             >
-              <div className="col-span-1">{app.appID}</div>
-              <div className="col-span-2">{app.pName}</div>
-              <div className="col-span-2">{app.dName}</div>
-              <div className="col-span-2">{app.date}</div>
+              <div className="card col-span-1">{app.appID}</div>
+              <div className="card col-span-2">{app.pName}</div>
+              <div className="card col-span-2">{app.dName}</div>
+              <div className="card col-span-2">{app.date.slice(0, 10)}</div>
               <button
                 className=" blue col-span-3"
                 onClick={async () => {
-                  setPop1(app.pID);
+                  setPop1(app.appID);
                 }}
               >
                 Add Prescription
               </button>
+              <EntryData
+                appID={app.appID}
+                open={pop1 == app.appID}
+                onClose={() => {
+                  setPop1(null);
+                }}
+              />
             </div>
           ))}
         </div>

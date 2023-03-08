@@ -3,12 +3,12 @@ import React, { useEffect } from "react";
 function SurePopup(props: any) {
   let { open, onNo, onYes } = props;
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
   return (
     <div
       className="fixed inset-0 grid place-content-center 
-    bg-slate-300 text-gray-700 px-6
+    bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >

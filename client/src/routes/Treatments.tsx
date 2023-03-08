@@ -4,7 +4,7 @@ import { getTreatments } from "../API";
 function Treatments(props: any) {
   let { user, open, onClose } = props;
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
     if (!user) return;
     getTreatments(user.username, user.password, props.patientId).then(
       (treatments) => {
@@ -17,8 +17,8 @@ function Treatments(props: any) {
   let [treatments, setTreatments] = React.useState<any>([]);
   return (
     <div
-      className="fixed inset-0 grid place-content-center
-    bg-slate-300 text-gray-700 px-6
+      className="fixed inset-0 grid place-content-center 
+    bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >

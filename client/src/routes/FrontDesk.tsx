@@ -97,6 +97,7 @@ function FrontDesk() {
             (e.target as any).email.value
           );
           fetchAllPatients(user).then((res) => {
+            console.log("FETCHED", res);
             setFetchedPatients(res);
           });
         }}

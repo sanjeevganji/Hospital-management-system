@@ -12,7 +12,8 @@ function AdmitPatient(props: any) {
   }, []);
   let { patientId, open, onClose } = props;
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    //prevent scrolling when modal is open
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
   return (
     <div

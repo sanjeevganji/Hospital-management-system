@@ -19,7 +19,7 @@ function Login() {
           );
           if (status === "error") setTries(tries + 1);
         }}
-        className="fixed w-screen h-screen grid place-content-center bg-slate-300 text-gray-700"
+        className="fixed w-screen h-screen grid place-content-center bg-slate-300 text-gray-700 overflow-y-auto"
       >
         <h1 className="font-bold text-center text-3xl uppercase m-6">Login</h1>
         <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">

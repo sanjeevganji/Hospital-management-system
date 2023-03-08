@@ -10,7 +10,7 @@ function DischargePatient(props: any) {
   }, []);
   let { patientId,Name, Room, Type, open, onClose } = props;
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "unset";
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
   return (
     <div

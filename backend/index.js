@@ -1,10 +1,21 @@
 import express from "express";
+import fs from "fs";
 import cors from "cors";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
 import { Blob } from "buffer";
 
 var connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "password",
+  // host: "dbms-hostpital.mysql.database.azure.com",
+  // user: "atishay",
+  // password: "pass@123",
+  // database: "hospital",
+  // port: 3306,
+  // ssl: { cs: fs.readFileSync("./files/BaltimoreCyberTrustRoot.crt.pem") },
   // host: "localhost",
   // user: "root",
   // database: "Hospital",
@@ -21,6 +32,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) {
+    console.log({ connection });
     console.log({ err });
     return;
   }
@@ -151,7 +163,7 @@ app.get("/doctor/appointments", (req, res) => {
     }
   });
 });
-//TODO;
+
 app.get("/frontdesk/patients", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
@@ -168,6 +180,7 @@ app.get("/frontdesk/patients", (req, res) => {
         LEFT JOIN Room ON Room.Number = Admission.Room
         ORDER BY Patient.ID DESC;
       `;
+      //DISCHARGE kiya par admitted phir bhi true aa raha hai
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -187,7 +200,7 @@ app.get("/dataentry/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
