@@ -187,35 +187,16 @@ export const masterDATAENTRY = async (props) => {
   console.log({ PROPS: props });
   console.log({ stringified: JSON.stringify(props) });
   //DONE:
-  let WhatGoesAsBody = {
-    appID: 1,
-    username: "de",
-    password: "pass",
-    tests: [
-      {
-        name: "abc",
-        result: "123",
-        date: "2023-03-09",
-        report: {}, //FILE,
-      },
-    ],
-    treatments: [
-      {
-        name: "123",
-        dosage: "123",
-        date: "2023-03-18",
-      },
-    ],
-  };
-
   let config = {
     method: "POST",
     headers: {
-      Authorization: "Basic " + encode(username + ":" + password),
+      Authorization: "Basic " + encode(props.username + ":" + props.password),
       "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(props),
   };
+  console.log({ config });
   let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
   let json = await response.json();
   console.log({ masterDATAENTRY: json });

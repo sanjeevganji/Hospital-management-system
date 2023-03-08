@@ -1,9 +1,14 @@
 import express from "express";
-import fs from "fs";
 import cors from "cors";
+import moment from "moment";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
 import { Blob } from "buffer";
+
+const formatDate = (date) => {
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
+};
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -20,10 +25,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "DakRR#2020",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -146,7 +151,7 @@ app.get("/doctor/appointments", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "doctor") {
-      let date = new Date().toJSON().slice(0, 10);
+      let date = formatDate(new Date());
       //CORRECT THIS
       let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
 
@@ -170,14 +175,14 @@ app.get("/frontdesk/patients", (req, res) => {
     console.log({ user });
     if (user.Type == "frontdesk") {
       //todo: change the query to get if patient is in Admission and Discharge Date is > current date
-      let sql = `SELECT Patient.*, Admission.Room AS Room, Room.Type AS Type,
-          CASE WHEN Admission.ID IS NOT NULL AND Admission.Discharge_date IS NULL
+
+      let sql = `SELECT DISTINCT Patient.*,
+          CASE WHEN Patient.ID IN (SELECT Patient FROM Admission WHERE Discharge_date IS NULL)
             THEN true
             ELSE false
           END AS admitted
-	      FROM Patient
-	      LEFT JOIN Admission ON Patient.ID = Admission.Patient AND Admission.Discharge_date IS NULL
-        LEFT JOIN Room ON Room.Number = Admission.Room
+        FROM Patient, Admission
+        WHERE Patient.ID = Admission.Patient
         ORDER BY Patient.ID DESC;
       `;
       //DISCHARGE kiya par admitted phir bhi true aa raha hai
@@ -200,14 +205,14 @@ app.get("/dataentry/appointments", (req, res) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor ;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
           console.log({ err });
           res.json({ status: "error" });
         } else {
-          console.log(result);
+          console.log({ result });
           res.json(result);
         }
       });
@@ -333,8 +338,8 @@ app.post("/discharge", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
-      let date = new Date().toJSON();
-      let sql = `Select Admission.ID AS ID, Admission.Room AS Room from Admission WHERE Admission.Patient = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
+      let date = formatDate(new Date());
+      let sql = `Select Admission.ID, Room from Admission, Patient_Admission WHERE Patient_Admission.ID = ${req.body.patientId} AND Admission.Discharge_date IS NULL;`;
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -383,36 +388,54 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/dataentry/appointments", (req, res) => {
+  console.log("dataentry/appointments");
   isAuth(connection, req, res, (user) => {
     if (user.Type == "dataentry") {
       //sql query
-      tests = req.body.tests;
-      treatments = req.body.treatments;
-      let sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
-      let imps = tests.forEach((test) => {
-        sql += `('${test.name}', '${test.date}', '${test.result}', ${
-          test.report ? test.report : null
-        }), `;
-        return test.important;
-      });
-      sql.slice(0, -2);
-      sql += ";";
+      let tests = req.body.tests;
+      let treatments = req.body.treatments;
+      console.log({ tests });
+      console.log({ treatments });
+      let sql = ``;
+      if (tests.length > 0) {
+        sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
+        var imps = tests.map((test) => {
+          sql += `('${test.name}', '${test.date}', '${
+            test.result
+          }', ${null}), `;
+          return test.important || 0;
+        });
+        sql = sql.slice(0, -2);
+        sql += ";";
+      } else {
+        sql = `SELECT 0;`;
+      }
+      console.log({ sql });
+      console.log({ imps });
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error" });
+          console.log(err);
           return;
         }
         let testIds = result.insertId;
         let testNo = result.affectedRows;
-        sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
-        treatments.forEach((treatment) => {
-          sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
-        });
-        sql.slice(0, -2);
-        sql += ";";
+        if (treatments.length > 0) {
+          sql = `INSERT INTO Treatment (Date, Name, Dosage) VALUES `;
+          treatments.forEach((treatment) => {
+            sql += `('${treatment.date}', '${treatment.name}', '${treatment.dosage}'), `;
+          });
+          sql = sql.slice(0, -2);
+          sql += ";";
+        } else {
+          sql = `SELECT 0;`;
+        }
+
+        console.log({ sql });
         connection.query(sql, function (err, result) {
           if (err) {
             res.json({ status: "error" });
+            console.log({ err });
             return;
           }
           let treatmentIds = result.insertId;
@@ -424,28 +447,50 @@ app.post("/dataentry/appointments", (req, res) => {
               return;
             }
             let prescriptionId = result.insertId;
-            sql = `INSERT INTO Prescription_Test VALUES `;
-            let i = 0;
-            imps.forEach((imp) => {
-              sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
-              i += 1;
-            });
-            sql.slice(0, -2);
+            if (tests.length > 0) {
+              sql = `INSERT INTO Prescription_Test VALUES `;
+              let i = 0;
+              imps.forEach((imp) => {
+                sql += `(${prescriptionId}, ${testIds + i}, ${imp}), `;
+                i += 1;
+              });
+              sql = sql.slice(0, -2);
+              sql += ";";
+            } else {
+              sql = `SELECT 0;`;
+            }
+            console.log({ sql });
             connection.query(sql, function (err, result) {
               if (err) {
                 res.json({ status: "error" });
                 return;
               }
-              sql = `INSERT INTO Presctiption_Treatment VALUES `;
-              for (i = 0; i < treatmentNo; i++) {
-                sql += `(${prescriptionId}, ${treatmentIds + i}), `;
+              if (treatments.length > 0) {
+                sql = `INSERT INTO Prescription_Treatment VALUES `;
+                for (i = 0; i < treatmentNo; i++) {
+                  sql += `(${prescriptionId}, ${treatmentIds + i}), `;
+                }
+                sql = sql.slice(0, -2);
+                sql += ";";
+              } else {
+                sql = `SELECT 0;`;
               }
-              sql.slice(0, -2);
+              console.log({ sql });
               connection.query(sql, function (err, result) {
                 if (err) {
                   res.json({ status: "error" });
                   return;
                 }
+                sql = `UPDATE Appointment SET Prescription = ${prescriptionId} WHERE ID = ${req.body.appID};`;
+                console.log({ sql });
+                connection.query(sql, function (err, result) {
+                  if (err) {
+                    res.json({ status: "error" });
+                    return;
+                  }
+                  res.json({ status: "ok", data: { prescriptionId } });
+                  console.log({ result });
+                });
               });
             });
           });
@@ -633,14 +678,14 @@ app.post("/getTreatment", (req, res) => {
                         Treatment.Dosage AS Dosage,
                         Treatment.Date AS Date
                 from Treatment, Prescription_Treatment,Appointment
-                where Appointment.Patient = '${req.body.patientId}' and Appointment.Prescription = Prescription_Treatment.ID and Prescription_Treatment.Treatment = Treatment.ID;`
+                where Appointment.Patient = '${req.body.patientId}' and Appointment.Prescription = Prescription_Treatment.ID and Prescription_Treatment.Treatment = Treatment.ID;`;
       // console.log({ sql });
 
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error", reason: "getTreatment" });
         } else {
-          console.log({result})
+          console.log({ result });
           // console.log({ result });
           //PROBLEM
           res.json({ status: "ok", result });
