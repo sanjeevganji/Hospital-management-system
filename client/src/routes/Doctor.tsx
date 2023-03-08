@@ -126,7 +126,7 @@ function Doctor() {
         <div className="grid grid-cols-5 gap-3 mb-2 mt-4 text-center">
           <h3 className="col-span-1">Patient ID</h3>
           <h3 className="col-span-3">Patient Name</h3>
-          <h3 className="col-span-2">Date</h3>
+          <h3 className="col-span-1">Date</h3>
           {/* <h3 className="col-span-2">Priority</h3> */}
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
@@ -149,8 +149,8 @@ function Doctor() {
                     key={appointment.appID}
                   >
                     <div className="card col-span-1">{appointment.pID}</div>
-                    <div className="card col-span-2">{appointment.pName}</div>
-                    <div className="card col-span-2">
+                    <div className="card col-span-3">{appointment.pName}</div>
+                    <div className="card col-span-1">
                       {appointment.date.slice(0, 10)}
                     </div>
                     {/* <div className="card col-span-2">{appointment.priority}</div> */}
