@@ -5,6 +5,7 @@ create table User (
     `Password` text not null,
     `Type` varchar(16) not null,
     `Name` varchar(256) not null,
+    `Email` varchar(256),
     CHECK (`Type` IN ('frontdesk','admin','dataentry', 'doctor'))
 );
 
