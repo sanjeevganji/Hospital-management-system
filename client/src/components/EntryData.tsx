@@ -10,7 +10,7 @@ function EntryData(props: any) {
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
-  let { appID, open, onClose ,appDate} = props;
+  let { appID, open, onClose, appDate } = props;
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
@@ -21,7 +21,7 @@ function EntryData(props: any) {
     "
       style={{ display: open ? "grid" : "none" }}
     >
-      <h2 className="text-left ml-2">Add Tests</h2>
+      <h2 className="text-left ml-2">Add Tests' Details</h2>
       <form
         className="grid grid-cols-2 place-content-center items-start"
         style={{ height: "340px" }}
@@ -31,11 +31,54 @@ function EntryData(props: any) {
           let name = data.get("name");
           let result = data.get("result");
           let date = data.get("date");
-          let important=data.get("important");
-          let file = data.get("file");
-          let test = { name, result, date,important:important?"1":"0", report: file };
-          setTests(tests.slice().concat(test as any));
+          let important = data.get("important");
+          let file = data.get("file") as File;
+          //load the file
+          console.log(file);
+          if (file as File) {
+            let reader = new FileReader();
+            //prep the json data on load
+            reader.onload = function (event: any) {
+              const arrayBuf = event.target.result as ArrayBuffer;
+              console.log(arrayBuf);
+              let buffer = new Uint8Array(arrayBuf).buffer;
+              let binary = [...new Uint8Array(buffer)]
+                .map((x) => x.toString(16).padStart(2, "0"))
+                .join("");
+              //hex string to array buffer
+              const binaryData = new Uint8Array(
+                binary.match(/[\da-f]{2}/gi).map(function (h) {
+                  return parseInt(h, 16);
+                })
+              ).buffer;
+              const b = new Blob([arrayBuf], { type: "application/pdf" });
+              const url = URL.createObjectURL(b);
+              window.open(url, "_blank");
 
+              // let test = {
+              //   name,
+              //   result,
+              //   date,
+              //   important: important ? "1" : "0",
+              //   reportName: file.name,
+              //   reportBody: binary,
+              // };
+              // setTests(tests.slice().concat(test as any));
+              // console.log("onSubmit: with report", test);
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            let test = {
+              name,
+              result,
+              date,
+              important: important ? "1" : "0",
+              reportName: file.name,
+              reportBody: null,
+            };
+            setTests(tests.slice().concat(test as any));
+            console.log("onSubmit: without report", test);
+          }
           //remove the values from the form
           (e.target as HTMLFormElement).reset();
         }}
@@ -53,23 +96,16 @@ function EntryData(props: any) {
             autoComplete="off"
             required
           />
-          
-            <span className="text-gray-900 mt-2 text-left flex gap-2 items-center h-10">
-              <span>Result</span>
-            <select className="flex-1" name="result">
-              <option value="positive">positive</option>
-              <option value="negative">negative</option>
-            </select>
-            </span>
+
           <label className=" flex items-center gap-2 h-10">
-          <input
-            className="h-5"
-            type="checkbox"
-            placeholder="important"
-            name="important"
-            autoComplete="off"
-          />
-          important
+            <input
+              className="h-5"
+              type="checkbox"
+              placeholder="important"
+              name="important"
+              autoComplete="off"
+            />
+            important
           </label>
           <input
             className="h-10"
@@ -81,6 +117,13 @@ function EntryData(props: any) {
             autoComplete="off"
             required
           />
+          <span className="text-gray-900 mt-2 text-left flex gap-2 items-center h-10">
+            <span>Result</span>
+            <select className="flex-1" name="result">
+              <option value="positive">positive</option>
+              <option value="negative">negative</option>
+            </select>
+          </span>
           <div className="flex gap-3 items-center h-10 text-gray-900">
             <div>Upload Report:</div>
             <input name="file" type="file" />
@@ -102,9 +145,11 @@ function EntryData(props: any) {
                 <li className="flex gap-3" key={i}>
                   <span
                     className="p-2 bg-slate-200 rounded-sm  flex-grow flex-shrink w-0 outline outline-2 outline-slate-300 cursor-default overflow-hidden overflow-ellipsis"
-                    title={`name:${test.name}\nresult:${test.result}\nimportant:${test.important}\ndate:${
-                      test.date
-                    }\nfile:${test.file ? test.file.name : "none"}`}
+                    title={`name:${test.name}\nresult:${
+                      test.result
+                    }\nimportant:${test.important}\ndate:${test.date}\nfile:${
+                      test.reportName ? test.reportName : "none"
+                    }`}
                   >
                     {test.name}
                   </span>
@@ -123,7 +168,7 @@ function EntryData(props: any) {
           )}
         </span>
       </form>
-      <h2 className="text-left mt-6 ml-2">Add Treatments</h2>
+      <h2 className="text-left mt-6 ml-2">Add Treatments' Details</h2>
       <form
         className="grid grid-cols-2 place-content-center items-start"
         style={{ height: "228px" }}
