@@ -11,10 +11,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "password",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "password",
   // host: "dbms-hostpital.mysql.database.azure.com",
   // user: "atishay",
   // password: "pass@123",
@@ -25,10 +25,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "DakRR#2020",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",
   // user: "sql12602698",
   // database: "sql12602698",
@@ -48,6 +48,9 @@ var app = express();
 var PORT = 3000;
 // use cors
 app.use(cors());
+
+//json limit 20mb
+app.use(express.json({ limit: "20mb" }));
 
 //implement for specific clients
 
@@ -175,8 +178,6 @@ app.get("/frontdesk/patients", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "frontdesk") {
-      //todo: change the query to get if patient is in Admission and Discharge Date is > current date
-
       let sql = `SELECT Patient.*, Admission.Room AS Room, Room.Type AS Type,
           CASE WHEN Admission.ID IS NOT NULL AND Admission.Discharge_date IS NULL
             THEN true
@@ -187,7 +188,6 @@ app.get("/frontdesk/patients", (req, res) => {
         LEFT JOIN Room ON Room.Number = Admission.Room
         ORDER BY Patient.ID DESC;
       `;
-      //DISCHARGE kiya par admitted phir bhi true aa raha hai
       console.log(sql);
       connection.query(sql, function (err, result) {
         if (err) {
@@ -202,12 +202,11 @@ app.get("/frontdesk/patients", (req, res) => {
 });
 
 app.get("/dataentry/appointments", (req, res) => {
-  console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "dataentry") {
       // get all the patients that have some test pending`
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor ;`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient, User WHERE Prescription IS NULL AND Patient=Patient.ID AND User.Username=Doctor  AND Date <= CURDATE();`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -253,30 +252,28 @@ app.get("/doctor/patients", (req, res) => {
   });
 });
 
-
 app.get("/getAdmissionHistory", (req, res) => {
   console.log({ body: req.headers });
   isAuth(connection, req, res, (user) => {
-    console.log({user});
-    if(user.Type == "frontdesk")
-    {
+    console.log({ user });
+    if (user.Type == "frontdesk") {
       let sql = `SELECT Admission.ID AS appID, Admission.Room AS Room,Admission.Admit_date As Admit_date, Admission.Discharge_date AS Discharge_Date,
               Patient.Name AS Name, Patient.ID AS Patient
               FROM Admission
               JOIN Patient ON Admission.Patient = Patient.ID
               ORDER BY Admission.ID DESC LIMIT 100;`;
       console.log(sql);
-      connection.query(sql, function(err, result){
+      connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error" });
         } else {
           console.log(result);
           res.json(result);
         }
-      })
+      });
     }
   });
-})
+});
 
 //not tested
 // app.get("/test/:id", (req, res) => {
@@ -375,7 +372,10 @@ app.post("/discharge", (req, res) => {
         } else if (result.length == 0) {
           res.json({ status: "error", message: "Patient is not admitted" });
         } else {
-          sql = `UPDATE Admission SET Discharge_date = '${date.slice(0,10)}' WHERE ID = ${result[0].ID};`;
+          sql = `UPDATE Admission SET Discharge_date = '${date.slice(
+            0,
+            10
+          )}' WHERE ID = ${result[0].ID};`;
           let roomNumber = result[0].Room;
           console.log(sql);
           connection.query(sql, function (err, result) {
@@ -415,6 +415,7 @@ app.post("/register", (req, res) => {
   });
 });
 
+//TODO: add report BODY to test
 app.post("/dataentry/appointments", (req, res) => {
   console.log("dataentry/appointments");
   isAuth(connection, req, res, (user) => {
@@ -422,15 +423,26 @@ app.post("/dataentry/appointments", (req, res) => {
       //sql query
       let tests = req.body.tests;
       let treatments = req.body.treatments;
-      console.log({ tests });
       console.log({ treatments });
       let sql = ``;
       if (tests.length > 0) {
         sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
-        var imps = tests.map((test) => {
-          sql += `('${test.name}', '${test.date}', '${
-            test.result
-          }', ${null}), `;
+        var imps = tests.map((test, i) => {
+          if (test.reportBody) {
+            let rb = test.reportBody;
+            console.log(
+              JSON.stringify(
+                `('${test.name}', '${test.date}', '${
+                  test.result
+                }', x'${rb.slice(0, 50)}...'), `
+              )
+            );
+            sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}'), `;
+          } else {
+            sql += `('${test.name}', '${test.date}', '${
+              test.result
+            }', ${null}), `;
+          }
           return test.important || 0;
         });
         sql = sql.slice(0, -2);
@@ -438,8 +450,8 @@ app.post("/dataentry/appointments", (req, res) => {
       } else {
         sql = `SELECT 0;`;
       }
-      console.log({ sql });
-      console.log({ imps });
+      // console.log({ sql });
+      // console.log({ imps });
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error" });
