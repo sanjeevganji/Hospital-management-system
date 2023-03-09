@@ -185,8 +185,7 @@ VALUES
     (1019);
 
 
-INSERT INTO Prescription_Test
-    (ID, Test, Important)
+INSERT INTO Prescription_Test(ID, Test, Important)
 VALUES
     (1001, 1, 1),
     (1002, 3, 0),
@@ -270,9 +269,7 @@ VALUES
     (30, NULL, 10, 130, 'doc2', '2023-06-22'),
     (31, NULL, 3, 131, 'doc1', '2023-04-16');
 
-INSERT INTO Appointment
-    (`ID`, `Prescription
-`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
+INSERT INTO Appointment(`ID`, `Prescription`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
 (51, 1001, 3, 101, 'doc1', '2022-12-15'),
 (52, 1002, 2, 104, 'doc1', '2022-12-10'),
 (53, 1003, 6, 105, 'doc2', '2022-11-22'),

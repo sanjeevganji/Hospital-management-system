@@ -4,6 +4,7 @@ import moment from "moment";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
 import { Blob } from "buffer";
+import fs from 'fs';
 
 const formatDate = (date) => {
   let d = moment(date);
@@ -11,16 +12,16 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "password",
-  // host: "dbms-hostpital.mysql.database.azure.com",
-  // user: "atishay",
-  // password: "pass@123",
-  // database: "hospital",
-  // port: 3306,
-  // ssl: { cs: fs.readFileSync("./files/BaltimoreCyberTrustRoot.crt.pem") },
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "password",
+  host: "dbms-hostpital.mysql.database.azure.com",
+  user: "atishay",
+  password: "pass@123",
+  database: "hospital",
+  port: 3306,
+  ssl: { cs: fs.readFileSync("./files/BaltimoreCyberTrustRoot.crt.pem") },
   // host: "localhost",
   // user: "root",
   // database: "Hospital",

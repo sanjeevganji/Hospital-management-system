@@ -17,7 +17,7 @@ function EntryData(props: any) {
   return (
     <div
       className="fixed inset-0 grid place-content-center  gap-2
-    bg-slate-300 text-gray-700 px-6 overflow-y-auto 
+    bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >
@@ -40,31 +40,35 @@ function EntryData(props: any) {
             //prep the json data on load
             reader.onload = function (event: any) {
               const arrayBuf = event.target.result as ArrayBuffer;
-              console.log(arrayBuf);
+              console.log(event.target.result);
               let buffer = new Uint8Array(arrayBuf).buffer;
               let binary = [...new Uint8Array(buffer)]
                 .map((x) => x.toString(16).padStart(2, "0"))
                 .join("");
-              //hex string to array buffer
-              const binaryData = new Uint8Array(
-                binary.match(/[\da-f]{2}/gi).map(function (h) {
-                  return parseInt(h, 16);
-                })
-              ).buffer;
-              const b = new Blob([arrayBuf], { type: "application/pdf" });
-              const url = URL.createObjectURL(b);
-              window.open(url, "_blank");
 
-              // let test = {
-              //   name,
-              //   result,
-              //   date,
-              //   important: important ? "1" : "0",
-              //   reportName: file.name,
-              //   reportBody: binary,
-              // };
-              // setTests(tests.slice().concat(test as any));
-              // console.log("onSubmit: with report", test);
+              // to open the uploaded file
+              
+              // const binaryData = new Uint8Array(
+              //         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
+              //           return parseInt(h, 16);
+              //         })
+              //   ).buffer;
+              // // hex string to array buffer
+
+              // const b = new Blob([binaryData], { type: "application/pdf" });
+              // const url = URL.createObjectURL(b);
+              // window.open(url, "_blank");
+
+              let test = {
+                name,
+                result,
+                date,
+                important: important ? "1" : "0",
+                reportName: file.name,
+                reportBody: binary,
+              };
+              setTests(tests.slice().concat(test as any));
+              console.log("onSubmit: with report", test);
             };
             reader.readAsArrayBuffer(file);
           } else {
@@ -132,7 +136,7 @@ function EntryData(props: any) {
         </span>
         <span
           className="
-          flex flex-col gap-3 bg-slate-100 rounded-md shadow-xl h-full overflow-hidden 
+          flex flex-col gap-3 bg-slate-100 rounded-md shadow-xl h-full overflow-hidden
           rounded-tl-none rounded-bl-none "
         >
           {tests.length == 0 ? (

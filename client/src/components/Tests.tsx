@@ -37,9 +37,18 @@ function Tests(props: any) {
               {test.Report  ?(
                 <button
                   onClick={() => {
-                    // const decodedString = String.fromCharCode(...test.Report.data)
-                    // console.log(decodedString);
-                    const blob = new Blob([test.Report], { type: 'application/pdf' });
+                    const buffer = test.Report.data as ArrayBuffer
+
+                    let binary = [...new Uint8Array(buffer)]
+                    .map((x) => x.toString(16).padStart(2, "0"))
+                      .join("");
+                    const binaryData = new Uint8Array(
+                         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
+                             return parseInt(h, 16);
+                         })
+                      ).buffer;
+
+                    const blob = new Blob([binaryData], { type: 'application/pdf' });
                     console.log(blob);
                     const url = URL.createObjectURL(blob);
                     // change title of url

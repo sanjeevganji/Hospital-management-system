@@ -54,7 +54,7 @@ create table Prescription_Test (
     `Test` int,
     `Important` boolean default false not null,
     foreign key (`Test`) REFERENCES `Test`(`ID`),
-    foreign key (`ID`) REFERENCES `Prescription` (`ID`),
+    foreign key (`ID`) REFERENCES `Prescription`(`ID`),
     primary key (`ID`, `Test`)
 );
 
