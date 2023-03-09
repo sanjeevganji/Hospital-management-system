@@ -37,11 +37,14 @@ function Tests(props: any) {
               {test.Report  ?(
                 <button
                   onClick={() => {
-                    const decodedString = String.fromCharCode(...test.Report.data)
-                    const blob = new Blob([decodedString], { type: 'text/plain' });
+                    // const decodedString = String.fromCharCode(...test.Report.data)
+                    // console.log(decodedString);
+                    const blob = new Blob([test.Report], { type: 'application/pdf' });
+                    console.log(blob);
                     const url = URL.createObjectURL(blob);
+                    // change title of url
                     window.open(url, '_blank');
-                    // setTimeout(() => URL.revokeObjectURL(url), 5000);
+                    setTimeout(() => URL.revokeObjectURL(url), 5000);
                   }}
                   className="orange col-span-1"
                 >
