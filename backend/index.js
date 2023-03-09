@@ -536,10 +536,18 @@ app.post("/dataentry/appointments", (req, res) => {
                   let imptests = tests.filter((test) => test.important == "1");
                   if (imptests.length > 0) {
                     sql = `SELECT Name as dName, Patient as pID, Email FROM Appointment, User WHERE Appointment.ID = ${req.body.appID} AND User.Username = Appointment.Doctor;`;
+                    connection.query(sql, function (err, result) {
+                      if (err) {
+                        res.json({ stats: "erroe" });
+                        return;
+                      }
+                      res.json({ status: "ok", data: { prescriptionId } });
+                      console.log({ result });
+                    });
                     mailDoc({
                       email: "atishayjain002@gmail.com",
                       patient: 2,
-                      name: "Atishay",
+                      name: dName,
                       test: imptests,
                     });
                   }
