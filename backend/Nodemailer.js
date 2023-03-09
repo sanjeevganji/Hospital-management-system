@@ -1,30 +1,41 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 
-let mailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "rudrakpatratest@gmail.com",
-    pass: "pfvlqifqghhxhoef",
-  },
-});
+function mailDoc(props) {
+  let mailTransporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "rudrakpatratest@gmail.com",
+      pass: "pfvlqifqghhxhoef",
+    },
+  });
 
-let mailDetails = {
-  from: "rudrakpatratest@gmail.com",
-  to: "das815221@gmail.com",
-  subject: "Paitient health is Critical",
-  text: "Dear Dr.Akash Das,The patient has died so there is no need to send the further reports.  XD  Regards DBMS Hospital",
-  html: `
-  <h1>Dear Dr.Akash Das,</h1>
-    <p>The patient has died so there is no need to send the further reports.  XD </p>
+  let testResult = "";
+  props.test.forEach((test) => {
+    testResult += `<p>Name: <b>${test.name}</b>, Date: <b>${test.date}</b>, Result: <b>${test.result}</b></p>\n`;
+  });
+
+  let mailDetails = {
+    from: "rudrakpatratest@gmail.com",
+    to: props.email,
+    subject: "Paitient health report",
+    text: "",
+    html: `
+    <p>Dear Dr. <b>${props.name}</b>,</p>
+    <p>The report for the patient named <b>${props.pName}</b> with ID <b>'${props.patient}'</b> for the important tests are as follows </p>
+    ${testResult}
     <p>Regards</p>
-    <p>DBMS Hospital</p>
-  `,
-};
+    <p><b>PARAS</b> Hospital</p>`,
+  };
 
-mailTransporter.sendMail(mailDetails, function (err, data) {
-  if (err) {
-    console.log("Error Occurs", err, data);
-  } else {
-    console.log("Email sent successfully");
-  }
-});
+  mailTransporter.sendMail(mailDetails, function (err, data) {
+    if (err) {
+      console.log("Error Occurs", err, data);
+      console.log({ mailDetails });
+    } else {
+      console.log({ props });
+      console.log("Email sent successfully");
+    }
+  });
+}
+
+export default mailDoc;
