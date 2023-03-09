@@ -5,8 +5,6 @@ import mysql from "mysql2";
 import isAuth from "./auth.js";
 import mailDoc from "./Nodemailer.js";
 import fs from "fs";
-import { Blob } from "buffer";
-import fs from 'fs';
 
 const formatDate = (date) => {
   let d = moment(date);
