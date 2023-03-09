@@ -154,7 +154,7 @@ function FrontDesk() {
         <button className="blue">Register Patient </button>
         <div className="col-span-2 flex flex-col gap-4 py-2 "></div>
       </form>
-  
+
       <select
       className="mt-8 mb-2 shadow-lg font-bold"
       onChange={(event:any) => {
@@ -214,14 +214,14 @@ function FrontDesk() {
       <div className=" grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
         <h2 className=" col-span-1">ID</h2>
         <h2 className=" col-span-2">Patient Name</h2>
-        <h2 className=" col-span-2">Address</h2>
+        <h2 className=" col-span-3">Address</h2>
         <select className="col-span-2 font-bold" onChange={handleOptionChange}>
           <option value="Contact" className="font-bold">Contact</option>
           <option value="Email" className="font-bold">Email</option>
         </select>
         <h2 className=" col-span-1">Room</h2>
         <h2 className=" col-span-1">Type</h2>
-        <h2 className=" col-span-3">Actions</h2>
+        <h2 className=" col-span-2">Actions</h2>
       </div>
       <div className=" mb-16 mt-6 flex flex-col gap-3 ">
       {fetchedPatients?.map((fetchedPatient: any) => (
@@ -229,7 +229,7 @@ function FrontDesk() {
           <div className="grid grid-cols-12 gap-3" key={fetchedPatient.ID}>
             <div className="card col-span-1 whitespace-nowrap">{fetchedPatient.ID}</div>
             <div className="card col-span-2 whitespace-nowrap">{fetchedPatient.Name}</div>
-            <div className="card col-span-2 whitespace-nowrap">{fetchedPatient.Address}</div>
+            <div className="card col-span-3 whitespace-nowrap">{fetchedPatient.Address}</div>
             { selectedOption === 1 ?
                 (<div className="card col-span-2 whitespace-nowrap">{fetchedPatient.Email}</div>):
                 (<div className="card col-span-2 whitespace-nowrap">{fetchedPatient.Contact}</div>)
@@ -301,24 +301,6 @@ function FrontDesk() {
               className={"col-span-1 orange"}
             >
               appoint
-            </button>
-            <ScheduleAppointmentPopUp
-              patientId={fetchedPatient.ID}
-              open={fetchedPatient.ID === get3}
-              onClose={() => {
-                set3(null);
-                fetchAllPatients(user).then((res) => {
-                  setFetchedPatients(res);
-                });
-              }}
-            />
-            <button
-              onClick={() => {
-                set3(fetchedPatient.ID);
-              }}
-              className={"col-span-1 red"}
-            >
-              Test
             </button>
             <ScheduleAppointmentPopUp
               patientId={fetchedPatient.ID}

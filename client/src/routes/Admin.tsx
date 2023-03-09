@@ -132,18 +132,20 @@ function Admin() {
         <button className="blue">Add User</button>
       </form>
       <h1 className="mt-16 mb-2">Users</h1>
-      <div className=" grid grid-cols-4 gap-3 mt-1 mb-2 shadow-lg text-center ">
+      <div className=" grid grid-cols-5 gap-3 mt-1 mb-2 shadow-lg text-center ">
         <h2>Username</h2>
         <h2>Name</h2>
         <h2>Type</h2>
+        <h2>Email</h2>
         <h2>Action</h2>
       </div>
       <div className=" mb-16 mt-6 flex flex-col gap-3 ">
         {fetchedUsers?.map((fetchedUser: any) => (
-          <div className="grid grid-cols-4 gap-3" key={fetchedUser.Username}>
+          <div className="grid grid-cols-5 gap-3" key={fetchedUser.Username}>
             <div className="card whitespace-nowrap">{fetchedUser.Username}</div>
             <div className="card whitespace-nowrap">{fetchedUser.Name}</div>
             <div className="card whitespace-nowrap">{fetchedUser.Type}</div>
+             <div className="card whitespace-nowrap">{fetchedUser.Email}</div>
             <button
               disabled={fetchedUser.Type === "admin"}
               className={"col-span-1 orange"}
