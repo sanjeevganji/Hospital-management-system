@@ -3,6 +3,8 @@ import cors from "cors";
 import moment from "moment";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
+import mailDoc from "./Nodemailer.js";
+import fs from "fs";
 import { Blob } from "buffer";
 import fs from 'fs';
 
@@ -30,7 +32,7 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "DakRR#2020",
-  // host: "sql12.freemysqlhosting.net",
+  // host: "sql12.freemysqlhosting.net",t
   // user: "sql12602698",
   // database: "sql12602698",
   // password: "1KhY5mYxNw",
@@ -42,7 +44,7 @@ connection.connect(function (err) {
     console.log({ err });
     return;
   }
-  console.log("Connected!");
+  console.log("Connected to database!");
 });
 
 var app = express();
@@ -531,6 +533,16 @@ app.post("/dataentry/appointments", (req, res) => {
                   }
                   res.json({ status: "ok", data: { prescriptionId } });
                   console.log({ result });
+                  let imptests = tests.filter((test) => test.important == "1");
+                  if (imptests.length > 0) {
+                    sql = `SELECT Name as dName, Patient as pID, Email FROM Appointment, User WHERE Appointment.ID = ${req.body.appID} AND User.Username = Appointment.Doctor;`;
+                    mailDoc({
+                      email: "atishayjain002@gmail.com",
+                      patient: 2,
+                      name: "Atishay",
+                      test: imptests,
+                    });
+                  }
                 });
               });
             });
