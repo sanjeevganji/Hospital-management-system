@@ -33,6 +33,12 @@ function EntryData(props: any) {
           let date = data.get("date");
           let important = data.get("important");
           let file = data.get("file") as File;
+
+
+          let image = data.get("image") as File;
+
+          console.log(image);
+
           //load the file
           console.log(file);
           if (file as File) {
@@ -47,7 +53,7 @@ function EntryData(props: any) {
                 .join("");
 
               // to open the uploaded file
-              
+
               // const binaryData = new Uint8Array(
               //         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
               //           return parseInt(h, 16);
@@ -59,19 +65,70 @@ function EntryData(props: any) {
               // const url = URL.createObjectURL(b);
               // window.open(url, "_blank");
 
-              let test = {
-                name,
-                result,
-                date,
-                important: important ? "1" : "0",
-                reportName: file.name,
-                reportBody: binary,
-              };
-              setTests(tests.slice().concat(test as any));
-              console.log("onSubmit: with report", test);
+              if (image as File) {
+                let reader = new FileReader();
+                reader.onload = function (event: any) {
+                const arrayBuf = event.target.result as ArrayBuffer;
+                console.log(event.target.result);
+                let binaryimg = [...new Uint8Array(arrayBuf)]
+                  .map((x) => x.toString(16).padStart(2, "0"))
+                  .join("");
+                  let test = {
+                    name,
+                    result,
+                    date,
+                    important: important ? "1" : "0",
+                    reportName: file.name,
+                    reportBody: binary,
+                    imageName: image.name,
+                    imageBody: binaryimg,
+                  };
+                  setTests(tests.slice().concat(test as any));
+                  console.log("onSubmit: with report", test);
+                };
+                reader.readAsArrayBuffer(image);
+              }
+              else{
+                let test = {
+                    name,
+                    result,
+                    date,
+                    important: important ? "1" : "0",
+                    reportName: file.name,
+                    reportBody: binary,
+                    imageName: image.name,
+                    imageBody: null,
+                  };
+                  setTests(tests.slice().concat(test as any));
+                  console.log("onSubmit: with report", test);
+              }
+
             };
             reader.readAsArrayBuffer(file);
-          } else {
+          } else if(image as File){
+                let reader = new FileReader();
+                reader.onload = function (event: any) {
+                const arrayBuf = event.target.result as ArrayBuffer;
+                console.log(event.target.result);
+                let binaryimg = [...new Uint8Array(arrayBuf)]
+                  .map((x) => x.toString(16).padStart(2, "0"))
+                  .join("");
+                  let test = {
+                    name,
+                    result,
+                    date,
+                    important: important ? "1" : "0",
+                    reportName: file.name,
+                    reportBody: null,
+                    imageName: image.name,
+                    imageBody: binaryimg,
+                  };
+                  setTests(tests.slice().concat(test as any));
+                  console.log("onSubmit: with report", test);
+                };
+                reader.readAsArrayBuffer(image);
+          }
+          else {
             let test = {
               name,
               result,
@@ -79,6 +136,8 @@ function EntryData(props: any) {
               important: important ? "1" : "0",
               reportName: file.name,
               reportBody: null,
+              imageName: image.name,
+              imageBody: null,
             };
             setTests(tests.slice().concat(test as any));
             console.log("onSubmit: without report", test);
@@ -130,7 +189,9 @@ function EntryData(props: any) {
           </span>
           <div className="flex gap-3 items-center h-10 text-gray-900">
             <div>Upload Report:</div>
-            <input name="file" type="file" />
+            <input name="file" type="file" accept=".pdf"/>
+            <div>Upload Image:</div>
+            <input name="image" type="file" accept="image/*"/>
           </div>
           <button className="blue">Add Test</button>
         </span>

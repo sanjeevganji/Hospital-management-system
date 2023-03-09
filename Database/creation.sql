@@ -20,7 +20,8 @@ create table Test (
     `Name` text not null,
     `Date` datetime not null,
     `Result` text,
-    `Report` MEDIUMBLOB
+    `Report` MEDIUMBLOB,
+    `Image` MEDIUMBLOB
 );
 
 create table Treatment (

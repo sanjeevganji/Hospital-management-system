@@ -250,9 +250,10 @@ export const addUser = async (
   username,
   password,
   name,
+  email,
   type
 ) => {
-  my_alert(adminUsername, adminPassword, username, password, name, type);
+  my_alert(adminUsername, adminPassword, username, password, name,email, type);
   let config = {
     method: "POST",
     headers: {
@@ -265,6 +266,7 @@ export const addUser = async (
       password: password,
       name: name,
       type: type,
+      email: email,
     }),
   };
   console.log(config.body);

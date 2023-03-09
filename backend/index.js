@@ -16,20 +16,20 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  host: "dbms-hostpital.mysql.database.azure.com",
-  user: "atishay",
-  password: "pass@123",
-  database: "hospital",
-  port: 3306,
-  ssl: { cs: fs.readFileSync("./files/BaltimoreCyberTrustRoot.crt.pem") },
+  // host: "dbms-hostpital.mysql.database.azure.com",
+  // user: "atishay",
+  // password: "pass@123",
+  // database: "hospital",
+  // port: 3306,
+  // ssl: { cs: fs.readFileSync("./files/BaltimoreCyberTrustRoot.crt.pem") },
   // host: "localhost",
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "DakRR#2020",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",t
   // user: "sql12602698",
   // database: "sql12602698",
@@ -103,7 +103,7 @@ app.post("/users", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "admin") {
       //sql query
-      let sql = `INSERT INTO User (Username, Password, Type, Name) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}');`;
+      let sql = `INSERT INTO User (Username, Password, Type, Name, Email) VALUES ('${req.body.username}', '${req.body.password}', '${req.body.type}', '${req.body.name}', '${req.body.email}');`;
       connection.query(sql, function (err, result) {
         if (err) {
           res.json({ status: "error", reason: "username must be unique" });
@@ -427,7 +427,7 @@ app.post("/dataentry/appointments", (req, res) => {
       console.log({ treatments });
       let sql = ``;
       if (tests.length > 0) {
-        sql = `INSERT INTO Test (Name, Date, Result, Report) VALUES `;
+        sql = `INSERT INTO Test (Name, Date, Result, Report, Image) VALUES `;
         var imps = tests.map((test, i) => {
           if (test.reportBody) {
             let rb = test.reportBody;
@@ -438,11 +438,17 @@ app.post("/dataentry/appointments", (req, res) => {
                 }', x'${rb.slice(0, 50)}...'), `
               )
             );
-            sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}'), `;
+            test.imageBody
+                ? (sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}', x'${test.imageBody}'), `)
+                : (sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}', ${null} ), `);
           } else {
-            sql += `('${test.name}', '${test.date}', '${
-              test.result
-            }', ${null}), `;
+            test.imageBody
+                ? (sql += `('${test.name}', '${test.date}', '${
+                      test.result
+                  }', ${null},  ${null}), `)
+                : (sql += `('${test.name}', '${test.date}', '${
+                      test.result
+                  }', x'${rb}', ${null} ), `);
           }
           return test.important || 0;
         });
@@ -762,7 +768,7 @@ app.post("/getTest", (req, res) => {
     if (user.Type == "doctor") {
       console.log({ body: req.body });
       //sql query
-      let sql = `select Appointment.ID AS appID, Test.ID AS ID , Test.Name AS Name,  Test.Date AS Date, Test.Result AS Result, Test.Report AS Report from Test, Prescription_Test, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Test.ID and Prescription_Test.Test = Test.ID;`;
+      let sql = `select Appointment.ID AS appID, Test.ID AS ID , Test.Name AS Name,  Test.Date AS Date, Test.Result AS Result, Test.Report AS Report, Test.Image AS Image from Test, Prescription_Test, Appointment where Appointment.Patient = "${req.body.patientId}" and Appointment.Prescription = Prescription_Test.ID and Prescription_Test.Test = Test.ID;`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {

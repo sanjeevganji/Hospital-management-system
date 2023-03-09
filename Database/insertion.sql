@@ -64,35 +64,16 @@ VALUES
 INSERT INTO Test
     (Name, Date, Result, Report)
 VALUES
-    ('Blood Test', '2022-01-01 10:30:00', 'Positive', CAST('Medical Report: Blood Test Results
-
-Patient Name: [Insert Patient Name]
-Date of Test: [Insert Date]
-
-Test Performed: Blood Test
-
-Summary of Results:
-The patient\'s blood test showed that their levels of red blood cells, white blood cells, and platelets are all within normal range. Their
-hemoglobin and hematocrit levels are also normal, indicating that the patient\'s blood is carrying enough oxygen to their body tissues. Additionally, their blood glucose levels are within normal range, which is a positive sign for their overall health. However, their cholesterol levels are slightly elevated, which could indicate a risk for cardiovascular disease if not managed properly.
-
-Recommendations:
-
-Encourage the patient to adopt a healthy diet and lifestyle habits to manage their cholesterol levels.
-Schedule a follow-up appointment with the patient to monitor their cholesterol levels and overall health.
-If the patient is experiencing any symptoms related to their blood test results, further tests or treatments may be necessary.
-Additional Information:
-The patient has a history of high blood pressure and is currently taking medication to manage it.
-Their blood pressure levels were not tested during this blood test,
-so it is recommended that the patient continue to monitor their blood pressure at home and report any changes to their healthcare provider.' AS BINARY)),
-('X-Ray', '2022-01-02 14:00:00', 'Negative', NULL),
-('CT Scan', '2022-01-03 09:15:00', 'Positive', NULL),
-('MRI', '2022-01-05 11:00:00', 'Negative', NULL),
-('ECG', '2022-01-07 16:45:00', 'Positive', NULL),
-('Ultrasound', '2022-01-10 10:00:00', 'Negative', NULL),
-('Blood Culture', '2022-01-11 11:30:00', NULL, NULL),
-('Urine Culture', '2022-01-12 12:15:00', 'Positive', NULL),
-('Stool Test', '2022-01-15 09:30:00', 'Negative', NULL),
-('Sputum Test', '2022-01-18 15:00:00', 'Positive', NULL);
+    ('Blood Test', '2022-01-01 10:30:00', 'Positive', null),
+    ('X-Ray', '2022-01-02 14:00:00', 'Negative', NULL),
+    ('CT Scan', '2022-01-03 09:15:00', 'Positive', NULL),
+    ('MRI', '2022-01-05 11:00:00', 'Negative', NULL),
+    ('ECG', '2022-01-07 16:45:00', 'Positive', NULL),
+    ('Ultrasound', '2022-01-10 10:00:00', 'Negative', NULL),
+    ('Blood Culture', '2022-01-11 11:30:00', NULL, NULL),
+    ('Urine Culture', '2022-01-12 12:15:00', 'Positive', NULL),
+    ('Stool Test', '2022-01-15 09:30:00', 'Negative', NULL),
+    ('Sputum Test', '2022-01-18 15:00:00', 'Positive', NULL);
 
 INSERT INTO Treatment
     (Date, Name, Dosage)
@@ -185,7 +166,8 @@ VALUES
     (1019);
 
 
-INSERT INTO Prescription_Test(ID, Test, Important)
+INSERT INTO Prescription_Test
+    (ID, Test, Important)
 VALUES
     (1001, 1, 1),
     (1002, 3, 0),
@@ -269,7 +251,9 @@ VALUES
     (30, NULL, 10, 130, 'doc2', '2023-06-22'),
     (31, NULL, 3, 131, 'doc1', '2023-04-16');
 
-INSERT INTO Appointment(`ID`, `Prescription`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
+INSERT INTO Appointment
+    (`ID`, `Prescription
+`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
 (51, 1001, 3, 101, 'doc1', '2022-12-15'),
 (52, 1002, 2, 104, 'doc1', '2022-12-10'),
 (53, 1003, 6, 105, 'doc2', '2022-11-22'),

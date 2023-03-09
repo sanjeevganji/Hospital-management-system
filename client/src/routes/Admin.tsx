@@ -64,12 +64,21 @@ function Admin() {
             e.preventDefault();
             return;
           }
+          if((e.target as any).name.value.length == 0)
+          {
+            alert(
+              "email is required"
+            )
+            e.preventDefault();
+            return;
+          }
           let s = await addUser(
             user.username,
             user.password,
             (e.target as any).username.value,
             (e.target as any).password.value,
             (e.target as any).name.value,
+            (e.target as any).email.value,
             (e.target as any).type.value
           );
           console.log(s);
@@ -81,7 +90,7 @@ function Admin() {
           });
         }}
       >
-        <div className="col-span-4 flex gap-4 py-2 ">
+        <div className="col-span-5 flex gap-4 py-2 ">
           <div>Type:</div>
           <label>
             <input
@@ -123,6 +132,7 @@ function Admin() {
           autoComplete="off"
         />
         <input type="text" placeholder="name" name="name" autoComplete="off" />
+        <input type="text" placeholder="email" name="email" autoComplete="off" />
         <input
           type="password"
           placeholder="password"
