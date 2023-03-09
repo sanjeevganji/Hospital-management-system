@@ -529,26 +529,29 @@ app.post("/dataentry/appointments", (req, res) => {
                     res.json({ status: "error" });
                     return;
                   }
-                  res.json({ status: "ok", data: { prescriptionId } });
                   console.log({ result });
                   let imptests = tests.filter((test) => test.important == "1");
                   if (imptests.length > 0) {
-                    sql = `SELECT Name as dName, Patient as pID, Email FROM Appointment, User WHERE Appointment.ID = ${req.body.appID} AND User.Username = Appointment.Doctor;`;
+                    sql = `SELECT User.Name as dName,Patient.Name as pName, Appointment.Patient as pID, User.Email FROM Appointment, User, Patient WHERE Appointment.ID = ${req.body.appID} AND User.Username = Appointment.Doctor AND Patient.ID = Appointment.Patient;`;
+                    console.log({ sql });
                     connection.query(sql, function (err, result) {
+                      console.log(sql);
                       if (err) {
-                        res.json({ stats: "erroe" });
+                        console.log({ err });
+                        res.json({ stats: "error" });
                         return;
                       }
-                      res.json({ status: "ok", data: { prescriptionId } });
                       console.log({ result });
-                    });
-                    mailDoc({
-                      email: "atishayjain002@gmail.com",
-                      patient: 2,
-                      name: dName,
-                      test: imptests,
+                      mailDoc({
+                        email: result[0].Email,
+                        patient: result[0].pID,
+                        pName: result[0].pName,
+                        name: result[0].dName,
+                        test: imptests,
+                      });
                     });
                   }
+                  res.json({ status: "ok", data: { prescriptionId } });
                 });
               });
             });
