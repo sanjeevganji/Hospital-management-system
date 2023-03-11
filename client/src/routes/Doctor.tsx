@@ -5,6 +5,11 @@ import Treatments from "./Treatments";
 import moment from "moment";
 import { getUser } from "../log";
 
+const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+};
+
 function Doctor() {
   let [appointments, setAppointments] = React.useState([]);
   let [patients, setPatients] = React.useState([]);
@@ -28,11 +33,6 @@ function Doctor() {
     greeting = 'Good evening';
   }
 
-
-  const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
-  };
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -155,7 +155,7 @@ function Doctor() {
                 <div className="mb-2">Search by Date:</div>
                 <input
                   onChange={handleDate}
-                  min={new Date().toISOString().split("T")[0]}
+                  min={formatDate(new Date)}
                   className=" h-10 card w-full"
                   type={"date"}
                   placeholder="patient name"
@@ -183,12 +183,11 @@ function Doctor() {
                     (searchdate != null && searchdate != ""
                       ? searchdate == formatDate(appointment.date) //date from sql
                       : (searchid == 0 && searchname == "") ||
-                        (searchid != 0 &&
+                        (searchid == 0 ||
                           appointment.pID
                             .toString()
-                            .startsWith(searchid.toString())) ||
-                        (searchname != "" &&
-                          appointment.pName
+                            .startsWith(searchid.toString())) &&
+                        ( appointment.pName
                             .toLowerCase()
                             .startsWith(searchname.toLowerCase()))) && (
                       <div
@@ -264,7 +263,7 @@ function Doctor() {
                         (searchid2 != 0 &&
                           patient.ID.toString()
                             .toLowerCase()
-                            .startsWith(searchid2.toString().toLowerCase())) ||
+                            .startsWith(searchid2.toString().toLowerCase())) &&
                         (searchname2 != "" &&
                           patient.Name.toLowerCase().startsWith(
                             searchname2.toLowerCase()
