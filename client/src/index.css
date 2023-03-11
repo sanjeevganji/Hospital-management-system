@@ -24,39 +24,39 @@ h3 {
 
 input[type="text"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500;
 }
 input[type="date"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500;
 }
 input[type="number"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500;
 }
 
 input[type="password"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500;
 }
 input[type="file"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500 bg-slate-50;
 }
 input[type="file"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2 cursor-pointer
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500 bg-slate-50;
 }
 input[type="file"]::file-selector-button {
@@ -69,35 +69,35 @@ input[type="file"]::file-selector {
 select {
   height: 26px;
   @apply bg-slate-50 outline outline-2 outline-slate-300 rounded-sm px-2
-            focus:outline 
-            focus:outline-2 
+            focus:outline
+            focus:outline-2
             focus:outline-gray-500;
 }
 
 button.blue {
   @apply text-blue-900
             outline outline-2 outline-blue-300
-            bg-blue-300 hover:bg-blue-200 rounded-sm p-2 
+            bg-blue-300 hover:bg-blue-200 rounded-sm p-2
             focus:outline text-center  whitespace-nowrap capitalize
-            focus:outline-2 
+            focus:outline-2
             focus:outline-blue-500 overflow-hidden;
 }
 
 button.red {
   @apply text-red-900
             outline outline-2 outline-red-300
-            bg-red-300 hover:bg-red-200 rounded-sm p-2 
+            bg-red-300 hover:bg-red-200 rounded-sm p-2
             focus:outline text-center  whitespace-nowrap capitalize
-            focus:outline-2 
+            focus:outline-2
             focus:outline-red-500 overflow-hidden;
 }
 
 button.orange {
   @apply text-orange-900
             outline outline-2 outline-orange-300
-            bg-orange-300 hover:bg-orange-200 rounded-sm p-2 
+            bg-orange-300 hover:bg-orange-200 rounded-sm p-2
             focus:outline text-center  whitespace-nowrap capitalize
-            focus:outline-2 
+            focus:outline-2
             focus:outline-orange-500 overflow-hidden;
 }
 button:disabled {
@@ -111,11 +111,11 @@ button:disabled:hover {
         bg-slate-300 rounded-sm p-2 opacity-50;
 }
 .card {
-  @apply p-2 
+  @apply p-2
         bg-slate-100
         outline outline-2
             outline-slate-100
-        rounded-sm  
+        rounded-sm
         overflow-hidden
         overflow-ellipsis;
 }

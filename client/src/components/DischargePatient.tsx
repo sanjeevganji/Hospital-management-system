@@ -37,7 +37,7 @@ function DischargePatient(props: any) {
 
           <button
             type="submit"
-            className=" col-span-4 orange w-fit place-self-end"
+            className=" col-span-4 red w-fit place-self-end"
             onClick={() => {
                 onClose();
             }}
@@ -47,7 +47,7 @@ function DischargePatient(props: any) {
 
           <button
             type="submit"
-            className=" col-span-3 red w-fit place-self-end"
+            className=" col-span-3 blue w-fit place-self-end"
             onClick={async () => {
                 let s = await dischargePatient(
                   user.username,

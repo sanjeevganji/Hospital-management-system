@@ -88,6 +88,25 @@ function FrontDesk() {
     }
   }
 
+  const handlePanelChange = (event: any) => {
+        if (event.target.value === "Panel") {
+          setSelectedPanel(0);
+          console.log("p");
+          console.log(selectedPanel)
+        }
+        else if(event.target.value === "Rescheduling"){
+          setSelectedPanel(1);
+          console.log("r");
+          console.log(selectedPanel);
+        }
+        else if(event.target.value === "History"){
+            setSelectedPanel(2);
+            console.log("h");
+            console.log(selectedPanel);
+        }
+
+  }
+
   return (
     <div className="px-6">
       <>
@@ -157,47 +176,45 @@ function FrontDesk() {
 
       <select
       className="mt-8 mb-2 shadow-lg font-bold"
-      onChange={(event:any) => {
-        if (event.target.value === "Panel") {
-          setSelectedPanel(0);
-        } else {
-            setSelectedPanel(1);
-        }
-      }}>
+      onChange={handlePanelChange}>
           <option value="Panel" className="">Control Panel</option>
+          <option value="Rescheduling" className="">Rescheduling</option>
           <option value="History" className="">Admission History</option>
       </select>
 
-      {selectedPanel == 1 ?
+      {
+      selectedPanel == 2 &&
       (
         <>
         <div className="grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
           <h2 className=" col-span-2">Appointment ID</h2>
-          <h2 className=" col-span-2">Patient ID</h2>
-          <h2 className=" col-span-2">Patient Name</h2>
+          <h2 className=" col-span-1">Patient ID</h2>
+          <h2 className=" col-span-3">Patient Name</h2>
           <h2 className=" col-span-2">Admit Date</h2>
           <h2 className=" col-span-2">Discharge Date</h2>
           <h2 className=" col-span-2">Room Number</h2>
         </div>
-        <div className=" mb-16 mt-6 flex flex-col gap-3 ">
+        <div className=" mb-16 mt-6 flex flex-col gap-3 text-center ">
           {history?.map((Admission: any) => (
-            <div className="grid grid-cols-12 gap-3">
-              <div className=" col-span-2">{Admission.appID}</div>
-              <div className=" col-span-2">{Admission.Patient}</div>
-              <div className=" col-span-2">{Admission.Name}</div>
+            <div className="grid grid-cols-12 gap-3" key={Admission.appID}>
+              <div className=" col-span-2 text-center ">{Admission.appID}</div>
+              <div className=" col-span-1 text-center">{Admission.Patient}</div>
+              <div className=" col-span-3">{Admission.Name}</div>
               <div className=" col-span-2">{Admission.Admit_date.slice(0,19).replace("T", " ")}</div>
               {Admission.Discharge_Date ?
               (<div className=" col-span-2">{Admission.Discharge_Date.slice(0,19).replace("T", " ")}</div>)
               :
               (<div className=" col-span-2">-</div>)
               }
-              <div className=" col-span-2">{Admission.Room}</div>
+              <div className=" col-span-2 text-center">{Admission.Room}</div>
             </div>
           ))}
         </div>
         </>
       )
-      :
+      }
+     {
+      selectedPanel == 0 &&
       (<>
       <div className="search">
         <label className="id"> Search by ID:
@@ -315,7 +332,14 @@ function FrontDesk() {
           </div>
         ))}
       </div>
-      </>)}
+      </>)
+     }
+     {
+      selectedPanel == 1 &&
+      (
+        <div>hello world</div>
+      )
+      }
       </>
     </div>
   );
