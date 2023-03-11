@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getTreatments, scheduleAppointment } from "../API";
+import { getTreatments, scheduleAppointment,updateAppointment } from "../API";
 import { getUser } from "../log";
 
 function ScheduleAppointment(props: any) {
@@ -10,7 +10,7 @@ function ScheduleAppointment(props: any) {
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
-  let { patientId, open, onClose } = props;
+  let { patientId,appID, open, onClose, update } = props;
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -36,13 +36,21 @@ function ScheduleAppointment(props: any) {
           className="grid grid-cols-2 gap-x-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            let s = await scheduleAppointment(
+            let s = update ? await updateAppointment(
+              user.username,
+              user.password,
+              appID,
+              (e.target as any).scheduleDate.value,
+              (e.target as any).priority.value
+            ):
+            await scheduleAppointment(
               user.username,
               user.password,
               patientId,
               (e.target as any).scheduleDate.value,
               (e.target as any).priority.value
-            );
+            )
+            ;
             if (s.err) {
               setTrys(tries + 1);
               return;
@@ -85,7 +93,7 @@ function ScheduleAppointment(props: any) {
               cancel
             </span>
             <button type="submit" className="orange w-fit ">
-              Appoint
+              {update ? ("Update"): ("Appoint")}
             </button>
           </div>
         </form>

@@ -82,6 +82,36 @@ export const scheduleAppointment = async (
   return json;
 };
 
+export const updateAppointment = async (
+    username,
+    password,
+    appID,
+    date,
+    priority
+) => {
+    my_alert("API call: scheduleAppointment()");
+    console.log(username, password, appID, date, priority);
+    //server
+    let config = {
+        method: "POST",
+        headers: {
+            Authorization: "Basic " + encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            appID: appID,
+            date: date,
+            priority: priority,
+        }),
+    };
+    let response = await fetch(SERVER_URL + "/appointment/updateSchedule", config);
+    console.log("response recv");
+    let json = await response.json();
+    console.log({ schedule: json });
+    return json;
+};
+
 //For  admitted  patients  a  room should be assigned based on available room capacity.
 //For discharged patients information should be preserved but room occupancy should be updated.
 //The workflow should also support scheduling tests and treatments prescribed by doctors.
@@ -615,3 +645,19 @@ export const fetchAdmissionHistory = async ({username, password}) => {
   console.log({ json });
   return json;
 }
+
+export const fetchRescheduling = async ({ username, password }) => {
+    console.log("API call: fetchRescheduling()");
+    let config = {
+        method: "GET",
+        headers: {
+            Authorization: "Basic " + encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+    };
+    let response = await fetch(SERVER_URL + "/getRescheduling", config);
+    let json = await response.json();
+    console.log({ json });
+    return json;
+};
