@@ -38,3 +38,7 @@ This is a web application developed as a mini project for the course Web Applica
 -   [Prakhar Singh]()
 -   [Rudrak Patra](https://github.com/rudrakpatra)
 -   [Saras Pantulwar](https://github.com/pantulwars)
+
+## References
+
+- [tailwind](https://tailwindcss.com/docs/guides/vite)
