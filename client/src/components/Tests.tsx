@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useEffect } from "react";
 import { getTests } from "../API";
 
@@ -7,12 +8,16 @@ function Tests(props: any) {
   React.useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     if (!user) return;
-    getTests(user.username, user.password, props.patientId).then((tests) => {
-      console.log(tests);
-      setTests(tests.result);
-    });
+    if (open)
+      getTests(user.username, user.password, props.patientId).then((tests) => {
+        console.log(tests);
+        setTests(tests.result);
+      });
   }, [open]);
-  const textDecoder = new TextDecoder();
+  const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+  };
   return (
     <div
       className="fixed inset-0 grid place-content-center
@@ -33,28 +38,34 @@ function Tests(props: any) {
           {tests.map((test: any) => (
             <div className="grid grid-cols-9 gap-3" key={test.ID}>
               <div className="cell col-span-2">{test.Name}</div>
-              <div className="cell col-span-3">{test.Date.slice(0, 19).replace('T', ' ')}</div>
+              <div className="cell col-span-3">
+                {test.Date && formatDate(test.Date)}
+              </div>
               <div className="cell col-span-2">{test.Result}</div>
-              {test.Report  ?(
+              {test.Report ? (
                 <button
                   onClick={() => {
-                    const buffer = test.Report.data as ArrayBuffer
+                    const buffer = test.Report.data as ArrayBuffer;
 
                     let binary = [...new Uint8Array(buffer)]
-                    .map((x) => x.toString(16).padStart(2, "0"))
+                      .map((x) => x.toString(16).padStart(2, "0"))
                       .join("");
                     const binaryData = new Uint8Array(
-                         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
-                             return parseInt(h, 16);
-                         })
-                      ).buffer;
+                      (binary as any)
+                        .match(/[\da-f]{2}/gi)
+                        .map(function (h: any) {
+                          return parseInt(h, 16);
+                        })
+                    ).buffer;
 
-                    const blob = new Blob([binaryData], { type: 'application/pdf' });
+                    const blob = new Blob([binaryData], {
+                      type: "application/pdf",
+                    });
                     console.log(blob);
                     const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
+                    const link = document.createElement("a");
                     link.href = url;
-                    link.target = '_blank';
+                    link.target = "_blank";
                     link.click();
                     setTimeout(() => URL.revokeObjectURL(url), 5000);
                   }}
@@ -66,44 +77,47 @@ function Tests(props: any) {
                 <div className="cell col-span-1"> None</div>
               )}
 
-              {test.Image  ?(
+              {test.Image ? (
                 <button
                   onClick={() => {
-                    const buffer = test.Image.data as ArrayBuffer
+                    const buffer = test.Image.data as ArrayBuffer;
 
                     let binary = [...new Uint8Array(buffer)]
-                    .map((x) => x.toString(16).padStart(2, "0"))
+                      .map((x) => x.toString(16).padStart(2, "0"))
                       .join("");
                     const binaryData = new Uint8Array(
-                         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
-                             return parseInt(h, 16);
-                         })
-                      ).buffer;
+                      (binary as any)
+                        .match(/[\da-f]{2}/gi)
+                        .map(function (h: any) {
+                          return parseInt(h, 16);
+                        })
+                    ).buffer;
 
-                    const blob = new Blob([binaryData], { type: 'image/*' });
+                    const blob = new Blob([binaryData], { type: "image/*" });
                     // console.log(blob);
                     const url = URL.createObjectURL(blob);
                     // window.open(url, '_blank');
                     // setTimeout(() => URL.revokeObjectURL(url), 5000);
 
-
                     fetch(url)
-                    .then(response => {
-                      const disposition = response.headers.get('Content-Disposition');
-                      const type = response.headers.get('Content-Type');
-                      return response.blob().then(blob => {
-                        const url = URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.target = '_blank';
-                        link.download = disposition || `TestImage_${test.Name}_${test.ID}`;
-                        link.click();
-                       });
-                    })
-                    .catch(error => {
-                      console.error(error);
-                    });
-
+                      .then((response) => {
+                        const disposition = response.headers.get(
+                          "Content-Disposition"
+                        );
+                        const type = response.headers.get("Content-Type");
+                        return response.blob().then((blob) => {
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement("a");
+                          link.href = url;
+                          link.target = "_blank";
+                          link.download =
+                            disposition || `TestImage_${test.Name}_${test.ID}`;
+                          link.click();
+                        });
+                      })
+                      .catch((error) => {
+                        console.error(error);
+                      });
                   }}
                   className="orange col-span-1"
                 >
@@ -112,7 +126,6 @@ function Tests(props: any) {
               ) : (
                 <div className="cell col-span-1"> None</div>
               )}
-
             </div>
           ))}
         </div>

@@ -4,7 +4,6 @@ import Tests from "../components/Tests";
 import Treatments from "./Treatments";
 import moment from "moment";
 import { getUser } from "../log";
-import "./doctor.css";
 
 function Doctor() {
   let [appointments, setAppointments] = React.useState([]);
@@ -84,192 +83,229 @@ function Doctor() {
     setSearchdate(date);
     console.log(searchdate);
   }
-
   return (
     <>
-      <div className="px-6">
-        <h2 className="mt-8 mb-2">Dashboard</h2>
-        <div>Hello sir, you have {appointments.length} upcoming Appointments!</div>
-        <select name="select"
-          className="mt-8 mb-2 shadow-lg font-bold"
-          onChange={(event:any) => {
-          if (event.target.value === "Appointment") {
-            setSelectedPanel(0);
-          } else {
-            setSelectedPanel(1);
-          }
-        }}>
-            <option value="Appointment">Appointment</option>
-            <option value="Patient Info">Patient Info</option>
-          </select>
-        {
-        (selectedPanel == 0) ?
-        (<>
-        <div className="search">
-          <label className="id">
-            {" "}
-            Search by ID:
-            <input
-              className="input"
-              type="number"
-              value={searchid > 0 ? searchid : ""}
-              onChange={handleSearchId}
-            />
-            <button className="button" onClick={handlesubmitId}>
-              clear
-            </button>
-          </label>
-          <br />
-          <label className="name">
-            {" "}
-            Search by Name:
-            <input
-              className="input"
-              type="text"
-              value={searchname}
-              onChange={handleSearchName}
-            />
-            <button className="button" onClick={handlesubmitName}>
-              clear
-            </button>
-          </label>
-          <label className="name">Search By Date: </label>
-          <input
-            onChange={handleDate}
-            min={new Date().toISOString().split("T")[0]}
-            type="date"
-            placeholder="patient name"
-            name="scheduleDate"
-            autoComplete="off"
-          />
-        </div>
-        <div className="grid grid-cols-7 gap-3 mb-2 mt-4 shadow-lg text-center">
-          <h3 className="col-span-1">Patient ID</h3>
-          <h3 className="col-span-2">Patient Name</h3>
-          <h3 className="col-span-1">Contact</h3>
-          <h3 className="col-span-2">Email</h3>
-          <h3 className="col-span-1">Date</h3>
-          {/* <h3 className="col-span-2">Priority</h3> */}
-        </div>
-        <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
-          {appointments.sort((a: any, b: any) => {
-            if (a.date > b.date) return 1;
-            if (a.date < b.date) return -1;
-            return b.priority - a.priority;
-          }) &&
-            appointments.map(
-              (appointment: any) =>
-                ((searchdate != null && searchdate != "") ?  (searchdate == appointment.date.slice(0,10)): ((searchid == 0 && searchname == "") || (searchid != 0 && appointment.pID.toString().startsWith(searchid.toString())) || (searchname != "" && appointment.pName.toLowerCase().startsWith(searchname.toLowerCase())))) &&(
-                  <div
-                    className="grid grid-cols-7 gap-3"
-                    key={appointment.appID}
-                  >
-                    <div className="card col-span-1">{appointment.pID}</div>
-                    <div className="card col-span-2">{appointment.pName}</div>
-                    <div className="card col-span-1">{appointment.Contact}</div>
-                    <div className="card col-span-2">{appointment.Email}</div>
-                    <div className="card col-span-1">
-                      {formatDate(appointment.date)}
-                    </div>
-                    {/* <div className="card col-span-2">{appointment.priority}</div> */}
-                  </div>
-                )
-            )}
-        </div>
-        </>
-        ):(
+      <div className="px-6 flex flex-col">
+        <h2 className="mt-6 mb-2">Dashboard</h2>
+        <select
+          name="select"
+          className="mt-6 mb-2 shadow-lg font-bold w-fit"
+          onChange={(event: any) => {
+            if (event.target.value === "Appointment") {
+              setSelectedPanel(0);
+            } else {
+              setSelectedPanel(1);
+            }
+          }}
+        >
+          <option value="Appointment">Appointments</option>
+          <option value="Patient Info">Patient Info</option>
+        </select>
+        {selectedPanel == 0 ? (
           <>
-        <div className="search">
-          <label className="id">
-            {" "}
-            Search by ID:
-            <input
-              className="input"
-              type="number"
-              value={searchid2 > 0 ? searchid2 : ""}
-              onChange={handleSearchId2}
-            />
-            <button className="button" onClick={handlesubmitId2}>
-              clear
-            </button>
-          </label>
-          <br />
-          <label className="name">
-            {" "}
-            Search by Name:
-            <input
-              className="input"
-              type="text"
-              value={searchname2}
-              onChange={handleSearchName2}
-            />
-            <button className="button" onClick={handlesubmitName2}>
-              clear
-            </button>
-          </label>
-        </div>
-        <div className=" flex flex-col mb-16 ">
-          <div className="grid grid-cols-8 gap-3 mb-2 mt-4 shadow-lg text-center">
-            <h3 className=" col-span-1 ">ID</h3>
-            <h3 className=" col-span-2 ">Name</h3>
-            <h3 className=" col-span-1">Contact</h3>
-            <h3 className=" col-span-2 ">Email</h3>
-            <h3 className="col-span-2">Actions</h3>
-          </div>
-          <div className="flex flex-col gap-3 whitespace-nowrap">
-            {patients.sort((a: any, b: any) => a.ID - b.ID) &&
-              patients.map(
-                (patient: any) =>
-                  ((searchid2 == 0 && searchname2 == "") ||
-                    (searchid2 != 0 &&
-                      patient.ID.toString().toLowerCase().startsWith(searchid2.toString().toLowerCase())) ||
-                    (searchname2 != "" &&
-                      patient.Name.toLowerCase().startsWith(searchname2.toLowerCase()))) && (
-                    <div className="grid grid-cols-8 gap-3" key={patient.ID}>
-                      <div className="card col-span-1 ">{patient.ID}</div>
-                      <div className="card col-span-2">{patient.Name}</div>
-                      <div className="card col-span-1">{patient.Contact}</div>
-                      <div className="card col-span-2">{patient.Email}</div>
-                      <button
-                        onClick={async () => {
-                          setPop1(patient.ID);
-                        }}
-                        className=" blue"
+            {/* Appointment */}
+            <div className="mt-2 mb-2">
+              Hello {user?.username}, you have{" "}
+              <span className=" text-orange-600">{appointments.length} </span>
+              upcoming Appointments!
+            </div>
+            {/* SEARCH */}
+            <div className="flex flex-wrap gap-6 mt-6 mb-2">
+              <label className="flex-1 whitespace-nowrap">
+                <div className="mb-2">Search by ID:</div>
+                <span className="flex gap-3">
+                  <input
+                    className="card flex-1"
+                    type="number"
+                    value={searchid > 0 ? searchid : ""}
+                    onChange={handleSearchId}
+                  />
+                  <button className="red" onClick={handlesubmitId}>
+                    clear
+                  </button>
+                </span>
+              </label>
+              <label className="flex-1 whitespace-nowrap">
+                <div className="mb-2">Search by Name:</div>
+                <span className="flex gap-3">
+                  <input
+                    className="card flex-1"
+                    type="text"
+                    value={searchname}
+                    onChange={handleSearchName}
+                  />
+                  <button className="red" onClick={handlesubmitName}>
+                    clear
+                  </button>
+                </span>
+              </label>
+              <label className="flex-1 whitespace-nowrap">
+                <div className="mb-2">Search by Date:</div>
+                <input
+                  onChange={handleDate}
+                  min={new Date().toISOString().split("T")[0]}
+                  className=" h-10 card w-full"
+                  type={"date"}
+                  placeholder="patient name"
+                  name="scheduleDate"
+                  autoComplete="off"
+                />
+              </label>
+            </div>
+            <div className="grid grid-cols-7 gap-3 mt-6 mb-2 shadow-lg text-center">
+              <h3 className="col-span-1">Patient ID</h3>
+              <h3 className="col-span-2">Patient Name</h3>
+              <h3 className="col-span-1">Contact</h3>
+              <h3 className="col-span-2">Email</h3>
+              <h3 className="col-span-1">Date</h3>
+              {/* <h3 className="col-span-2">Priority</h3> */}
+            </div>
+            <div className="flex flex-col gap-3 whitespace-nowrap mb-8">
+              {appointments.sort((a: any, b: any) => {
+                if (a.date > b.date) return 1;
+                if (a.date < b.date) return -1;
+                return b.priority - a.priority;
+              }) &&
+                appointments.map(
+                  (appointment: any) =>
+                    (searchdate != null && searchdate != ""
+                      ? searchdate == formatDate(appointment.date) //date from sql
+                      : (searchid == 0 && searchname == "") ||
+                        (searchid != 0 &&
+                          appointment.pID
+                            .toString()
+                            .startsWith(searchid.toString())) ||
+                        (searchname != "" &&
+                          appointment.pName
+                            .toLowerCase()
+                            .startsWith(searchname.toLowerCase()))) && (
+                      <div
+                        className="grid grid-cols-7 gap-3"
+                        key={appointment.appID}
                       >
-                        treatments
-                      </button>
-                      <button
-                        onClick={async () => {
-                          setPop2(patient.ID);
-                        }}
-                        className="orange"
-                      >
-                        tests
-                      </button>
-                      <Treatments
-                        user={user}
-                        open={pop1 == patient.ID}
-                        patientId={patient.ID}
-                        onClose={() => {
-                          setPop1(null);
-                        }}
-                      />
-                      <Tests
-                        user={user}
-                        open={pop2 == patient.ID}
-                        patientId={patient.ID}
-                        onClose={() => {
-                          setPop2(null);
-                        }}
-                      />
-                    </div>
-                  )
-              )}
-          </div>
-        </div>
-        </>
-        )
-        }
+                        <div className="card col-span-1">{appointment.pID}</div>
+                        <div className="card col-span-2">
+                          {appointment.pName}
+                        </div>
+                        <div className="card col-span-1">
+                          {appointment.Contact}
+                        </div>
+                        <div className="card col-span-2">
+                          {appointment.Email}
+                        </div>
+                        <div className="card col-span-1">
+                          {formatDate(appointment.date)}
+                        </div>
+                        {/* <div className="card col-span-2">{appointment.priority}</div> */}
+                      </div>
+                    )
+                )}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Paitent INFO */}
+            <div className="flex flex-wrap gap-6 mt-6 mb-2">
+              <label className="flex-1 whitespace-nowrap">
+                <div className="mb-2">Search by ID:</div>
+                <span className="flex gap-3">
+                  <input
+                    className=" card flex-1"
+                    type="number"
+                    value={searchid2 > 0 ? searchid2 : ""}
+                    onChange={handleSearchId2}
+                  />
+                  <button className="red" onClick={handlesubmitId2}>
+                    clear
+                  </button>
+                </span>
+              </label>
+              <label className="whitespace-nowrap flex-1">
+                <div className="mb-2">Search by Name:</div>
+                <span className="flex gap-3">
+                  <input
+                    className=" card flex-1"
+                    type="text"
+                    value={searchname2}
+                    onChange={handleSearchName2}
+                  />
+                  <button className="red" onClick={handlesubmitName2}>
+                    clear
+                  </button>
+                </span>
+              </label>
+            </div>
+            <div className=" flex flex-col mb-16 ">
+              <div className="grid grid-cols-8 gap-3 mb-2 mt-4 shadow-lg text-center">
+                <h3 className=" col-span-1 ">ID</h3>
+                <h3 className=" col-span-2 ">Name</h3>
+                <h3 className=" col-span-1">Contact</h3>
+                <h3 className=" col-span-2 ">Email</h3>
+                <h3 className="col-span-2">Actions</h3>
+              </div>
+
+              <div className="flex flex-col gap-3 whitespace-nowrap">
+                {patients.sort((a: any, b: any) => a.ID - b.ID) &&
+                  patients.map(
+                    (patient: any) =>
+                      ((searchid2 == 0 && searchname2 == "") ||
+                        (searchid2 != 0 &&
+                          patient.ID.toString()
+                            .toLowerCase()
+                            .startsWith(searchid2.toString().toLowerCase())) ||
+                        (searchname2 != "" &&
+                          patient.Name.toLowerCase().startsWith(
+                            searchname2.toLowerCase()
+                          ))) && (
+                        <div
+                          className="grid grid-cols-8 gap-3"
+                          key={patient.ID}
+                        >
+                          <div className="card col-span-1 ">{patient.ID}</div>
+                          <div className="card col-span-2">{patient.Name}</div>
+                          <div className="card col-span-1">
+                            {patient.Contact}
+                          </div>
+                          <div className="card col-span-2">{patient.Email}</div>
+                          <button
+                            onClick={async () => {
+                              setPop1(patient.ID);
+                            }}
+                            className=" blue"
+                          >
+                            treatments
+                          </button>
+                          <button
+                            onClick={async () => {
+                              setPop2(patient.ID);
+                            }}
+                            className="orange"
+                          >
+                            tests
+                          </button>
+                          <Treatments
+                            user={user}
+                            open={pop1 == patient.ID}
+                            patientId={patient.ID}
+                            onClose={() => {
+                              setPop1(null);
+                            }}
+                          />
+                          <Tests
+                            user={user}
+                            open={pop2 == patient.ID}
+                            patientId={patient.ID}
+                            onClose={() => {
+                              setPop2(null);
+                            }}
+                          />
+                        </div>
+                      )
+                  )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

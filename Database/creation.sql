@@ -18,7 +18,7 @@ create table Room (
 create table Test (
     `ID` int primary key auto_increment,
     `Name` text not null,
-    `Date` datetime not null,
+    `Date` datetime,
     `Result` text,
     `Report` MEDIUMBLOB,
     `Image` MEDIUMBLOB

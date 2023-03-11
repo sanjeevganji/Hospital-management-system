@@ -6,13 +6,13 @@ function Treatments(props: any) {
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     if (!user) return;
-    getTreatments(user.username, user.password, props.patientId).then(
-      (treatments) => {
-        console.log({ treatments });
-        setTreatments(treatments.result);
-      }
-    );
-    console.log("here");
+    if (open)
+      getTreatments(user.username, user.password, props.patientId).then(
+        (treatments) => {
+          console.log({ treatments });
+          setTreatments(treatments.result);
+        }
+      );
   }, [open]);
   let [treatments, setTreatments] = React.useState<any>([]);
   return (
@@ -35,7 +35,9 @@ function Treatments(props: any) {
           {treatments.map((treatment: any) => (
             <div className="grid grid-cols-7 gap-5" key={treatment.treatmentID}>
               <div className="cell col-span-2">{treatment.treatmentName}</div>
-              <div className="cell col-span-2">{treatment.Date.slice(0, 19).replace('T', ' ')}</div>
+              <div className="cell col-span-2">
+                {treatment.Date.slice(0, 19).replace("T", " ")}
+              </div>
               <div className="cell col-span-3">{treatment.Dosage}</div>
             </div>
           ))}

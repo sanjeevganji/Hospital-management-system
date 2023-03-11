@@ -62,18 +62,18 @@ VALUES
 
 
 INSERT INTO Test
-    (Name, Date, Result, Report)
+    (Name, Date, Result)
 VALUES
-    ('Blood Test', '2022-01-01 10:30:00', 'Positive', null),
-    ('X-Ray', '2022-01-02 14:00:00', 'Negative', NULL),
-    ('CT Scan', '2022-01-03 09:15:00', 'Positive', NULL),
-    ('MRI', '2022-01-05 11:00:00', 'Negative', NULL),
-    ('ECG', '2022-01-07 16:45:00', 'Positive', NULL),
-    ('Ultrasound', '2022-01-10 10:00:00', 'Negative', NULL),
-    ('Blood Culture', '2022-01-11 11:30:00', NULL, NULL),
-    ('Urine Culture', '2022-01-12 12:15:00', 'Positive', NULL),
-    ('Stool Test', '2022-01-15 09:30:00', 'Negative', NULL),
-    ('Sputum Test', '2022-01-18 15:00:00', 'Positive', NULL);
+    ('Blood Test', '2022-01-01 10:30:00', 'Positive'),
+    ('X-Ray', '2022-01-02 14:00:00', 'Negative'),
+    ('CT Scan', '2022-01-03 09:15:00', 'Positive'),
+    ('MRI', '2022-01-05 11:00:00', 'Negative'),
+    ('ECG', '2022-01-07 16:45:00', 'Positive'),
+    ('Ultrasound', '2022-01-10 10:00:00', 'Negative'),
+    ('Blood Culture', '2022-01-11 11:30:00', NULL),
+    ('Urine Culture', '2022-01-12 12:15:00', NULL),
+    ('Stool Test', NULL, NULL),
+    ('Sputum Test', NULL, NULL);
 
 INSERT INTO Treatment
     (Date, Name, Dosage)

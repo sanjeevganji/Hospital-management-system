@@ -12,10 +12,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "password",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "password",
   // host: "dbms-hostpital.mysql.database.azure.com",
   // user: "atishay",
   // password: "pass@123",
@@ -26,10 +26,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "DakRR#2020",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",t
   // user: "sql12602698",
   // database: "sql12602698",
@@ -278,22 +278,21 @@ app.get("/getAdmissionHistory", (req, res) => {
 
 app.get("/getRescheduling", (req, res) => {
   isAuth(connection, req, res, (user) => {
-
-    if(user.Type == "frontdesk"){
+    if (user.Type == "frontdesk") {
       let sql = `SELECT Patient.*, Appointment.Date AS appDate, Appointment.ID AS appID
       FROM Patient, Appointment
       WHERE Patient.ID = Appointment.Patient AND CURDATE() > Appointment.Date AND Appointment.Prescription IS NULL;
       `;
       connection.query(sql, function (err, result) {
-          if (err) {
-              res.json({ status: "error" });
-          } else {
-              console.log(result);
-              res.json(result);
-          }
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
+        }
       });
     }
-  })
+  });
 });
 
 //not tested
@@ -459,16 +458,18 @@ app.post("/dataentry/appointments", (req, res) => {
               )
             );
             test.imageBody
-                ? (sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}', x'${test.imageBody}'), `)
-                : (sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}', ${null} ), `);
+              ? (sql += `('${test.name}', '${test.date}', '${test.result}', x'${rb}', x'${test.imageBody}'), `)
+              : (sql += `('${test.name}', '${test.date}', '${
+                  test.result
+                }', x'${rb}', ${null} ), `);
           } else {
             test.imageBody
-                ? (sql += `('${test.name}', '${test.date}', '${
-                      test.result
-                  }', ${null},  ${null}), `)
-                : (sql += `('${test.name}', '${test.date}', '${
-                      test.result
-                  }', x'${rb}', ${null} ), `);
+              ? (sql += `('${test.name}', '${test.date}', '${
+                  test.result
+                }', ${null},  ${null}), `)
+              : (sql += `('${test.name}', '${test.date}', '${
+                  test.result
+                }', x'${rb}', ${null} ), `);
           }
           return test.important || 0;
         });
@@ -806,25 +807,24 @@ app.post("/getTest", (req, res) => {
 
 app.post("/appointment/updateSchedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
-      if (user.Type == "frontdesk") {
-          console.log({ body: req.body });
-          //sql query
-          let sql = `UPDATE Appointment SET Date='${req.body.date}', Priority=${req.body.priority} WHERE ID = ${req.body.appID};`;
-          console.log({ sql });
-          connection.query(sql, function (err, result) {
-              if (err) {
-                  res.json({ status: "error", reason: "getTest" });
-              } else {
-                  console.log({ result });
-                  // let insertId = result.insertId;
+    if (user.Type == "frontdesk") {
+      console.log({ body: req.body });
+      //sql query
+      let sql = `UPDATE Appointment SET Date='${req.body.date}', Priority=${req.body.priority} WHERE ID = ${req.body.appID};`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "getTest" });
+        } else {
+          console.log({ result });
+          // let insertId = result.insertId;
 
-                  res.json({ status: "ok", result });
-              }
-          });
-      }
+          res.json({ status: "ok", result });
+        }
+      });
+    }
   });
 });
-
 
 app.listen(PORT, function (err) {
   if (err) console.log(err);
