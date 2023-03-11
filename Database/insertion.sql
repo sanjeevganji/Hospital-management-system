@@ -6,7 +6,7 @@ USE Hospital;
 
 
 INSERT INTO User
-    (Username, Password, Type, Name)
+    (Username, Password, Type, Name, Email)
 VALUES
     ('doc1', 'pass', 'doctor', 'John Doe', 'das815221@gmail.com'),
     ('doc2', 'pass', 'doctor', 'Jane Smith', 'das815221@gmail.com'),
@@ -219,12 +219,12 @@ VALUES
 INSERT INTO Appointment
     (ID, Prescription, Priority, Patient, Doctor, Date)
 VALUES
-    (1, NULL, 8, 101, 'doc1', '2023-04-10'),
-    (2, NULL, 4, 102, 'doc2', '2023-05-01'),
-    (3, NULL, 2, 103, 'doc1', '2023-06-15'),
+    (1, NULL, 8, 101, 'doc1', '2023-01-10'),
+    (2, NULL, 4, 102, 'doc2', '2023-02-01'),
+    (3, NULL, 2, 103, 'doc1', '2023-04-15'),
     (4, NULL, 6, 104, 'doc2', '2023-04-20'),
-    (5, NULL, 10, 105, 'doc1', '2023-05-05'),
-    (6, NULL, 3, 106, 'doc2', '2023-06-10'),
+    (5, NULL, 10, 105, 'doc1', '2023-04-05'),
+    (6, NULL, 3, 106, 'doc2', '2023-03-10'),
     (7, NULL, 9, 107, 'doc1', '2023-04-12'),
     (8, NULL, 1, 108, 'doc2', '2023-05-17'),
     (9, NULL, 7, 109, 'doc1', '2023-06-25'),
@@ -252,8 +252,7 @@ VALUES
     (31, NULL, 3, 131, 'doc1', '2023-04-16');
 
 INSERT INTO Appointment
-    (`ID`, `Prescription
-`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
+    (`ID`, `Prescription`, `Priority`, `Patient`, `Doctor`, `Date`) VALUES
 (51, 1001, 3, 101, 'doc1', '2022-12-15'),
 (52, 1002, 2, 104, 'doc1', '2022-12-10'),
 (53, 1003, 6, 105, 'doc2', '2022-11-22'),

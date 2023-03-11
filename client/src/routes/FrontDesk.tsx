@@ -8,6 +8,7 @@ import {
   registerPatient,
   scheduleAppointment,
   fetchAdmissionHistory,
+  fetchRescheduling,
 } from "../API";
 import ScheduleAppointmentPopUp from "../components/ScheduleAppointment";
 import AdmitPatientPopUp from "../components/AdmitPatient";
@@ -26,6 +27,7 @@ function FrontDesk() {
   const [selectedOption, setSelectedOption] = React.useState(0);
   const [selectedPanel, setSelectedPanel] = React.useState(0);
   let [history, setHistory] = React.useState<any>(null);
+  let [reschedule, setReschedule] = React.useState<any>(null);
 
 
 
@@ -37,17 +39,19 @@ function FrontDesk() {
 
   useEffect(() => {
     if (user)
+    {
       fetchAllPatients(user).then((res) => {
         setFetchedPatients(res);
       });
-  }, [user]);
-
-  useEffect(() => {
-    if (user)
       fetchAdmissionHistory(user).then((res) => {
         setHistory(res);
       });
+      fetchRescheduling(user).then((res) => {
+        setReschedule(res);
+      });
+    }
   }, [user]);
+
 
   useEffect(() => {
     console.log({ fetchedPatients });
@@ -86,6 +90,25 @@ function FrontDesk() {
     } else {
       setSelectedOption(0);
     }
+  }
+
+  const handlePanelChange = (event: any) => {
+        if (event.target.value === "Panel") {
+          setSelectedPanel(0);
+          // console.log("p");
+          // console.log(selectedPanel)
+        }
+        else if(event.target.value === "Rescheduling"){
+          setSelectedPanel(1);
+          // console.log("r");
+          // console.log(selectedPanel);
+        }
+        else if(event.target.value === "History"){
+            setSelectedPanel(2);
+            // console.log("h");
+            // console.log(selectedPanel);
+        }
+
   }
 
   return (
@@ -157,55 +180,53 @@ function FrontDesk() {
 
       <select
       className="mt-8 mb-2 shadow-lg font-bold"
-      onChange={(event:any) => {
-        if (event.target.value === "Panel") {
-          setSelectedPanel(0);
-        } else {
-            setSelectedPanel(1);
-        }
-      }}>
+      onChange={handlePanelChange}>
           <option value="Panel" className="">Control Panel</option>
+          <option value="Rescheduling" className="">Rescheduling</option>
           <option value="History" className="">Admission History</option>
       </select>
 
-      {selectedPanel == 1 ?
+      {
+      selectedPanel == 2 &&
       (
         <>
         <div className="grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
           <h2 className=" col-span-2">Appointment ID</h2>
-          <h2 className=" col-span-2">Patient ID</h2>
-          <h2 className=" col-span-2">Patient Name</h2>
+          <h2 className=" col-span-1">Patient ID</h2>
+          <h2 className=" col-span-3">Patient Name</h2>
           <h2 className=" col-span-2">Admit Date</h2>
           <h2 className=" col-span-2">Discharge Date</h2>
           <h2 className=" col-span-2">Room Number</h2>
         </div>
-        <div className=" mb-16 mt-6 flex flex-col gap-3 ">
+        <div className=" mb-16 mt-6 flex flex-col gap-3 text-center ">
           {history?.map((Admission: any) => (
-            <div className="grid grid-cols-12 gap-3">
-              <div className=" col-span-2">{Admission.appID}</div>
-              <div className=" col-span-2">{Admission.Patient}</div>
-              <div className=" col-span-2">{Admission.Name}</div>
-              <div className=" col-span-2">{Admission.Admit_date.slice(0,19).replace("T", " ")}</div>
+            <div className="grid grid-cols-12 gap-3" key={Admission.appID}>
+              <div className="card col-span-2 text-center ">{Admission.appID}</div>
+              <div className="card col-span-1 text-center">{Admission.Patient}</div>
+              <div className="card col-span-3">{Admission.Name}</div>
+              <div className="card col-span-2">{Admission.Admit_date.slice(0,19).replace("T", " ")}</div>
               {Admission.Discharge_Date ?
-              (<div className=" col-span-2">{Admission.Discharge_Date.slice(0,19).replace("T", " ")}</div>)
+              (<div className="card col-span-2">{Admission.Discharge_Date.slice(0,19).replace("T", " ")}</div>)
               :
-              (<div className=" col-span-2">-</div>)
+              (<div className="card col-span-2">-</div>)
               }
-              <div className=" col-span-2">{Admission.Room}</div>
+              <div className="card col-span-2 text-center">{Admission.Room}</div>
             </div>
           ))}
         </div>
         </>
       )
-      :
+      }
+     {
+      selectedPanel == 0 &&
       (<>
-      <div className="search">
-        <label className="id"> Search by ID:
+      <div className="search flex flex-wrap">
+        <label className="id whitespace-nowrap"> Search by ID:
           <input className="input" type="number" value={searchid > 0 ? searchid : ""} onChange={handleSearchId}/>
           <button className="button" onClick={handlesubmitId}>clear</button>
         </label>
           <br />
-        <label className="name"> Search by Name:
+        <label className="name whitespace-nowrap"> Search by Name:
           <input className="input" type="text" value={searchname} onChange={handleSearchName}/>
           <button className="button" onClick={handlesubmitName}>clear</button>
         </label>
@@ -216,8 +237,8 @@ function FrontDesk() {
         <h2 className=" col-span-2">Patient Name</h2>
         <h2 className=" col-span-3">Address</h2>
         <select className="col-span-2 font-bold" onChange={handleOptionChange}>
-          <option value="Contact" className="font-bold">Contact</option>
-          <option value="Email" className="font-bold">Email</option>
+          <option value="Contact" className="font-bold" selected={selectedOption==0}>Contact</option>
+          <option value="Email" className="font-bold" selected={selectedOption==1}>Email</option>
         </select>
         <h2 className=" col-span-1">Room</h2>
         <h2 className=" col-span-1">Type</h2>
@@ -304,6 +325,7 @@ function FrontDesk() {
             </button>
             <ScheduleAppointmentPopUp
               patientId={fetchedPatient.ID}
+              appID={null}
               open={fetchedPatient.ID === get3}
               onClose={() => {
                 set3(null);
@@ -311,11 +333,69 @@ function FrontDesk() {
                   setFetchedPatients(res);
                 });
               }}
+              update={false}
             />
           </div>
         ))}
       </div>
-      </>)}
+      </>)
+     }
+     {
+      selectedPanel == 1 &&
+      (
+        <>
+      <div className=" grid grid-cols-12 gap-3 mt-8 mb-2 shadow-lg text-center">
+        <h2 className=" col-span-1">ID</h2>
+        <h2 className=" col-span-2">Patient Name</h2>
+        <h2 className=" col-span-3">Address</h2>
+        <select className="col-span-2 font-bold" onChange={handleOptionChange}>
+          <option value="Contact" className="font-bold" selected={selectedOption==0} >Contact</option>
+          <option value="Email" className="font-bold" selected={selectedOption==1}>Email</option>
+        </select>
+        <h2 className=" col-span-2">Past Date</h2>
+        <h2 className=" col-span-2">Actions</h2>
+      </div>
+      <div className=" mb-16 mt-8 flex flex-col gap-3 ">
+      {
+        reschedule?.map((Appoinment: any) =>(
+          <div className=" grid grid-cols-12 gap-3" key={Appoinment.appID}>
+            <div className="card col-span-1 whitespace-nowrap">{Appoinment.ID}</div>
+            <div className="card col-span-2 whitespace-nowrap">{Appoinment.Name}</div>
+            <div className="card col-span-3 whitespace-nowrap">{Appoinment.Address}</div>
+            {!selectedOption?
+            (<div className="card col-span-2 whitespace-nowrap">{Appoinment.Contact}</div>)
+            :
+            (<div className="card col-span-2 whitespace-nowrap">{Appoinment.Email}</div>)
+            }
+            <div className="card col-span-2 whitespace-nowrap text-center">{Appoinment.appDate.slice(0,19).replace("T", ' ')}</div>
+            <button
+              onClick={() => {
+                set3(Appoinment.ID);
+              }}
+              className={"col-span-2 orange"}
+            >
+              Reschedule
+            </button>
+            <ScheduleAppointmentPopUp
+              patientId={Appoinment.ID}
+              appID={Appoinment.appID}
+              open={Appoinment.ID === get3}
+              onClose={() => {
+                set3(null);
+                fetchRescheduling(user).then((res) => {
+                  setReschedule(res);
+                });
+              }}
+              update={true}
+            />
+          </div>
+          )
+        )
+      }
+      </div>
+      </>
+      )
+      }
       </>
     </div>
   );
