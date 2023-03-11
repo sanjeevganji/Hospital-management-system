@@ -4,8 +4,9 @@ import {
   registerPatient,
   fetchAdmissionHistory,
   fetchRescheduling,
+  fetchScheduleTest,
 } from "../API";
-import ScheduleAppointmentPopUp from "../components/ScheduleAppointment";
+import {ScheduleAppointmentPopUp, ScheduleTestPopUp} from "../components/SchedulePopUp";
 import AdmitPatientPopUp from "../components/AdmitPatient";
 import DischargePatientPopUp from "../components/DischargePatient";
 import { getUser } from "../log";
@@ -15,6 +16,7 @@ function FrontDesk() {
   let [get1, setAdmit] = React.useState(null);
   let [get2, setDischarge] = React.useState(null);
   let [get3, setAppointmentPopup] = React.useState(null);
+  let [get4, setTestPopup] = React.useState(null);
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   let [searchid, setSearchid] = React.useState(0);
@@ -23,6 +25,7 @@ function FrontDesk() {
   const [selectedPanel, setSelectedPanel] = React.useState(0);
   let [history, setHistory] = React.useState<any>(null);
   let [reschedule, setReschedule] = React.useState<any>(null);
+  let [scheduleTest, setScheduleTest] = React.useState<any>(null);
 
   const formatDate = (date: Date) => {
     let d = moment(date);
@@ -44,6 +47,9 @@ function FrontDesk() {
       });
       fetchRescheduling(user).then((res) => {
         setReschedule(res);
+      });
+      fetchScheduleTest(user).then((res) => {
+        setScheduleTest(res);
       });
     }
   }, [user]);
@@ -83,10 +89,6 @@ function FrontDesk() {
       setSelectedOption("Contact");
       return;
     }
-    if (event.target.value === "Address") {
-      setSelectedOption("Address");
-      return;
-    }
     setSelectedOption("Error");
     console.log("option change error");
   };
@@ -94,23 +96,20 @@ function FrontDesk() {
   const handlePanelChange = (event: any) => {
     if (event.target.value === "Panel") {
       setSelectedPanel(0);
-      // console.log("p");
-      // console.log(selectedPanel)
     } else if (event.target.value === "Rescheduling") {
       setSelectedPanel(1);
-      // console.log("r");
-      // console.log(selectedPanel);
     } else if (event.target.value === "History") {
       setSelectedPanel(2);
-      // console.log("h");
-      // console.log(selectedPanel);
+    }
+    else if (event.target.value === "Test") {
+      setSelectedPanel(3);
     }
   };
 
   return (
     <div className="px-6">
       <>
-        <h2 className="mt-6 mb-2 shadow-lg ">Register Patient</h2>
+        <h2 className="mt-6 mb-2  ">Register Patient</h2>
         <form
           className="grid grid-cols-2 gap-3 mt-6 mb-2"
           onSubmit={async (e) => {
@@ -176,6 +175,9 @@ function FrontDesk() {
           <option value="Panel" className="">
             Control Panel
           </option>
+          <option value="Test" className="">
+            Schedule Test
+          </option>
           <option value="Rescheduling" className="">
             Rescheduling
           </option>
@@ -184,48 +186,6 @@ function FrontDesk() {
           </option>
         </select>
 
-        {selectedPanel == 2 && (
-          // selected  Admission History
-          <>
-            <h2 className="mt-6 mb-2">Admissions</h2>
-            <div className="grid grid-cols-10 gap-3 mt-8 mb-2 shadow-lg text-center">
-              <h2 className=" col-span-1">ID</h2>
-              <h2 className=" col-span-1">Patient ID</h2>
-              <h2 className=" col-span-3">Patient Name</h2>
-              <h2 className=" col-span-2">Admit Date</h2>
-              <h2 className=" col-span-2">Discharge Date</h2>
-              <h2 className=" col-span-1">Room No.</h2>
-            </div>
-            <div className=" mb-16 mt-6 flex flex-col gap-3">
-              {history?.map((Admission: any) => (
-                <div className="grid grid-cols-10 gap-3" key={Admission.appID}>
-                  <div className="card col-span-1 text-center ">
-                    {Admission.appID}
-                  </div>
-                  <div className="card col-span-1 text-center">
-                    {Admission.Patient}
-                  </div>
-                  <div className="card col-span-3">{Admission.Name}</div>
-
-                  <div className="card col-span-2 text-center">
-                    {formatDate(Admission.Admit_Date)}
-                  </div>
-                  {Admission.Discharge_Date ? (
-                    <div className="card col-span-2 text-center">
-                      {formatDate(Admission.Discharge_Date)}
-                    </div>
-                  ) : (
-                    <div className="card col-span-2 text-center">-</div>
-                  )}
-                  {/* room number */}
-                  <div className="card col-span-1 text-center">
-                    {Admission.Room}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
         {selectedPanel == 0 && (
           // selected  Control Panel
           <>
@@ -260,17 +220,15 @@ function FrontDesk() {
               </label>
             </div>
 
-            <div className=" grid grid-cols-10 gap-3 mt-8 mb-2 shadow-lg text-center">
+            <div className=" grid grid-cols-11 gap-3 mt-8 mb-2 shadow-lg text-center">
               <h2 className=" col-span-1">ID</h2>
               <h2 className=" col-span-2">Patient Name</h2>
+              <h2 className=" col-span-2">Address</h2>
               <select
                 className=" col-span-2 font-bold text-lg md:text-xl outline-none focus:outline-none"
                 onChange={handleOptionChange}
                 value={selectedOption}
               >
-                <option value="Address" className="font-bold">
-                  Address
-                </option>
                 <option value="Contact" className="font-bold">
                   Contact
                 </option>
@@ -280,9 +238,9 @@ function FrontDesk() {
               </select>
               <h2 className=" col-span-1">Room</h2>
               <h2 className=" col-span-1">Type</h2>
-              <h2 className=" col-span-3">Actions</h2>
+              <h2 className=" col-span-2">Actions</h2>
             </div>
-            <div className=" mb-16 mt-6 flex flex-col gap-3 ">
+            <div className=" mb-16 mt-8 flex flex-col gap-3 ">
               {fetchedPatients?.map(
                 (fetchedPatient: any) =>
                   ((searchid == 0 && searchname == "") ||
@@ -295,7 +253,7 @@ function FrontDesk() {
                         searchname.toLowerCase()
                       ))) && (
                     <div
-                      className="grid grid-cols-10 gap-3"
+                      className="grid grid-cols-11 gap-3"
                       key={fetchedPatient.ID}
                     >
                       <div className="card col-span-1 whitespace-nowrap text-center">
@@ -305,11 +263,11 @@ function FrontDesk() {
                         {fetchedPatient.Name}
                       </div>
 
-                      {selectedOption == "Address" && (
-                        <div className="card col-span-2 whitespace-nowrap">
-                          {fetchedPatient.Address}
-                        </div>
-                      )}
+
+                      <div className="card col-span-2 whitespace-nowrap">
+                        {fetchedPatient.Address}
+                      </div>
+
                       {selectedOption == "Contact" && (
                         <div className="card col-span-2 whitespace-nowrap">
                           {fetchedPatient.Contact}
@@ -328,7 +286,7 @@ function FrontDesk() {
                         {fetchedPatient.admitted ? fetchedPatient.Type : "-"}
                       </div>
                       {/* Actions */}
-                      <div className="col-span-3 flex gap-3">
+                      <div className="col-span-2 flex gap-3">
                         {fetchedPatient.admitted ? (
                           // discharge button
                           <>
@@ -416,21 +374,20 @@ function FrontDesk() {
             </div>
           </>
         )}
+
         {selectedPanel == 1 && (
           // selectedPanel is Reschedule Appointment
           <>
-            <div className=" grid grid-cols-10 gap-3 mt-8 mb-2 shadow-lg text-center">
+            <div className=" grid grid-cols-11 gap-3 mt-8 mb-2 shadow-lg text-center">
               <h2 className=" col-span-1">ID</h2>
               <h2 className=" col-span-2">Patient Name</h2>
+              <h2 className=" col-span-2">Address</h2>
 
               <select
                 className=" col-span-2 font-bold text-lg md:text-xl outline-none focus:outline-none"
                 onChange={handleOptionChange}
                 value={selectedOption}
               >
-                <option value="Address" className="font-bold">
-                  Address
-                </option>
                 <option value="Contact" className="font-bold">
                   Contact
                 </option>
@@ -439,12 +396,12 @@ function FrontDesk() {
                 </option>
               </select>
               <h2 className=" col-span-2">Past Date</h2>
-              <h2 className=" col-span-3">Actions</h2>
+              <h2 className=" col-span-2">Actions</h2>
             </div>
             <div className=" mb-16 mt-8 flex flex-col gap-3 ">
               {reschedule?.map((Appointment: any) => (
                 <div
-                  className=" grid grid-cols-10 gap-3"
+                  className=" grid grid-cols-11 gap-3"
                   key={Appointment.appID}
                 >
                   <div className="card col-span-1 whitespace-nowrap text-center">
@@ -453,11 +410,10 @@ function FrontDesk() {
                   <div className="card col-span-2 whitespace-nowrap">
                     {Appointment.Name}
                   </div>
-                  {selectedOption == "Address" && (
-                    <div className="card col-span-2 whitespace-nowrap">
-                      {Appointment.Address}
-                    </div>
-                  )}
+
+                  <div className="card col-span-2 whitespace-nowrap">
+                    {Appointment.Address}
+                  </div>
                   {selectedOption == "Contact" && (
                     <div className="card col-span-2 whitespace-nowrap">
                       {Appointment.Contact}
@@ -476,7 +432,7 @@ function FrontDesk() {
                     onClick={() => {
                       setAppointmentPopup(Appointment.ID);
                     }}
-                    className={"col-span-3 orange"}
+                    className={"col-span-2 orange"}
                   >
                     Reschedule
                   </button>
@@ -491,6 +447,102 @@ function FrontDesk() {
                       });
                     }}
                     update={true}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {selectedPanel == 2 && (
+          // selected  Admission History
+          <>
+            <h2 className="mt-6 mb-2">Admissions</h2>
+            <div className="grid grid-cols-10 gap-3 mt-8 mb-2 shadow-lg text-center">
+              <h2 className=" col-span-1">ID</h2>
+              <h2 className=" col-span-1">Patient ID</h2>
+              <h2 className=" col-span-3">Patient Name</h2>
+              <h2 className=" col-span-2">Admit Date</h2>
+              <h2 className=" col-span-2">Discharge Date</h2>
+              <h2 className=" col-span-1">Room No.</h2>
+            </div>
+            <div className=" mb-16 mt-6 flex flex-col gap-3">
+              {history?.map((Admission: any) => (
+                <div className="grid grid-cols-10 gap-3" key={Admission.appID}>
+                  <div className="card col-span-1 text-center ">
+                    {Admission.appID}
+                  </div>
+                  <div className="card col-span-1 text-center">
+                    {Admission.Patient}
+                  </div>
+                  <div className="card col-span-3">{Admission.Name}</div>
+
+                  <div className="card col-span-2 text-center">
+                    {formatDate(Admission.Admit_Date)}
+                  </div>
+                  {Admission.Discharge_Date ? (
+                    <div className="card col-span-2 text-center">
+                      {formatDate(Admission.Discharge_Date)}
+                    </div>
+                  ) : (
+                    <div className="card col-span-2 text-center">-</div>
+                  )}
+                  {/* room number */}
+                  <div className="card col-span-1 text-center">
+                    {Admission.Room}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {selectedPanel == 3 && (
+        <>
+            <div className=" grid grid-cols-8 gap-3 mt-8 mb-2 shadow-lg text-center">
+              <h2 className=" col-span-1">Test ID</h2>
+              <h2 className=" col-span-2">Test Name</h2>
+              <h2 className=" col-span-1">Patient ID</h2>
+              <h2 className=" col-span-2">Patient Name</h2>
+              <h2 className=" col-span-2">Actions</h2>
+            </div>
+            <div className=" mb-16 mt-8 flex flex-col gap-3 ">
+              {scheduleTest?.map((Test: any) => (
+                <div
+                  className=" grid grid-cols-8 gap-3"
+                  key={Test.testID}
+                >
+                  <div className="card col-span-1 whitespace-nowrap text-center">
+                    {Test.testID}
+                  </div>
+                  <div className="card col-span-2 whitespace-nowrap">
+                    {Test.testName}
+                  </div>
+                  <div className="card col-span-1 whitespace-nowrap text-center">
+                    {Test.ID}
+                  </div>
+                  <div className="card col-span-2 whitespace-nowrap text-center">
+                    {Test.Name}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setTestPopup(Test.ID);
+                    }}
+                    className={"col-span-2 orange"}
+                  >
+                    Schedule Test
+                  </button>
+                  <ScheduleTestPopUp
+                    patientId={Test.ID}
+                    testID={Test.testID}
+                    open={Test.ID === get4}
+                    onClose={() => {
+                      setTestPopup(null);
+                      fetchScheduleTest(user).then((res) => {
+                        setScheduleTest(res);
+                      });
+                    }}
                   />
                 </div>
               ))}

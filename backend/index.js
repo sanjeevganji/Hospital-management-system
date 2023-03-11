@@ -12,10 +12,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "password",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "password",
   // host: "dbms-hostpital.mysql.database.azure.com",
   // user: "atishay",
   // password: "pass@123",
@@ -26,10 +26,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "DakRR#2020",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",t
   // user: "sql12602698",
   // database: "sql12602698",
@@ -293,6 +293,26 @@ app.get("/getRescheduling", (req, res) => {
       });
     }
   });
+});
+
+
+app.get("/getScheduleTest", (req, res) => {
+    isAuth(connection, req, res, (user) => {
+        if (user.Type == "frontdesk") {
+            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
+      FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
+      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND Test.Date IS NULL;
+      `;
+            connection.query(sql, function (err, result) {
+                if (err) {
+                    res.json({ status: "error" });
+                } else {
+                    console.log(result);
+                    res.json(result);
+                }
+            });
+        }
+    });
 });
 
 //not tested
@@ -670,33 +690,33 @@ app.post("/appointment/schedule", (req, res) => {
     }
   });
 });
-app.post("/test/schedule", (req, res) => {
-  isAuth(connection, req, res, (user) => {
-    if (user.Type == "dataentry") {
-      console.log({ body: req.body });
-      //sql query
-      let sql = `insert into Test (Name,Date) values("${req.body.testName}","${req.body.date}");`;
-      console.log({ sql });
-      connection.query(sql, function (err, result) {
-        if (err) {
-          res.json({ status: "error", reason: "test" });
-        } else {
-          console.log({ result });
-          let insertId = result.insertId;
-          sql = `INSERT INTO Prescription_Test (ID, Test, Important) VALUES ('${req.body.prescriptionId}', '${insertId}', '${req.body.important}');`;
-          console.log({ insert_test: sql });
-          connection.query(sql, function (err, result) {
-            if (err) {
-              res.json({ status: "error", reason: "prescription" });
-            } else {
-              res.json({ status: "ok", TestId: insertId });
-            }
-          });
-        }
-      });
-    }
-  });
-});
+// app.post("/test/schedule", (req, res) => {
+//   isAuth(connection, req, res, (user) => {
+//     if (user.Type == "dataentry") {
+//       console.log({ body: req.body });
+//       //sql query
+//       let sql = `insert into Test (Name,Date) values("${req.body.testName}","${req.body.date}");`;
+//       console.log({ sql });
+//       connection.query(sql, function (err, result) {
+//         if (err) {
+//           res.json({ status: "error", reason: "test" });
+//         } else {
+//           console.log({ result });
+//           let insertId = result.insertId;
+//           sql = `INSERT INTO Prescription_Test (ID, Test, Important) VALUES ('${req.body.prescriptionId}', '${insertId}', '${req.body.important}');`;
+//           console.log({ insert_test: sql });
+//           connection.query(sql, function (err, result) {
+//             if (err) {
+//               res.json({ status: "error", reason: "prescription" });
+//             } else {
+//               res.json({ status: "ok", TestId: insertId });
+//             }
+//           });
+//         }
+//       });
+//     }
+//   });
+// });
 
 app.post("/treatment", (req, res) => {
   isAuth(connection, req, res, (user) => {
@@ -817,12 +837,31 @@ app.post("/appointment/updateSchedule", (req, res) => {
           res.json({ status: "error", reason: "getTest" });
         } else {
           console.log({ result });
-          // let insertId = result.insertId;
 
           res.json({ status: "ok", result });
         }
       });
     }
+  });
+});
+
+app.post("/test/schedule", (req, res) => {
+  isAuth(connection, req, res, (user) => {
+      if (user.Type == "frontdesk") {
+          console.log({ body: req.body });
+
+          let sql = `UPDATE Test SET Date='${req.body.date}' WHERE ID = ${req.body.testID};`;
+          console.log({ sql });
+          connection.query(sql, function (err, result) {
+              if (err) {
+                  res.json({ status: "error", reason: "getTest" });
+              } else {
+                  console.log({ result });
+
+                  res.json({ status: "ok", result });
+              }
+          });
+      }
   });
 });
 
