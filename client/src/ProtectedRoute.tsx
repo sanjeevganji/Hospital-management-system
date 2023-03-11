@@ -22,7 +22,7 @@ const ProtectedRoute = (props: any) => {
       <div className="flex flex-col">
         <div className="grid grid-cols-2 place-items-center shadow-lg px-6">
           <h1 className="justify-self-start text-gray-500 whitespace-nowrap overflow-hidden overflow-ellipsis w-full">
-            Welcome {user?.username}!
+            Welcome {user?.name}!
           </h1>
           <button
             onClick={async () => {

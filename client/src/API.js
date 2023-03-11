@@ -25,6 +25,7 @@ export const login = async (username, password) => {
         username: username,
         password: password,
         type: json.Type,
+        name: json.Name,
     };
 };
 

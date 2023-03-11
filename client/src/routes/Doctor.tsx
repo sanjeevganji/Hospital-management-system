@@ -17,6 +17,18 @@ function Doctor() {
   let [searchdate, setSearchdate] = React.useState(null);
   const [selectedPanel, setSelectedPanel] = React.useState(0);
 
+  const date = new Date();
+  const hours = date.getHours();
+  let greeting;
+  if (hours >= 0 && hours < 12) {
+    greeting = 'Good morning';
+  } else if (hours >= 12 && hours < 18) {
+    greeting = 'Good afternoon';
+  } else {
+    greeting = 'Good evening';
+  }
+
+
   const formatDate = (date: Date) => {
     let d = moment(date);
     return d.format("YYYY-MM-DD");
@@ -87,6 +99,11 @@ function Doctor() {
     <>
       <div className="px-6 flex flex-col">
         <h2 className="mt-6 mb-2">Dashboard</h2>
+        <div className="mt-2 mb-2">
+            {greeting} Sir, you have{" "}
+          <span className=" text-orange-600">{appointments.length} </span>
+            upcoming Appointments!
+        </div>
         <select
           name="select"
           className="mt-6 mb-2 shadow-lg font-bold w-fit"
@@ -104,11 +121,6 @@ function Doctor() {
         {selectedPanel == 0 ? (
           <>
             {/* Appointment */}
-            <div className="mt-2 mb-2">
-              Hello {user?.username}, you have{" "}
-              <span className=" text-orange-600">{appointments.length} </span>
-              upcoming Appointments!
-            </div>
             {/* SEARCH */}
             <div className="flex flex-wrap gap-6 mt-6 mb-2">
               <label className="flex-1 whitespace-nowrap">
