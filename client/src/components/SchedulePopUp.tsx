@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { getTreatments, scheduleAppointment,updateAppointment, scheduleTest} from "../API";
 import { getUser } from "../log";
+import moment from "moment";
+
+const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+};
 
 function ScheduleAppointmentPopUp(props: any) {
-  //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   let [tries, setTrys] = useState(0);
   let [priority, setPriority] = useState(5);
+  let { patientId,appID, open, onClose, update } = props;
+
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
-  let { patientId,appID, open, onClose, update } = props;
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -61,7 +67,7 @@ function ScheduleAppointmentPopUp(props: any) {
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
             <label className="text-gray-500">Schedule Date</label>
             <input
-              min={new Date().toISOString().split("T")[0]}
+              min={formatDate(new Date())}
               type="date"
               name="scheduleDate"
               autoComplete="off"
@@ -103,15 +109,14 @@ function ScheduleAppointmentPopUp(props: any) {
 }
 
 function ScheduleTestPopUp(props: any){
-
   let [user, setUser] = React.useState<any>(null);
   let [tries, setTrys] = useState(0);
+  let { patientId,testID, open, onClose } = props;
 
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
 
-  let { patientId,testID, open, onClose } = props;
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
@@ -145,7 +150,7 @@ function ScheduleTestPopUp(props: any){
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
             <label className="text-gray-500">Schedule Date</label>
             <input
-              min={new Date().toISOString().split("T")[0]}
+              min={formatDate(new Date())}
               type="date"
               name="scheduleDate"
               autoComplete="off"

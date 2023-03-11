@@ -683,3 +683,19 @@ export const fetchScheduleTest = async ({ username, password }) => {
     console.log({ json });
     return json;
 };
+
+export const fetchRescheduleTest = async ({ username, password }) => {
+    console.log("API call: fetchRescheduleTest()");
+    let config = {
+        method: "GET",
+        headers: {
+            Authorization: "Basic " + encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+        },
+    };
+    let response = await fetch(SERVER_URL + "/getRescheduleTest", config);
+    let json = await response.json();
+    console.log({ json });
+    return json;
+};

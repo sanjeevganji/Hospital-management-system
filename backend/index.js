@@ -315,6 +315,25 @@ app.get("/getScheduleTest", (req, res) => {
     });
 });
 
+app.get("/getRescheduleTest", (req, res) => {
+    isAuth(connection, req, res, (user) => {
+        if (user.Type == "frontdesk") {
+            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
+      FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
+      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() > Test.Date AND Test.Result IS NULL;
+      `;
+            connection.query(sql, function (err, result) {
+                if (err) {
+                    res.json({ status: "error" });
+                } else {
+                    console.log(result);
+                    res.json(result);
+                }
+            });
+        }
+    });
+});
+
 //not tested
 // app.get("/test/:id", (req, res) => {
 //   let id = req.params.id;
@@ -700,7 +719,7 @@ app.post("/appointment/schedule", (req, res) => {
 //       connection.query(sql, function (err, result) {
 //         if (err) {
 //           res.json({ status: "error", reason: "test" });
-//         } else {
+//         } else {GET
 //           console.log({ result });
 //           let insertId = result.insertId;
 //           sql = `INSERT INTO Prescription_Test (ID, Test, Important) VALUES ('${req.body.prescriptionId}', '${insertId}', '${req.body.important}');`;
