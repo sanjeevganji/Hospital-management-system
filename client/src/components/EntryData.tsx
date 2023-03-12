@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { masterDATAENTRY } from "../API";
+import { addPrescription } from "../API";
 import { getUser } from "../log";
 
 function EntryData(props: any) {
@@ -34,7 +34,6 @@ function EntryData(props: any) {
           let important = data.get("important");
           let file = data.get("file") as File;
 
-
           let image = data.get("image") as File;
 
           console.log(image);
@@ -68,11 +67,11 @@ function EntryData(props: any) {
               if (image as File) {
                 let reader = new FileReader();
                 reader.onload = function (event: any) {
-                const arrayBuf = event.target.result as ArrayBuffer;
-                console.log(event.target.result);
-                let binaryimg = [...new Uint8Array(arrayBuf)]
-                  .map((x) => x.toString(16).padStart(2, "0"))
-                  .join("");
+                  const arrayBuf = event.target.result as ArrayBuffer;
+                  console.log(event.target.result);
+                  let binaryimg = [...new Uint8Array(arrayBuf)]
+                    .map((x) => x.toString(16).padStart(2, "0"))
+                    .join("");
                   let test = {
                     name,
                     result,
@@ -87,48 +86,45 @@ function EntryData(props: any) {
                   console.log("onSubmit: with report", test);
                 };
                 reader.readAsArrayBuffer(image);
-              }
-              else{
+              } else {
                 let test = {
-                    name,
-                    result,
-                    date,
-                    important: important ? "1" : "0",
-                    reportName: file.name,
-                    reportBody: binary,
-                    imageName: image.name,
-                    imageBody: null,
-                  };
-                  setTests(tests.slice().concat(test as any));
-                  console.log("onSubmit: with report", test);
+                  name,
+                  result,
+                  date,
+                  important: important ? "1" : "0",
+                  reportName: file.name,
+                  reportBody: binary,
+                  imageName: image.name,
+                  imageBody: null,
+                };
+                setTests(tests.slice().concat(test as any));
+                console.log("onSubmit: with report", test);
               }
-
             };
             reader.readAsArrayBuffer(file);
-          } else if(image as File){
-                let reader = new FileReader();
-                reader.onload = function (event: any) {
-                const arrayBuf = event.target.result as ArrayBuffer;
-                console.log(event.target.result);
-                let binaryimg = [...new Uint8Array(arrayBuf)]
-                  .map((x) => x.toString(16).padStart(2, "0"))
-                  .join("");
-                  let test = {
-                    name,
-                    result,
-                    date,
-                    important: important ? "1" : "0",
-                    reportName: file.name,
-                    reportBody: null,
-                    imageName: image.name,
-                    imageBody: binaryimg,
-                  };
-                  setTests(tests.slice().concat(test as any));
-                  console.log("onSubmit: with report", test);
-                };
-                reader.readAsArrayBuffer(image);
-          }
-          else {
+          } else if (image as File) {
+            let reader = new FileReader();
+            reader.onload = function (event: any) {
+              const arrayBuf = event.target.result as ArrayBuffer;
+              console.log(event.target.result);
+              let binaryimg = [...new Uint8Array(arrayBuf)]
+                .map((x) => x.toString(16).padStart(2, "0"))
+                .join("");
+              let test = {
+                name,
+                result,
+                date,
+                important: important ? "1" : "0",
+                reportName: file.name,
+                reportBody: null,
+                imageName: image.name,
+                imageBody: binaryimg,
+              };
+              setTests(tests.slice().concat(test as any));
+              console.log("onSubmit: with report", test);
+            };
+            reader.readAsArrayBuffer(image);
+          } else {
             let test = {
               name,
               result,
@@ -189,9 +185,9 @@ function EntryData(props: any) {
           </span>
           <div className="flex gap-3 items-center h-10 text-gray-900">
             <div>Upload Report:</div>
-            <input name="file" type="file" accept=".pdf"/>
+            <input name="file" type="file" accept=".pdf" />
             <div>Upload Image:</div>
-            <input name="image" type="file" accept="image/*"/>
+            <input name="image" type="file" accept="image/*" />
           </div>
           <button className="blue">Add Test</button>
         </span>
@@ -337,7 +333,7 @@ function EntryData(props: any) {
               tests,
               treatments,
             });
-            let s = await masterDATAENTRY({
+            let s = await addPrescription({
               appID: appID,
               username: user.username,
               password: user.password,

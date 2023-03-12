@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer";
-
+import moment from "moment";
+const formatDate = (date) => {
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
+};
 function mailDoc(props) {
   let mailTransporter = nodemailer.createTransport({
     service: "gmail",
@@ -11,17 +15,19 @@ function mailDoc(props) {
 
   let testResult = "";
   props.test.forEach((test) => {
-    testResult += `<p>Name: <b>${test.name}</b>, Date: <b>${test.date}</b>, Result: <b>${test.result}</b></p>\n`;
+    testResult += `<p>Name: <b>${test.name}</b>, Date: <b>${formatDate(
+      test.date
+    )}</b>, Result: <b>${test.result}</b></p>\n`;
   });
 
   let mailDetails = {
     from: "rudrakpatratest@gmail.com",
     to: props.email,
-    subject: "Paitient health report",
+    subject: "Patient health report",
     text: "",
     html: `
     <p>Dear Dr. <b>${props.name}</b>,</p>
-    <p>The report for the patient named <b>${props.pName}</b> with ID <b>'${props.patient}'</b> for the important tests are as follows </p>
+    <p>The report for the patient named <b>${props.pName}</b> with ID <b>'${props.patient}'</b> for the tests are as follows </p>
     ${testResult}
     <p>Regards</p>
     <p><b>PARAS</b> Hospital</p>`,

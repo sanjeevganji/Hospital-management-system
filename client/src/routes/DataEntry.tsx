@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import moment from "moment";
 import { getUser } from "../log";
-import { getAppointmentListForDataEntry } from "../API";
-import EntryData from "../components/EntryData";
+import { fetchTestUpdate, getAppointmentsWithNoPrescription } from "../API";
+import AddPrescription from "../components/AddPrescription";
+import UploadTestsPopup from "../components/UploadTestsPopup";
 
 function DataEntry() {
+  let [testUpdate, setTestUpdate] = React.useState([]);
   let [appointments, setAppointments] = React.useState([]);
   let [pop1, setPop1] = React.useState(null);
-
+  let [pop2, setPop2] = React.useState(null);
   const formatDate = (date: Date) => {
     let d = moment(date);
     return d.format("YYYY-MM-DD");
@@ -21,6 +23,7 @@ function DataEntry() {
 
   let [searchid, setSearchid] = React.useState(0);
   let [searchname, setSearchname] = React.useState("");
+
   function handleSearchId(e: any) {
     const id = parseInt(e.target.value);
     if (id < 0 || id.toString() == "NaN") {
@@ -40,18 +43,43 @@ function DataEntry() {
   function handlesubmitName() {
     setSearchname("");
   }
+
+  let [searchid2, setSearchid2] = React.useState(0);
+  let [searchname2, setSearchname2] = React.useState("");
+  function handleSearchId2(e: any) {
+    const id = parseInt(e.target.value);
+    if (id < 0 || id.toString() == "NaN") {
+      // alert("can't be less than 0");
+      setSearchid2(0);
+      return;
+    }
+    setSearchid2(id);
+  }
+  function handleSearchName2(e: any) {
+    const name = e.target.value;
+    setSearchname2(name);
+  }
+  function handlesubmitId2() {
+    setSearchid2(0);
+  }
+  function handlesubmitName2() {
+    setSearchname2("");
+  }
   useEffect(() => {
     if (!user) return;
     console.log({ user });
-    getAppointmentListForDataEntry(user).then((res) => {
+    getAppointmentsWithNoPrescription(user).then((res) => {
       setAppointments(res);
+    });
+    fetchTestUpdate(user).then((res) => {
+      setTestUpdate(res);
     });
   }, [user]);
 
   return (
     <>
-      <div className="px-6">
-        <h2 className="mt-8 mb-2 shadow-lg ">Add Prescription</h2>
+      <div className="px-6 flex flex-col  ">
+        <h2 className="mt-8 mb-2 ">Add Prescription</h2>
         {/* SEARCH */}
         <div className="flex flex-wrap gap-6 mt-6 mb-2">
           <label className="flex-1 whitespace-nowrap">
@@ -85,11 +113,10 @@ function DataEntry() {
         </div>
         <div className="grid grid-cols-6 gap-3 mt-6 mb-2 text-center shadow-lg">
           <h3 className="col-span-1">Appointment ID</h3>
-          <h3 className="col-span-1">Prescription ID</h3>
           <h3 className="col-span-1">Patient Name</h3>
           <h3 className="col-span-1">Doctor</h3>
           <h3 className="col-span-1">Date</h3>
-          <h3 className="col-span-1">Actions</h3>
+          <h3 className="col-span-2">Actions</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mt-4 mb-8">
           {appointments.map(
@@ -108,30 +135,27 @@ function DataEntry() {
                   <div className="card col-span-1 text-center">
                     {app.appID || "-"}
                   </div>
-                  <div className="card col-span-1 text-center">
-                    {app.presID || "-"}
-                  </div>
                   <div className="card col-span-1">{app.pName}</div>
                   <div className="card col-span-1">{app.dName}</div>
                   <div className="card col-span-1 text-center">
                     {formatDate(app.date)}
                   </div>
                   <button
-                    className=" blue col-span-1"
+                    className=" blue col-span-2"
                     onClick={async () => {
                       setPop1(app.appID);
                     }}
                   >
                     Add Prescription
                   </button>
-                  <EntryData
+                  <AddPrescription
                     appID={app.appID}
                     appDate={formatDate(app.date)}
                     open={pop1 == app.appID}
                     onClose={() => {
                       setPop1(null);
                       //update the list of appointments
-                      getAppointmentListForDataEntry(user).then((res) => {
+                      getAppointmentsWithNoPrescription(user).then((res) => {
                         setAppointments(res);
                       });
                     }}
@@ -140,7 +164,7 @@ function DataEntry() {
               )
           )}
         </div>
-        <h2 className="mt-8 mb-2 shadow-lg ">Upload Test Result and Report</h2>
+        <h2 className="mt-8 mb-2 ">Upload Test Result and Report</h2>
         {/* SEARCH */}
         <div className="flex flex-wrap gap-6 mt-6 mb-2">
           <label className="flex-1 whitespace-nowrap">
@@ -149,79 +173,73 @@ function DataEntry() {
               <input
                 className="card flex-1"
                 type="number"
-                value={searchid > 0 ? searchid : ""}
-                onChange={handleSearchId}
+                value={searchid2 > 0 ? searchid2 : ""}
+                onChange={handleSearchId2}
               />
-              <button className="red" onClick={handlesubmitId}>
+              <button className="red" onClick={handlesubmitId2}>
                 clear
               </button>
             </span>
           </label>
           <label className="flex-1 whitespace-nowrap">
-            <div className="mb-2">Search by Patient Name:</div>
+            <div className="mb-2">Search by Test Name:</div>
             <span className="flex gap-3">
               <input
                 className="card flex-1"
                 type="text"
-                value={searchname}
-                onChange={handleSearchName}
+                value={searchname2}
+                onChange={handleSearchName2}
               />
-              <button className="red" onClick={handlesubmitName}>
+              <button className="red" onClick={handlesubmitName2}>
                 clear
               </button>
             </span>
           </label>
         </div>
-        <div className="grid grid-cols-6 gap-3 mt-6 mb-2 text-center shadow-lg">
-          <h3 className="col-span-1">Appointment ID</h3>
-          <h3 className="col-span-1">Prescription ID</h3>
-          <h3 className="col-span-1">Patient Name</h3>
-          <h3 className="col-span-1">Doctor</h3>
+        <div className="grid grid-cols-4 gap-3 mt-6 mb-2 text-center shadow-lg">
+          <h3 className="col-span-1">Test ID</h3>
+          <h3 className="col-span-1">Name</h3>
           <h3 className="col-span-1">Date</h3>
           <h3 className="col-span-1">Actions</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mt-4 mb-8">
-          {appointments.map(
-            (app: any) =>
-              ((searchid == 0 && searchname == "") ||
-                (searchid != 0 &&
-                  app.appID
-                    .toString()
+          {testUpdate.map(
+            (test: any) =>
+              ((searchid2 == 0 && searchname2 == "") ||
+                (searchid2 != 0 &&
+                  test.ID.toString()
                     .toLowerCase()
-                    .startsWith(searchid.toString().toLowerCase())) ||
-                (searchname != "" &&
-                  app.pName
-                    .toLowerCase()
-                    .startsWith(searchname.toLowerCase()))) && (
-                <div className="grid grid-cols-6 gap-3 " key={app.appID}>
+                    .startsWith(searchid2.toString().toLowerCase())) ||
+                (searchname2 != "" &&
+                  test.Name.toLowerCase().startsWith(
+                    searchname2.toLowerCase()
+                  ))) && (
+                <div className="grid grid-cols-4 gap-3 " key={test.ID}>
                   <div className="card col-span-1 text-center">
-                    {app.appID || "-"}
+                    {test.ID || "-"}
                   </div>
                   <div className="card col-span-1 text-center">
-                    {app.presID || "-"}
+                    {test.Name || "-"}
                   </div>
-                  <div className="card col-span-1">{app.pName}</div>
-                  <div className="card col-span-1">{app.dName}</div>
                   <div className="card col-span-1 text-center">
-                    {formatDate(app.date)}
+                    {formatDate(test.date)}
                   </div>
                   <button
-                    className=" blue col-span-1"
                     onClick={async () => {
-                      setPop1(app.appID);
+                      setPop2(test.ID);
                     }}
+                    className="orange"
                   >
-                    Add Prescription
+                    Upload Test Result
                   </button>
-                  <EntryData
-                    appID={app.appID}
-                    appDate={formatDate(app.date)}
-                    open={pop1 == app.appID}
+                  <UploadTestsPopup
+                    user={user}
+                    open={pop2 == test.ID}
+                    test={test}
                     onClose={() => {
-                      setPop1(null);
-                      //update the list of appointments
-                      getAppointmentListForDataEntry(user).then((res) => {
-                        setAppointments(res);
+                      setPop2(null);
+                      fetchTestUpdate(user).then((res) => {
+                        setTestUpdate(res);
                       });
                     }}
                   />

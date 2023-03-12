@@ -6,6 +6,7 @@ create table User (
     `Type` varchar(16) not null,
     `Name` varchar(256) not null,
     `Email` varchar(256),
+    `Active` boolean default true not null,
     CHECK (`Type` IN ('frontdesk','admin','dataentry', 'doctor'))
 );
 
@@ -57,7 +58,7 @@ create table Prescription_Test (
     `Important` boolean default false not null,
     foreign key (`Test`) REFERENCES `Test`(`ID`),
     foreign key (`ID`) REFERENCES `Prescription`(`ID`),
-    primary key (`ID`, `Test`)
+    primary key (`Test`)
 );
 
 create table Admission (

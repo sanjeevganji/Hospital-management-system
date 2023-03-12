@@ -29,7 +29,14 @@ export const login = async (username, password) => {
 };
 
 // 1. Patient  registration/discharge
-export const registerPatient = async (username, password, name, Address, contact, email) => {
+export const registerPatient = async (
+  username,
+  password,
+  name,
+  Address,
+  contact,
+  email
+) => {
   my_alert("API call: registerPatient(" + name + ")");
   //server registers a new patient and returns the id
   console.log(name);
@@ -83,33 +90,36 @@ export const scheduleAppointment = async (
 };
 
 export const updateAppointment = async (
-    username,
-    password,
-    appID,
-    date,
-    priority
+  username,
+  password,
+  appID,
+  date,
+  priority
 ) => {
-    my_alert("API call: scheduleAppointment()");
-    console.log(username, password, appID, date, priority);
-    //server
-    let config = {
-        method: "POST",
-        headers: {
-            Authorization: "Basic " + encode(username + ":" + password),
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            appID: appID,
-            date: date,
-            priority: priority,
-        }),
-    };
-    let response = await fetch(SERVER_URL + "/appointment/updateSchedule", config);
-    console.log("response recv");
-    let json = await response.json();
-    console.log({ schedule: json });
-    return json;
+  my_alert("API call: scheduleAppointment()");
+  console.log(username, password, appID, date, priority);
+  //server
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      appID: appID,
+      date: date,
+      priority: priority,
+    }),
+  };
+  let response = await fetch(
+    SERVER_URL + "/appointment/updateSchedule",
+    config
+  );
+  console.log("response recv");
+  let json = await response.json();
+  console.log({ schedule: json });
+  return json;
 };
 
 //For  admitted  patients  a  room should be assigned based on available room capacity.
@@ -195,6 +205,46 @@ export const getAllPatientsForFrontDesk = async ({ username, password }) => {
   return json;
 };
 
+export const getAppointmentsWithNoPrescription = async ({
+  username,
+  password,
+}) => {
+  my_alert("API call: getAppointmentsWithNoPrescription()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+  let response = await fetch(
+    SERVER_URL + "/dataentry/appointments/noprescription",
+    config
+  );
+  let json = await response.json();
+  console.log({ getAppointmentListForDataEntry: json });
+  return json;
+};
+
+export const dataentryAddResult = async ({ username, password }, props) => {
+  my_alert("API call: dataentryAddResult()");
+  console.log(username, password, props);
+  let config = {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(props),
+  };
+  let response = await fetch(SERVER_URL + "/dataentry/testresult", config);
+  let json = await response.json();
+  console.log({ dataentryAddResult_RES_JSON: json });
+  return json;
+};
+
+// OLD
 export const getAppointmentListForDataEntry = async ({
   username,
   password,
@@ -215,8 +265,8 @@ export const getAppointmentListForDataEntry = async ({
 
 //MASTER DATAENTRY
 
-export const masterDATAENTRY = async (props) => {
-  my_alert("API call: masterDATAENTRY()");
+export const addPrescription = async (props) => {
+  my_alert("API call: addPrescription()");
   console.log({ PROPS: props });
   console.log({ stringified: JSON.stringify(props) });
   //DONE:
@@ -230,7 +280,7 @@ export const masterDATAENTRY = async (props) => {
     body: JSON.stringify(props),
   };
   console.log({ config });
-  let response = await fetch(SERVER_URL + "/dataentry/appointments", config);
+  let response = await fetch(SERVER_URL + "/dataentry/prescription", config);
   let json = await response.json();
   console.log({ masterDATAENTRY: json });
   return json;
@@ -283,7 +333,7 @@ export const addUser = async (
   email,
   type
 ) => {
-  my_alert(adminUsername, adminPassword, username, password, name,email, type);
+  my_alert(adminUsername, adminPassword, username, password, name, email, type);
   let config = {
     method: "POST",
     headers: {
@@ -629,8 +679,7 @@ export const getTests = async (username, password, patientId) => {
 
 // console.log("end of script");
 
-
-export const fetchAdmissionHistory = async ({username, password}) => {
+export const fetchAdmissionHistory = async ({ username, password }) => {
   console.log("API call: fetchAdmissionHistory()");
   let config = {
     method: "GET",
@@ -639,25 +688,41 @@ export const fetchAdmissionHistory = async ({username, password}) => {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
-  }
+  };
   let response = await fetch(SERVER_URL + "/getAdmissionHistory", config);
   let json = await response.json();
   console.log({ json });
   return json;
-}
+};
 
 export const fetchRescheduling = async ({ username, password }) => {
-    console.log("API call: fetchRescheduling()");
-    let config = {
-        method: "GET",
-        headers: {
-            Authorization: "Basic " + encode(username + ":" + password),
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-        },
-    };
-    let response = await fetch(SERVER_URL + "/getRescheduling", config);
-    let json = await response.json();
-    console.log({ json });
-    return json;
+  console.log("API call: fetchRescheduling()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+  };
+  let response = await fetch(SERVER_URL + "/getRescheduling", config);
+  let json = await response.json();
+  console.log({ json });
+  return json;
+};
+
+export const fetchTestUpdate = async ({ username, password }) => {
+  console.log("API call: fetchTestUpdate()");
+  let config = {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + encode(username + ":" + password),
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    },
+  };
+  let response = await fetch(SERVER_URL + "/dataentry/test/update", config);
+  let json = await response.json();
+  console.log({ json });
+  return json;
 };

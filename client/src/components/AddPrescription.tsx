@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { masterDATAENTRY } from "../API";
+import { addPrescription } from "../API";
 import { getUser } from "../log";
 
-function EntryData(props: any) {
+function AddPrescription(props: any) {
   let [tests, setTests] = useState([]);
   let [treatments, setTreatments] = useState([]);
   //get the user who is logged in
@@ -16,132 +16,26 @@ function EntryData(props: any) {
   }, [open]);
   return (
     <div
-      className="fixed inset-0 grid place-content-center  gap-2
+      className="fixed inset-0 grid place-content-center gap-2
     bg-slate-300 text-gray-700 px-6 overflow-y-auto
     "
       style={{ display: open ? "grid" : "none" }}
     >
-      <h2 className="text-left ml-2">Add Tests' Details</h2>
+      <h2 className="text-left ml-2">Add Tests</h2>
       <form
         className="grid grid-cols-2 place-content-center items-start"
-        style={{ height: "340px" }}
+        style={{ height: "176px" }}
         onSubmit={async (e) => {
           e.preventDefault();
           let data = new FormData(e.target as HTMLFormElement);
           let name = data.get("name");
-          let result = data.get("result");
-          let date = data.get("date");
-          let important = data.get("important");
-          let file = data.get("file") as File;
-
-
-          let image = data.get("image") as File;
-
-          console.log(image);
-
-          //load the file
-          console.log(file);
-          if (file as File) {
-            let reader = new FileReader();
-            //prep the json data on load
-            reader.onload = function (event: any) {
-              const arrayBuf = event.target.result as ArrayBuffer;
-              console.log(event.target.result);
-              let buffer = new Uint8Array(arrayBuf).buffer;
-              let binary = [...new Uint8Array(buffer)]
-                .map((x) => x.toString(16).padStart(2, "0"))
-                .join("");
-
-              // to open the uploaded file
-
-              // const binaryData = new Uint8Array(
-              //         (binary as any).match(/[\da-f]{2}/gi).map(function (h: any) {
-              //           return parseInt(h, 16);
-              //         })
-              //   ).buffer;
-              // // hex string to array buffer
-
-              // const b = new Blob([binaryData], { type: "application/pdf" });
-              // const url = URL.createObjectURL(b);
-              // window.open(url, "_blank");
-
-              if (image as File) {
-                let reader = new FileReader();
-                reader.onload = function (event: any) {
-                const arrayBuf = event.target.result as ArrayBuffer;
-                console.log(event.target.result);
-                let binaryimg = [...new Uint8Array(arrayBuf)]
-                  .map((x) => x.toString(16).padStart(2, "0"))
-                  .join("");
-                  let test = {
-                    name,
-                    result,
-                    date,
-                    important: important ? "1" : "0",
-                    reportName: file.name,
-                    reportBody: binary,
-                    imageName: image.name,
-                    imageBody: binaryimg,
-                  };
-                  setTests(tests.slice().concat(test as any));
-                  console.log("onSubmit: with report", test);
-                };
-                reader.readAsArrayBuffer(image);
-              }
-              else{
-                let test = {
-                    name,
-                    result,
-                    date,
-                    important: important ? "1" : "0",
-                    reportName: file.name,
-                    reportBody: binary,
-                    imageName: image.name,
-                    imageBody: null,
-                  };
-                  setTests(tests.slice().concat(test as any));
-                  console.log("onSubmit: with report", test);
-              }
-
-            };
-            reader.readAsArrayBuffer(file);
-          } else if(image as File){
-                let reader = new FileReader();
-                reader.onload = function (event: any) {
-                const arrayBuf = event.target.result as ArrayBuffer;
-                console.log(event.target.result);
-                let binaryimg = [...new Uint8Array(arrayBuf)]
-                  .map((x) => x.toString(16).padStart(2, "0"))
-                  .join("");
-                  let test = {
-                    name,
-                    result,
-                    date,
-                    important: important ? "1" : "0",
-                    reportName: file.name,
-                    reportBody: null,
-                    imageName: image.name,
-                    imageBody: binaryimg,
-                  };
-                  setTests(tests.slice().concat(test as any));
-                  console.log("onSubmit: with report", test);
-                };
-                reader.readAsArrayBuffer(image);
-          }
-          else {
-            let test = {
-              name,
-              result,
-              date,
-              important: important ? "1" : "0",
-              reportName: file.name,
-              reportBody: null,
-              imageName: image.name,
-              imageBody: null,
-            };
-            setTests(tests.slice().concat(test as any));
-            console.log("onSubmit: without report", test);
-          }
+          let important = data.get("important") ? 1 : 0;
+          let test = {
+            name,
+            important,
+          };
+          setTests(tests.slice().concat(test as any));
+          console.log("onSubmit: name,important", test);
           //remove the values from the form
           (e.target as HTMLFormElement).reset();
         }}
@@ -154,7 +48,7 @@ function EntryData(props: any) {
           <input
             className="h-10"
             type="text"
-            placeholder="name"
+            placeholder="Test name"
             name="name"
             autoComplete="off"
             required
@@ -170,29 +64,6 @@ function EntryData(props: any) {
             />
             important
           </label>
-          <input
-            className="h-10"
-            min={appDate}
-            max={new Date().toISOString().split("T")[0]}
-            type="date"
-            placeholder="date"
-            name="date"
-            autoComplete="off"
-            required
-          />
-          <span className="text-gray-900 mt-2 text-left flex gap-2 items-center h-10">
-            <span>Result</span>
-            <select className="flex-1" name="result">
-              <option value="positive">positive</option>
-              <option value="negative">negative</option>
-            </select>
-          </span>
-          <div className="flex gap-3 items-center h-10 text-gray-900">
-            <div>Upload Report:</div>
-            <input name="file" type="file" accept=".pdf"/>
-            <div>Upload Image:</div>
-            <input name="image" type="file" accept="image/*"/>
-          </div>
           <button className="blue">Add Test</button>
         </span>
         <span
@@ -210,11 +81,7 @@ function EntryData(props: any) {
                 <li className="flex gap-3" key={i}>
                   <span
                     className="p-2 bg-slate-200 rounded-sm  flex-grow flex-shrink w-0 outline outline-2 outline-slate-300 cursor-default overflow-hidden overflow-ellipsis"
-                    title={`name:${test.name}\nresult:${
-                      test.result
-                    }\nimportant:${test.important}\ndate:${test.date}\nfile:${
-                      test.reportName ? test.reportName : "none"
-                    }`}
+                    title={`test name:${test.name}\nimportant:${test.important}`}
                   >
                     {test.name}
                   </span>
@@ -233,7 +100,7 @@ function EntryData(props: any) {
           )}
         </span>
       </form>
-      <h2 className="text-left mt-6 ml-2">Add Treatments' Details</h2>
+      <h2 className="text-left mt-6 ml-2">Add Treatments</h2>
       <form
         className="grid grid-cols-2 place-content-center items-start"
         style={{ height: "228px" }}
@@ -257,7 +124,7 @@ function EntryData(props: any) {
           <input
             className="h-10"
             type="text"
-            placeholder="name"
+            placeholder="Treatment name"
             name="name"
             autoComplete="off"
             required
@@ -337,7 +204,7 @@ function EntryData(props: any) {
               tests,
               treatments,
             });
-            let s = await masterDATAENTRY({
+            let s = await addPrescription({
               appID: appID,
               username: user.username,
               password: user.password,
@@ -357,4 +224,4 @@ function EntryData(props: any) {
   );
 }
 
-export default EntryData;
+export default AddPrescription;

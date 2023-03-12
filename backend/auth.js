@@ -14,14 +14,14 @@ function isAuth(connection, req, res, onSuccess) {
   const [username, password] = decodedCredentials.split(":");
 
   let query;
-  query = `select * from User where Username="${username}" and Password="${password}";`;
+  query = `select * from User where Username="${username}" and Password="${password}" and Active=1;`;
   connection.query(query, function (error, results, fields) {
     if (error) throw error;
     //check if user
     if (results.length == 1) {
       onSuccess(results[0]);
     } else {
-      res.status(401).json({ status: "error", reason: "Unauthorized" });
+      res.status(401).json({ status: "error", reason: "Unauthorized Auth" });
     }
   });
 }
