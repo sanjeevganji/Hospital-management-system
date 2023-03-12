@@ -5,6 +5,11 @@ import Treatments from "./Treatments";
 import moment from "moment";
 import { getUser } from "../log";
 
+const formatDate = (date: Date) => {
+    let d = moment(date);
+    return d.format("YYYY-MM-DD");
+};
+
 function Doctor() {
   let [appointments, setAppointments] = React.useState([]);
   let [patients, setPatients] = React.useState([]);
@@ -17,10 +22,17 @@ function Doctor() {
   let [searchdate, setSearchdate] = React.useState(null);
   const [selectedPanel, setSelectedPanel] = React.useState(0);
 
-  const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
-  };
+  const date = new Date();
+  const hours = date.getHours();
+  let greeting;
+  if (hours >= 0 && hours < 12) {
+    greeting = 'Good morning';
+  } else if (hours >= 12 && hours < 18) {
+    greeting = 'Good afternoon';
+  } else {
+    greeting = 'Good evening';
+  }
+
   //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   useEffect(() => {
@@ -87,6 +99,11 @@ function Doctor() {
     <>
       <div className="px-6 flex flex-col">
         <h2 className="mt-6 mb-2">Dashboard</h2>
+        <div className="mt-2 mb-2">
+            {greeting} Sir, you have{" "}
+          <span className=" text-orange-600">{appointments.length} </span>
+            upcoming Appointments!
+        </div>
         <select
           name="select"
           className="mt-6 mb-2 shadow-lg font-bold w-fit"
@@ -104,11 +121,6 @@ function Doctor() {
         {selectedPanel == 0 ? (
           <>
             {/* Appointment */}
-            <div className="mt-2 mb-2">
-              Hello {user?.username}, you have{" "}
-              <span className=" text-orange-600">{appointments.length} </span>
-              upcoming Appointments!
-            </div>
             {/* SEARCH */}
             <div className="flex flex-wrap gap-6 mt-6 mb-2">
               <label className="flex-1 whitespace-nowrap">
@@ -143,7 +155,7 @@ function Doctor() {
                 <div className="mb-2">Search by Date:</div>
                 <input
                   onChange={handleDate}
-                  min={new Date().toISOString().split("T")[0]}
+                  min={formatDate(new Date)}
                   className=" h-10 card w-full"
                   type={"date"}
                   placeholder="patient name"
@@ -171,12 +183,11 @@ function Doctor() {
                     (searchdate != null && searchdate != ""
                       ? searchdate == formatDate(appointment.date) //date from sql
                       : (searchid == 0 && searchname == "") ||
-                        (searchid != 0 &&
+                        (searchid == 0 ||
                           appointment.pID
                             .toString()
-                            .startsWith(searchid.toString())) ||
-                        (searchname != "" &&
-                          appointment.pName
+                            .startsWith(searchid.toString())) &&
+                        ( appointment.pName
                             .toLowerCase()
                             .startsWith(searchname.toLowerCase()))) && (
                       <div
@@ -252,7 +263,7 @@ function Doctor() {
                         (searchid2 != 0 &&
                           patient.ID.toString()
                             .toLowerCase()
-                            .startsWith(searchid2.toString().toLowerCase())) ||
+                            .startsWith(searchid2.toString().toLowerCase())) &&
                         (searchname2 != "" &&
                           patient.Name.toLowerCase().startsWith(
                             searchname2.toLowerCase()

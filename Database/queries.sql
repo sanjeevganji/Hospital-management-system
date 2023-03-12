@@ -19,8 +19,6 @@ ORDER BY Patient.ID DESC;
 
 
 
-
-
 Select Admission.ID AS ID, Admission.Room
 from Admission
 WHERE Admission.Patient = 139 AND Admission.Discharge_date IS NULL;
@@ -48,7 +46,34 @@ ORDER BY Admission.ID DESC
 LIMIT 100;
 
 
+SELECT Patient.*, Appointment.Date AS aapDate, Appointment.ID AS appID
+      FROM Patient, Appointment
+      WHERE Patient.ID = Appointment.Patient AND CURDATE() > Appointment.Date AND Appointment.Prescription IS NULL;
 
+
+UPDATE Appointment SET Date='2023-03-12', Priority=2 WHERE ID = '1';
+
+SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
+      FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
+      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND Test.Date IS NULL;
+      
+      
+      
+      select * from Test;
+
+
+delete from `Patient_Admission`;
+delete from `Patient_Appointment`;
+delete from `Prescription_Treatment`;
+delete from `Prescription_Test`;
+delete from `Appointment`;
+delete from `Prescription`;
+delete from `Admission`;
+delete from `Room`;
+delete from `User`;
+delete from `Test`;
+delete from `Patient`;
+delete from `Treatment`;
 
 
 
