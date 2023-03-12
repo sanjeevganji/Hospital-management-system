@@ -132,15 +132,15 @@ function AddPrescription(props: any) {
           <input
             className="h-10"
             type="text"
-            placeholder="dosage"
+            placeholder="Dosage"
             name="dosage"
             autoComplete="off"
             required
           />
           <input
-            className="h-10"
+            className="h-10 px-2 text-gray-400"
             min={appDate}
-            type="date"
+            type="datetime-local"
             placeholder="date"
             name="date"
             autoComplete="off"

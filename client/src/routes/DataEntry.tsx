@@ -5,6 +5,11 @@ import { fetchTestUpdate, getAppointmentsWithNoPrescription } from "../API";
 import AddPrescription from "../components/AddPrescription";
 import UploadTestsPopup from "../components/UploadTestsPopup";
 
+const formatDateTime = (date: Date) => {
+  let d = moment(date);
+  return d.format("YYYY-MM-DD HH:mm:ss");
+};
+
 function DataEntry() {
   let [testUpdate, setTestUpdate] = React.useState([]);
   let [appointments, setAppointments] = React.useState([]);
@@ -199,7 +204,7 @@ function DataEntry() {
         <div className="grid grid-cols-4 gap-3 mt-6 mb-2 text-center shadow-lg">
           <h3 className="col-span-1">Test ID</h3>
           <h3 className="col-span-1">Name</h3>
-          <h3 className="col-span-1">Date</h3>
+          <h3 className="col-span-1">DateTime</h3>
           <h3 className="col-span-1">Actions</h3>
         </div>
         <div className="flex flex-col gap-3 whitespace-nowrap mt-4 mb-8">
@@ -222,7 +227,7 @@ function DataEntry() {
                     {test.Name || "-"}
                   </div>
                   <div className="card col-span-1 text-center">
-                    {formatDate(test.date)}
+                    {formatDateTime(test.date)}
                   </div>
                   <button
                     onClick={async () => {

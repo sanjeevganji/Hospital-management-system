@@ -100,9 +100,9 @@ function Doctor() {
       <div className="px-6 flex flex-col">
         <h2 className="mt-6 mb-2">Dashboard</h2>
         <div className="mt-2 mb-2">
-            {greeting} Sir, you have{" "}
+          {greeting} Sir, you have{" "}
           <span className=" text-orange-600">{appointments.length} </span>
-            upcoming Appointments!
+          upcoming Appointments!
         </div>
         <select
           name="select"
@@ -155,7 +155,7 @@ function Doctor() {
                 <div className="mb-2">Search by Date:</div>
                 <input
                   onChange={handleDate}
-                  min={formatDate(new Date)}
+                  min={formatDate(new Date())}
                   className=" h-10 card w-full"
                   type={"date"}
                   placeholder="patient name"
@@ -183,11 +183,11 @@ function Doctor() {
                     (searchdate != null && searchdate != ""
                       ? searchdate == formatDate(appointment.date) //date from sql
                       : (searchid == 0 && searchname == "") ||
-                        (searchid == 0 ||
+                        ((searchid == 0 ||
                           appointment.pID
                             .toString()
                             .startsWith(searchid.toString())) &&
-                        ( appointment.pName
+                          appointment.pName
                             .toLowerCase()
                             .startsWith(searchname.toLowerCase()))) && (
                       <div
@@ -260,14 +260,13 @@ function Doctor() {
                   patients.map(
                     (patient: any) =>
                       ((searchid2 == 0 && searchname2 == "") ||
-                        (searchid2 != 0 &&
-                          patient.ID.toString()
+                        ((searchid2 == 0 ||
+                          patient.ID
+                            .toString()
+                            .startsWith(searchid2.toString())) &&
+                          patient.Name
                             .toLowerCase()
-                            .startsWith(searchid2.toString().toLowerCase())) &&
-                        (searchname2 != "" &&
-                          patient.Name.toLowerCase().startsWith(
-                            searchname2.toLowerCase()
-                          ))) && (
+                            .startsWith(searchname2.toLowerCase()))) && (
                         <div
                           className="grid grid-cols-8 gap-3"
                           key={patient.ID}
