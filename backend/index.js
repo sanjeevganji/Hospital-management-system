@@ -228,7 +228,7 @@ app.get("/dataentry/appointments/noprescription", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "dataentry") {
-      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, Appointment.Doctor as dName, Date as date FROM Appointment, Patient WHERE Prescription IS NULL AND Patient=Patient.ID AND Appointment.Date <= CURDATE();`;
+      let sql = `SELECT Appointment.ID as appID, Patient.ID as pID, Patient.Name as pName, User.Name as dName, Date as date FROM Appointment, Patient,User WHERE Appointment.Doctor=User.Username AND Prescription IS NULL AND Patient=Patient.ID AND Appointment.Date <= CURDATE();`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -247,7 +247,10 @@ app.get("/dataentry/test/update", (req, res) => {
   isAuth(connection, req, res, (user) => {
     console.log({ user });
     if (user.Type == "dataentry") {
-      let sql = `SELECT * FROM Test WHERE Result IS NULL AND Date <= CURDATE();`;
+      let sql = `SELECT Test.*,Patient.ID as pID,Patient.Name as pName FROM Test,Prescription_Test,Appointment,Patient WHERE 
+      Test.ID=Prescription_Test.Test AND Prescription_Test.ID=Appointment.Prescription AND Appointment.Patient=Patient.ID
+      AND
+      Result IS NULL AND Test.Date < LOCALTIME();`;
       console.log({ sql });
       connection.query(sql, function (err, result) {
         if (err) {
@@ -335,43 +338,42 @@ app.get("/getRescheduling", (req, res) => {
   });
 });
 
-
 app.get("/getScheduleTest", (req, res) => {
-    isAuth(connection, req, res, (user) => {
-        if (user.Type == "frontdesk") {
-            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
       WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND Test.Date IS NULL;
       `;
-            connection.query(sql, function (err, result) {
-                if (err) {
-                    res.json({ status: "error" });
-                } else {
-                    console.log(result);
-                    res.json(result);
-                }
-            });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
         }
-    });
+      });
+    }
+  });
 });
 
 app.get("/getRescheduleTest", (req, res) => {
-    isAuth(connection, req, res, (user) => {
-        if (user.Type == "frontdesk") {
-            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName, Test.Date AS Date
+  isAuth(connection, req, res, (user) => {
+    if (user.Type == "frontdesk") {
+      let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName, Test.Date AS Date
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
       WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() > Test.Date AND Test.Result IS NULL;
       `;
-            connection.query(sql, function (err, result) {
-                if (err) {
-                    res.json({ status: "error" });
-                } else {
-                    console.log(result);
-                    res.json(result);
-                }
-            });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error" });
+        } else {
+          console.log(result);
+          res.json(result);
         }
-    });
+      });
+    }
+  });
 });
 
 //not tested
@@ -829,7 +831,7 @@ app.post("/dataentry/testresult", (req, res) => {
         }
       }
 
-      let sql = `UPDATE Test SET Result = '${req.body.result}', Report = '${req.body.report}', Image = '${req.body.image}' WHERE ID = ${req.body.ID};`;
+      let sql = `UPDATE Test SET Result = '${req.body.result}', Report = x'${req.body.report}', Image = x'${req.body.image}' WHERE ID = ${req.body.ID};`;
       connection.query(sql, function (err, result) {
         if (err) {
           console.error("sql UPDATE Test SET", err);
@@ -1127,21 +1129,21 @@ app.post("/appointment/updateSchedule", (req, res) => {
 
 app.post("/test/schedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
-      if (user.Type == "frontdesk") {
-          console.log({ body: req.body });
+    if (user.Type == "frontdesk") {
+      console.log({ body: req.body });
 
-          let sql = `UPDATE Test SET Date='${req.body.date}' WHERE ID = ${req.body.testID};`;
-          console.log({ sql });
-          connection.query(sql, function (err, result) {
-              if (err) {
-                  res.json({ status: "error", reason: "getTest" });
-              } else {
-                  console.log({ result });
+      let sql = `UPDATE Test SET Date='${req.body.date}' WHERE ID = ${req.body.testID};`;
+      console.log({ sql });
+      connection.query(sql, function (err, result) {
+        if (err) {
+          res.json({ status: "error", reason: "getTest" });
+        } else {
+          console.log({ result });
 
-                  res.json({ status: "ok", result });
-              }
-          });
-      }
+          res.json({ status: "ok", result });
+        }
+      });
+    }
   });
 });
 

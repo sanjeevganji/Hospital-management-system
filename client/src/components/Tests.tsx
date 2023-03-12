@@ -2,6 +2,10 @@ import moment from "moment";
 import React, { useEffect } from "react";
 import { getTests } from "../API";
 
+const formatDateTime = (date: Date) => {
+  let d = moment(date);
+  return d.format("YYYY-MM-DD HH:mm:ss");
+};
 function Tests(props: any) {
   let { user, open, onClose } = props;
   let [tests, setTests] = React.useState<any>([]);
@@ -39,9 +43,11 @@ function Tests(props: any) {
             <div className="grid grid-cols-9 gap-3" key={test.ID}>
               <div className="cell col-span-2">{test.Name}</div>
               <div className="cell col-span-3">
-                {test.Date && formatDate(test.Date)}
+                {test.Date ? formatDateTime(test.Date) : "Pending..."}
               </div>
-              <div className="cell col-span-2">{test.Result}</div>
+              <div className="cell col-span-2">
+                {test.Result || "Pending..."}
+              </div>
               {test.Report ? (
                 <button
                   onClick={() => {

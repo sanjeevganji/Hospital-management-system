@@ -6,8 +6,8 @@ import moment from "moment";
 import { getUser } from "../log";
 
 const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
 };
 
 function Doctor() {
@@ -26,11 +26,11 @@ function Doctor() {
   const hours = date.getHours();
   let greeting;
   if (hours >= 0 && hours < 12) {
-    greeting = 'Good morning';
+    greeting = "Good morning";
   } else if (hours >= 12 && hours < 18) {
-    greeting = 'Good afternoon';
+    greeting = "Good afternoon";
   } else {
-    greeting = 'Good evening';
+    greeting = "Good evening";
   }
 
   //get the user who is logged in
@@ -100,9 +100,9 @@ function Doctor() {
       <div className="px-6 flex flex-col">
         <h2 className="mt-6 mb-2">Dashboard</h2>
         <div className="mt-2 mb-2">
-            {greeting} Sir, you have{" "}
+          {greeting} Sir, you have{" "}
           <span className=" text-orange-600">{appointments.length} </span>
-            upcoming Appointments!
+          upcoming Appointments!
         </div>
         <select
           name="select"
@@ -155,7 +155,7 @@ function Doctor() {
                 <div className="mb-2">Search by Date:</div>
                 <input
                   onChange={handleDate}
-                  min={formatDate(new Date)}
+                  min={formatDate(new Date())}
                   className=" h-10 card w-full"
                   type={"date"}
                   placeholder="patient name"
@@ -183,18 +183,20 @@ function Doctor() {
                     (searchdate != null && searchdate != ""
                       ? searchdate == formatDate(appointment.date) //date from sql
                       : (searchid == 0 && searchname == "") ||
-                        (searchid == 0 ||
+                        ((searchid == 0 ||
                           appointment.pID
                             .toString()
                             .startsWith(searchid.toString())) &&
-                        ( appointment.pName
+                          appointment.pName
                             .toLowerCase()
                             .startsWith(searchname.toLowerCase()))) && (
                       <div
-                        className="grid grid-cols-7 gap-3"
+                        className="grid grid-cols-7 gap-3 "
                         key={appointment.appID}
                       >
-                        <div className="card col-span-1">{appointment.pID}</div>
+                        <div className="card col-span-1 text-center">
+                          {appointment.pID}
+                        </div>
                         <div className="card col-span-2">
                           {appointment.pName}
                         </div>
@@ -204,7 +206,7 @@ function Doctor() {
                         <div className="card col-span-2">
                           {appointment.Email}
                         </div>
-                        <div className="card col-span-1">
+                        <div className="card col-span-1 text-center">
                           {formatDate(appointment.date)}
                         </div>
                         {/* <div className="card col-span-2">{appointment.priority}</div> */}
@@ -263,8 +265,8 @@ function Doctor() {
                         (searchid2 != 0 &&
                           patient.ID.toString()
                             .toLowerCase()
-                            .startsWith(searchid2.toString().toLowerCase())) &&
-                        (searchname2 != "" &&
+                            .startsWith(searchid2.toString().toLowerCase()) &&
+                          searchname2 != "" &&
                           patient.Name.toLowerCase().startsWith(
                             searchname2.toLowerCase()
                           ))) && (
@@ -272,7 +274,9 @@ function Doctor() {
                           className="grid grid-cols-8 gap-3"
                           key={patient.ID}
                         >
-                          <div className="card col-span-1 ">{patient.ID}</div>
+                          <div className="card col-span-1 text-center ">
+                            {patient.ID}
+                          </div>
                           <div className="card col-span-2">{patient.Name}</div>
                           <div className="card col-span-1">
                             {patient.Contact}

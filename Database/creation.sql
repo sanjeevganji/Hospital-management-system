@@ -49,7 +49,7 @@ create table Prescription_Treatment (
     `Treatment` int,
     foreign key (`Treatment`) REFERENCES `Treatment`(`ID`),
     foreign key (`ID`) REFERENCES `Prescription` (`ID`),
-    primary key (`ID`, `Treatment`)
+    primary key (`Treatment`)
 );
 
 create table Prescription_Test (
@@ -86,11 +86,13 @@ create table Appointment (
 create table Patient_Appointment (
     `ID` int,
     `Appointment` int,
-    foreign key (`Appointment`) REFERENCES `Appointment`(`ID`)
+    foreign key (`Appointment`) REFERENCES `Appointment`(`ID`),
+    primary key (`Appointment`)
 );
 
 create table Patient_Admission (
     `ID` int,
     `Admission` int,
-    foreign key (`Admission`) REFERENCES `Admission`(`ID`)
+    foreign key (`Admission`) REFERENCES `Admission`(`ID`),
+    primary key (`Admission`)
 );

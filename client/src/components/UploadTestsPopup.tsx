@@ -16,6 +16,14 @@ let fileToHexString = (file: File) => {
       let fileHexString = [...new Uint8Array(fileArrayBuffer)]
         .map((x) => x.toString(16).padStart(2, "0"))
         .join("");
+      // //try to get back the array buffer
+      // let fileArrayBuffer2 = new Uint8Array(
+      //   fileHexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+      // ).buffer;
+      // //convert to blob and open in new window
+      // let blob = new Blob([fileArrayBuffer2], { type: "application/pdf" });
+      // let url = URL.createObjectURL(blob);
+      // window.open(url);
       resolve(fileHexString);
     };
     reader.readAsArrayBuffer(file);
