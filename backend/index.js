@@ -5,6 +5,7 @@ import mysql from "mysql2";
 import isAuth from "./auth.js";
 import mailDoc from "./Nodemailer.js";
 import fs from "fs";
+import weeklyMail from "./weekMail.js";
 
 const formatDate = (date) => {
   let d = moment(date);
@@ -53,6 +54,8 @@ let awaitQUERY = async (sql) => {
     });
   });
 };
+
+weeklyMail({connection: connection});
 var app = express();
 var PORT = 3000;
 // use cors

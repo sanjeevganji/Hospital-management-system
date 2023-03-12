@@ -12,12 +12,9 @@ function mailDoc(props) {
       pass: "pfvlqifqghhxhoef",
     },
   });
-
   let testResult = "";
   props.test.forEach((test) => {
-    testResult += `<p>Name: <b>${test.name}</b>, Date: <b>${formatDate(
-      test.date
-    )}</b>, Result: <b>${test.result}</b></p>\n`;
+    testResult += `<p>Name: <b>${test.Name}</b>, Date: <b>${formatDate(test.Date)}</b>, Result: <b>${test.Result}</b></p>\n`;
   });
 
   let mailDetails = {
