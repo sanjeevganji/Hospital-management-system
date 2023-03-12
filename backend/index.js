@@ -12,10 +12,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
-  // host: "localhost",
-  // user: "root",
-  // database: "Hospital",
-  // password: "password",
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "password",
   // host: "dbms-hostpital.mysql.database.azure.com",
   // user: "atishay",
   // password: "pass@123",
@@ -26,10 +26,10 @@ var connection = mysql.createConnection({
   // user: "root",
   // database: "Hospital",
   // password: "password",
-  host: "localhost",
-  user: "root",
-  database: "Hospital",
-  password: "DakRR#2020",
+  // host: "localhost",
+  // user: "root",
+  // database: "Hospital",
+  // password: "DakRR#2020",
   // host: "sql12.freemysqlhosting.net",t
   // user: "sql12602698",
   // database: "sql12602698",
