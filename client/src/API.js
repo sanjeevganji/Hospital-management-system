@@ -1,6 +1,7 @@
 import { encode } from "base-64";
-// let SERVER_URL = "`https://paras-dbms.azurewebsites.net`";
-let SERVER_URL = "http://localhost:3000";
+// let SERVER_URL = "https://hospital-paras.azurewebsites.net";
+let SERVER_URL = "https://dbms-paras.onrender.com";
+// let SERVER_URL = "http://localhost:3000";
 
 // SERVER_URL = "http://10.145.179.195:3000";
 let my_alert = console.warn;
