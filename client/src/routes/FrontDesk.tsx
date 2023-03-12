@@ -101,8 +101,7 @@ function FrontDesk() {
       setSelectedPanel(1);
     } else if (event.target.value === "History") {
       setSelectedPanel(2);
-    }
-    else if (event.target.value === "Test") {
+    } else if (event.target.value === "Test") {
       setSelectedPanel(3);
     }
   };
@@ -245,11 +244,11 @@ function FrontDesk() {
               {fetchedPatients?.map(
                 (fetchedPatient: any) =>
                   ((searchid == 0 && searchname == "") ||
-                    (searchid != 0 &&
+                    (searchid == 0 ||
                       fetchedPatient.ID.toString().startsWith(
                         searchid.toString()
-                      )) ||
-                    (searchname != "" &&
+                      )) &&
+                    (
                       fetchedPatient.Name.toLowerCase().startsWith(
                         searchname.toLowerCase()
                       ))) && (
@@ -389,7 +388,7 @@ function FrontDesk() {
                 onChange={async(e) => {
                   setAppointmentTest(1);
                 }}
-                defaultChecked
+                defaultChecked={appointmentTest === 1 ? true : false}
               />
               Appointment
             </label>
@@ -402,6 +401,7 @@ function FrontDesk() {
                 onChange={async(e) => {
                   setAppointmentTest(0);
                 }}
+                defaultChecked={appointmentTest === 0 ? true : false}
               />
               Test
             </label>
@@ -487,10 +487,11 @@ function FrontDesk() {
             <>
               <div className=" grid grid-cols-8 gap-3 mt-8 mb-2 shadow-lg text-center">
               <h2 className=" col-span-1">Test ID</h2>
-              <h2 className=" col-span-2">Test Name</h2>
+              <h2 className=" col-span-1">Test Name</h2>
+              <h2 className=" col-span-2">Test Date</h2>
               <h2 className=" col-span-1">Patient ID</h2>
               <h2 className=" col-span-2">Patient Name</h2>
-              <h2 className=" col-span-2">Actions</h2>
+              <h2 className=" col-span-1">Actions</h2>
             </div>
             <div className=" mb-16 mt-8 flex flex-col gap-3 ">
               {rescheduleTest?.map((Test: any) => (
@@ -501,8 +502,11 @@ function FrontDesk() {
                   <div className="card col-span-1 whitespace-nowrap text-center">
                     {Test.testID}
                   </div>
-                  <div className="card col-span-2 whitespace-nowrap">
+                  <div className="card col-span-1 whitespace-nowrap">
                     {Test.testName}
+                  </div>
+                  <div className="card col-span-2 whitespace-nowrap text-center">
+                    {formatDate(Test.Date)}
                   </div>
                   <div className="card col-span-1 whitespace-nowrap text-center">
                     {Test.ID}
@@ -515,7 +519,7 @@ function FrontDesk() {
                     onClick={() => {
                       setTestPopup(Test.ID);
                     }}
-                    className={"col-span-2 orange"}
+                    className={"col-span-1 orange"}
                   >
                     Reschedule Test
                   </button>

@@ -13,15 +13,3 @@ drop table if exists `Test`;
 drop table if exists `Patient`;
 drop table if exists `Treatment`;
 
-delete from `Patient_Admission`;
-delete from `Patient_Appointment`;
-delete from `Prescription_Treatment`;
-delete from `Prescription_Test`;
-delete from `Appointment`;
-delete from `Prescription`;
-delete from `Admission`;
-delete from `Room`;
-delete from `User`;
-delete from `Test`;
-delete from `Patient`;
-delete from `Treatment`;

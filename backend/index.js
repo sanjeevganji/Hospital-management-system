@@ -158,7 +158,7 @@ app.get("/doctor/appointments", (req, res) => {
       let date = formatDate(new Date());
       //CORRECT THIS
       let sql = `SELECT Appointment.ID AS appID, Patient.ID AS pID, Patient.Name AS pName, Appointment.Date AS date, Appointment.Priority AS priority, Patient.Contact AS Contact, Patient.Email AS Email
-               FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date > '${date}';`;
+               FROM Appointment, Patient WHERE Appointment.Doctor = '${user.Username}' AND Appointment.Patient = Patient.ID AND Appointment.Prescription is NULL AND Appointment.Date >= '${date}';`;
 
       console.log({ sql });
       connection.query(sql, function (err, result) {
@@ -318,7 +318,7 @@ app.get("/getScheduleTest", (req, res) => {
 app.get("/getRescheduleTest", (req, res) => {
     isAuth(connection, req, res, (user) => {
         if (user.Type == "frontdesk") {
-            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
+            let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName, Test.Date AS Date
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
       WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() > Test.Date AND Test.Result IS NULL;
       `;

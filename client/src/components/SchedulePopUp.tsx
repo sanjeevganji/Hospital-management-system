@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { getTreatments, scheduleAppointment,updateAppointment, scheduleTest} from "../API";
 import { getUser } from "../log";
-import moment from "moment";
+import moment, { min } from "moment";
 
 const formatDate = (date: Date) => {
     let d = moment(date);
     return d.format("YYYY-MM-DD");
+};
+
+const formatDateTime = (date: Date) => {
+  let d = moment(date);
+  d = d.add(10, 'minute').startOf('minute');
+  return d.format("YYYY-MM-DDTHH:mm:ss");
 };
 
 function ScheduleAppointmentPopUp(props: any) {
@@ -121,6 +127,7 @@ function ScheduleTestPopUp(props: any){
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+
   return(
     <div
       className="fixed inset-0 grid place-content-center
@@ -132,6 +139,7 @@ function ScheduleTestPopUp(props: any){
         <form
           className="grid grid-cols-2 gap-x-3"
           onSubmit={async (e) => {
+
             e.preventDefault();
             let s = await scheduleTest(
               user.username,
@@ -150,8 +158,8 @@ function ScheduleTestPopUp(props: any){
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
             <label className="text-gray-500">Schedule Date</label>
             <input
-              min={formatDate(new Date())}
-              type="date"
+              min={formatDateTime(new Date())}
+              type="datetime-local"
               name="scheduleDate"
               autoComplete="off"
               required
