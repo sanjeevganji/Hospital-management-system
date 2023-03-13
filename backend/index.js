@@ -400,7 +400,7 @@ app.get("/getRescheduleTest", (req, res) => {
     if (user.Type == "frontdesk") {
       let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName, Test.Date AS Date
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
-      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() >= Test.Date AND Test.Result IS NULL;
+      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() > Test.Date AND Test.Result IS NULL;
       `;
       connection.query(sql, function (err, result) {
         if (err) {
@@ -602,6 +602,7 @@ app.post("/dataentry/testresult", (req, res) => {
       //sql query
 
       let result = req.body.result;
+      let report, image;
       //PRELIMINARY CHECKS for result
       {
         //check if result is "negative" or "positive"
@@ -609,7 +610,7 @@ app.post("/dataentry/testresult", (req, res) => {
           res.json({ status: "error" });
           return;
         }
-        let report = req.body.report;
+        report = req.body.report;
         //check report is  of string type
         if (typeof report != "string") {
           res.json({
@@ -620,8 +621,10 @@ app.post("/dataentry/testresult", (req, res) => {
         }
         if (report.length == 0) {
           report = "null";
+        } else {
+          report = `x'${report}'`;
         }
-        let image = req.body.image;
+        image = req.body.image;
         //check image is of string type
         if (typeof image != "string") {
           res.json({
@@ -632,10 +635,12 @@ app.post("/dataentry/testresult", (req, res) => {
         }
         if (image.length == 0) {
           image = "null";
+        } else {
+          image = `x'${image}'`;
         }
       }
 
-      let sql = `UPDATE Test SET Result = '${req.body.result}', Report = x'${req.body.report}', Image = x'${req.body.image}' WHERE ID = ${req.body.ID};`;
+      let sql = `UPDATE Test SET Result = '${req.body.result}', Report = ${report}, Image = ${image} WHERE ID = ${req.body.ID};`;
       connection.query(sql, function (err, result) {
         if (err) {
           console.error("sql UPDATE Test SET", err);
