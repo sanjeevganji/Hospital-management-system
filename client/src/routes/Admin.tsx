@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { addUser, deleteUser, getUsers as fetchUsers } from "../API";
-import { getUser, tryLoggingOut } from "../log";
+import { getUser } from "../log";
 
 function Admin() {
   let [confirm, setConfirm] = React.useState(null);
@@ -37,7 +37,7 @@ function Admin() {
           }
           console.log((e.target as any).username.value.charAt(0));
           if (!/[a-zA-Z]$/.test((e.target as any).username.value.charAt(0))) {
-            alert("first charecter of Username must be an Alphabet");
+            alert("first character of Username must be an Alphabet");
             return;
           }
           if ((e.target as any).password.value.length < 8) {
@@ -92,7 +92,6 @@ function Admin() {
               type="radio"
               className="mx-1"
               defaultChecked
-              required
             />
             Doctor
           </label>
@@ -102,7 +101,6 @@ function Admin() {
               value="frontdesk"
               type="radio"
               className="mx-1"
-              required
             />
             Frontdesk
           </label>
@@ -112,7 +110,6 @@ function Admin() {
               value="dataentry"
               type="radio"
               className="mx-1"
-              required
             />
             Dataentry
           </label>
@@ -126,6 +123,7 @@ function Admin() {
           placeholder="username"
           name="username"
           autoComplete="off"
+          required
         />
         <input type="text" placeholder="name" name="name" autoComplete="off" />
         <input
@@ -133,12 +131,14 @@ function Admin() {
           placeholder="email"
           name="email"
           autoComplete="off"
+          required
         />
         <input
           type="password"
           placeholder="password"
           name="password"
           autoComplete="off"
+          required
         />
         <button className="blue">Add User</button>
       </form>

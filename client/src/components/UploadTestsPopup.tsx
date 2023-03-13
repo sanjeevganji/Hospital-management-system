@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   dataentryAddResult,
-  dischargePatient,
-  getTreatments,
-  scheduleAppointment,
 } from "../API";
 import { getUser } from "../log";
 

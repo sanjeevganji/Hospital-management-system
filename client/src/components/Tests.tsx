@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useEffect } from "react";
+import React from "react";
 import { getTests } from "../API";
 
 const formatDateTime = (date: Date) => {

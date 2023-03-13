@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  getTreatments,
-  scheduleAppointment,
-  updateAppointment,
-  scheduleTest,
-} from "../API";
+import { scheduleAppointment, updateAppointment, scheduleTest } from "../API";
 import { getUser } from "../log";
 import moment from "moment";
 
