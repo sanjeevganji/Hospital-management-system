@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { admitPatient} from "../API";
+import { admitPatient } from "../API";
 import { getUser } from "../log";
 
 function AdmitPatient(props: any) {
@@ -21,7 +21,7 @@ function AdmitPatient(props: any) {
     bg-black text-gray-700 px-6 bg-opacity-30
     "
       style={{ display: open ? "grid" : "none" }}
-    >dischargePatient
+    >
       <span className="grid place-content-center gap-1 p-4 bg-slate-100  rounded-md shadow-xl mx-auto">
         <form
           className="grid grid-cols-2 gap-x-3"
