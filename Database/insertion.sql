@@ -8,26 +8,26 @@ USE Hospital;
 INSERT INTO User
     (Username, Password, Type, Name, Email)
 VALUES
-    ('doc1', 'pass', 'doctor', 'John Doe', 'das815221@gmail.com'),
-    ('doc2', 'pass', 'doctor', 'Jane Smith', 'das815221@gmail.com'),
-    ('dataentry1', 'pass', 'dataentry', 'Emily Johnson', 'das815221@gmail.com'),
-    ('dataentry2', 'pass', 'dataentry', 'Michael Lee', 'das815221@gmail.com'),
-    ('admin1', 'pass', 'admin', 'David Brown', 'das815221@gmail.com'),
-    ('admin2', 'pass', 'admin', 'Amanda Wilson', 'das815221@gmail.com'),
-    ('frontdesk1', 'pass', 'frontdesk', 'Sarah Taylor', 'das815221@gmail.com'),
-    ('frontdesk2', 'pass', 'frontdesk', 'Kevin Martinez', 'das815221@gmail.com'),
-    ('doc3', 'pass', 'doctor', 'William Davis', 'das815221@gmail.com'),
-    ('doc4', 'pass', 'doctor', 'Olivia Hernandez', 'das815221@gmail.com'),
-    ('dataentry3', 'pass', 'dataentry', 'Ethan Garcia', 'das815221@gmail.com'),
-    ('dataentry4', 'pass', 'dataentry', 'Sophia Martinez', 'das815221@gmail.com'),
-    ('admin3', 'pass', 'admin', 'Aiden Jackson', 'das815221@gmail.com'),
-    ('admin4', 'pass', 'admin', 'Madison Miller', 'das815221@gmail.com'),
-    ('frontdesk3', 'pass', 'frontdesk', 'Daniel Moore', 'das815221@gmail.com'),
-    ('frontdesk4', 'pass', 'frontdesk', 'Avery Davis', 'das815221@gmail.com'),
-    ('doc5', 'pass', 'doctor', 'Chloe Green', 'das815221@gmail.com'),
-    ('doc6', 'pass', 'doctor', 'Alexander Scott', 'das815221@gmail.com'),
-    ('dataentry5', 'pass', 'dataentry', 'Natalie Carter', 'das815221@gmail.com'),
-    ('dataentry6', 'pass', 'dataentry', 'Noah Young', 'das815221@gmail.com');
+    ('doc1', 'pass', 'doctor', 'John Doe', 'juststartedxd150@gmail.com'),
+    ('doc2', 'pass', 'doctor', 'Jane Smith', 'juststartedxd150@gmail.com'),
+    ('dataentry1', 'pass', 'dataentry', 'Emily Johnson', 'juststartedxd150@gmail.com'),
+    ('dataentry2', 'pass', 'dataentry', 'Michael Lee', 'juststartedxd150@gmail.com'),
+    ('admin1', 'pass', 'admin', 'David Brown', 'juststartedxd150@gmail.com'),
+    ('admin2', 'pass', 'admin', 'Amanda Wilson', 'juststartedxd150@gmail.com'),
+    ('frontdesk1', 'pass', 'frontdesk', 'Sarah Taylor', 'juststartedxd150@gmail.com'),
+    ('frontdesk2', 'pass', 'frontdesk', 'Kevin Martinez', 'juststartedxd150@gmail.com'),
+    ('doc3', 'pass', 'doctor', 'William Davis', 'juststartedxd150@gmail.com'),
+    ('doc4', 'pass', 'doctor', 'Olivia Hernandez', 'juststartedxd150@gmail.com'),
+    ('dataentry3', 'pass', 'dataentry', 'Ethan Garcia', 'juststartedxd150@gmail.com'),
+    ('dataentry4', 'pass', 'dataentry', 'Sophia Martinez', 'juststartedxd150@gmail.com'),
+    ('admin3', 'pass', 'admin', 'Aiden Jackson', 'juststartedxd150@gmail.com'),
+    ('admin4', 'pass', 'admin', 'Madison Miller', 'juststartedxd150@gmail.com'),
+    ('frontdesk3', 'pass', 'frontdesk', 'Daniel Moore', 'juststartedxd150@gmail.com'),
+    ('frontdesk4', 'pass', 'frontdesk', 'Avery Davis', 'juststartedxd150@gmail.com'),
+    ('doc5', 'pass', 'doctor', 'Chloe Green', 'juststartedxd150@gmail.com'),
+    ('doc6', 'pass', 'doctor', 'Alexander Scott', 'juststartedxd150@gmail.com'),
+    ('dataentry5', 'pass', 'dataentry', 'Natalie Carter', 'juststartedxd150@gmail.com'),
+    ('dataentry6', 'pass', 'dataentry', 'Noah Young', 'juststartedxd150@gmail.com');
 
 
 INSERT INTO Room

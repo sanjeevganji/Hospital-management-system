@@ -56,24 +56,38 @@ UPDATE Appointment SET Date='2023-03-12', Priority=2 WHERE ID = '1';
 SELECT Patient.*, Test.ID AS testID, Test.Name AS testName
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
       WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND Test.Date IS NULL;
-      
-      
-      
+
+
+
       select * from Test;
 
 
-delete from `Patient_Admission`;
-delete from `Patient_Appointment`;
-delete from `Prescription_Treatment`;
-delete from `Prescription_Test`;
-delete from `Appointment`;
-delete from `Prescription`;
-delete from `Admission`;
-delete from `Room`;
-delete from `User`;
-delete from `Test`;
-delete from `Patient`;
-delete from `Treatment`;
+
+SELECT Username
+FROM User
+    LEFT JOIN Appointment ON User.Username = Appointment.Doctor AND Appointment.Prescription IS NULL AND Appointment.Date >= CURDATE()
+WHERE User.Type = 'doctor' AND Active
+GROUP BY Username
+ORDER BY COUNT(Username)
+LIMIT 1;
+
+
+
+(select Username
+from User where
+                User.Active=1 and
+                User.Type="doctor" and User.Username not in
+(select Doctor
+from Appointment
+where Date='${fdate}')
+limit 1)
+                union
+(Select Doctor
+from Appointment, User
+where Appointment.Doctor=User.Username and User.Active=1 and Date='${fdate}'
+group by Doctor
+order by count(*)
+limit 1);
 
 
 
