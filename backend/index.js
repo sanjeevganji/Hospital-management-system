@@ -400,7 +400,7 @@ app.get("/getRescheduleTest", (req, res) => {
     if (user.Type == "frontdesk") {
       let sql = `SELECT Patient.*, Test.ID AS testID, Test.Name AS testName, Test.Date AS Date
       FROM Patient, Appointment, Prescription AS P, Prescription_Test AS T, Test
-      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() > Test.Date AND Test.Result IS NULL;
+      WHERE Patient.ID = Appointment.Patient AND Appointment.Prescription = P.ID AND P.ID = T.ID AND T.Test = Test.ID AND CURDATE() >= Test.Date AND Test.Result IS NULL;
       `;
       connection.query(sql, function (err, result) {
         if (err) {
