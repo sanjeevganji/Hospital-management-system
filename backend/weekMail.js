@@ -18,7 +18,7 @@ function weeklyMail(props) {
   // send email every week on Monday at 10:00 AM
   setInterval(() => {
     let now = new Date();
-    console.log({ now });
+    // console.log({ now });
     // get date of last week
     if (now.getDay() === 1 && now.getHours() === 10 && now.getMinutes() === 0) {
       now.setDate(now.getDate() - 7);

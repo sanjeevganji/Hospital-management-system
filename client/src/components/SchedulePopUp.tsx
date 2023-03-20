@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { scheduleAppointment, updateAppointment, scheduleTest } from "../API";
 import { getUser } from "../log";
 import moment from "moment";
+import AlertPopup from "./AlertPopup";
 
 const formatDate = (date: Date) => {
   let d = moment(date);
@@ -20,7 +21,7 @@ function ScheduleAppointmentPopUp(props: any) {
   let [tries, setTrys] = useState(0);
   let [priority, setPriority] = useState(5);
   let { patientId, appID, open, onClose, update } = props;
-
+  let [popUpData, setPopUpData] = useState(null);
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
@@ -67,7 +68,7 @@ function ScheduleAppointmentPopUp(props: any) {
               setTrys(tries + 1);
               return;
             }
-            onClose();
+            setPopUpData(s);
           }}
         >
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
@@ -110,6 +111,27 @@ function ScheduleAppointmentPopUp(props: any) {
           </div>
         </form>
       </span>
+      <AlertPopup
+        open={popUpData}
+        onClose={() => {
+          popUpData = null;
+          onClose();
+        }}
+      >
+        {popUpData && (
+          <>
+            <h1>Appointment Successful</h1>
+            <h2 className=" inline pr-2">Appointment Id:</h2>
+            {(popUpData as any).AppId}
+            <br />
+            <h2 className=" inline pr-2">Doctor Appointed:</h2>
+            {(popUpData as any).DoctorUsername}
+            <br />
+            <h2 className=" inline pr-2">Doctor Name:</h2>
+            {(popUpData as any).DoctorName}
+          </>
+        )}
+      </AlertPopup>
     </div>
   );
 }

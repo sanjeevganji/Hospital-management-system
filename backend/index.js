@@ -749,7 +749,7 @@ app.post("/appointment/schedule", (req, res) => {
   isAuth(connection, req, res, (user) => {
     if (user.Type == "frontdesk") {
       //sql query
-      let sql = `SELECT Username FROM User
+      let sql = `SELECT Username,Name FROM User
                     LEFT JOIN Appointment ON User.Username = Appointment.Doctor AND Appointment.Prescription IS NULL AND Appointment.Date >= CURDATE()
                     WHERE User.Type = 'doctor' AND Active
                     GROUP BY Username
@@ -760,6 +760,7 @@ app.post("/appointment/schedule", (req, res) => {
           res.json({ err });
         } else {
           console.log({ result });
+          let doc = result;
           let doctorApp = result[0].Username;
           sql = `INSERT INTO Appointment (Patient, Doctor, Date, Priority) VALUES ('${req.body.patientId}', '${doctorApp}', '${req.body.date}', '${req.body.priority}');`;
           console.log({ schedule: sql });
@@ -773,7 +774,12 @@ app.post("/appointment/schedule", (req, res) => {
                 if (err) {
                   res.json({ status: "error" });
                 } else {
-                  res.json({ status: "ok", AppId: AppId });
+                  res.json({
+                    status: "ok",
+                    AppId: AppId,
+                    DoctorUsername: doc[0].Username,
+                    DoctorName: doc[0].Name,
+                  });
                 }
               });
             }
