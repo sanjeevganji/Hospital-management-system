@@ -5,8 +5,6 @@ import mysql from "mysql2";
 import isAuth from "./auth.js";
 import mailDoc from "./Nodemailer.js";
 import weeklyMail from "./weekmail.js";
-import fs from "fs";
-import weeklyMail from "./weekMail.js";
 
 const formatDate = (date) => {
   let d = moment(date);
