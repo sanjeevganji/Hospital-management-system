@@ -7,22 +7,29 @@ import {
   fetchScheduleTest,
   fetchRescheduleTest,
 } from "../API";
-import {ScheduleAppointmentPopUp, ScheduleTestPopUp} from "../components/SchedulePopUp";
+import {
+  ScheduleAppointmentPopUp,
+  ScheduleTestPopUp,
+} from "../components/SchedulePopUp";
 import AdmitPatientPopUp from "../components/AdmitPatient";
 import DischargePatientPopUp from "../components/DischargePatient";
 import { getUser } from "../log";
 import moment from "moment";
 
+const formatDateTime = (date: Date) => {
+  let d = moment(date);
+  return d.format("YYYY-MM-DD HH:mm:ss");
+};
 const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
 };
 
 function FrontDesk() {
   let [get1, setAdmit] = React.useState(null);
   let [get2, setDischarge] = React.useState(null);
   let [get3, setAppointmentPopup] = React.useState(null);
-  let [get4, setTestPopup] = React.useState(null);  //get the user who is logged in
+  let [get4, setTestPopup] = React.useState(null); //get the user who is logged in
   let [user, setUser] = React.useState<any>(null);
   let [searchid, setSearchid] = React.useState(0);
   let [searchname, setSearchname] = React.useState("");
@@ -244,11 +251,10 @@ function FrontDesk() {
               {fetchedPatients?.map(
                 (fetchedPatient: any) =>
                   ((searchid == 0 && searchname == "") ||
-                    (searchid == 0 ||
+                    ((searchid == 0 ||
                       fetchedPatient.ID.toString().startsWith(
                         searchid.toString()
                       )) &&
-                    (
                       fetchedPatient.Name.toLowerCase().startsWith(
                         searchname.toLowerCase()
                       ))) && (
@@ -262,7 +268,6 @@ function FrontDesk() {
                       <div className="card col-span-2 whitespace-nowrap">
                         {fetchedPatient.Name}
                       </div>
-
 
                       <div className="card col-span-2 whitespace-nowrap">
                         {fetchedPatient.Address}
@@ -376,168 +381,167 @@ function FrontDesk() {
         )}
 
         {selectedPanel == 1 && (
-          // selectedPanel is Reschedule Appointment
+          // selectedPanel is Reschedule
           <>
-          <form>
-            <label>
-              <input
-                name="type"
-                value="appointment"
-                type="radio"
-                className="mx-1 mt-8"
-                onChange={async(e) => {
-                  setAppointmentTest(1);
-                }}
-                defaultChecked={appointmentTest === 1 ? true : false}
-              />
-              Appointment
-            </label>
-            <label>
-              <input
-                name="type"
-                value="test"
-                type="radio"
-                className="mx-1 ml-6 mb-6"
-                onChange={async(e) => {
-                  setAppointmentTest(0);
-                }}
-                defaultChecked={appointmentTest === 0 ? true : false}
-              />
-              Test
-            </label>
-          </form>
-          { appointmentTest ? (
-            <>
-            <div className=" grid grid-cols-11 gap-3 mt-8 mb-2 shadow-lg text-center">
-              <h2 className=" col-span-1">ID</h2>
-              <h2 className=" col-span-2">Patient Name</h2>
-              <h2 className=" col-span-2">Address</h2>
+            <form>
+              <label>
+                <input
+                  name="type"
+                  value="appointment"
+                  type="radio"
+                  className="mx-1 mt-8"
+                  onChange={async (e) => {
+                    setAppointmentTest(1);
+                  }}
+                  defaultChecked={appointmentTest === 1 ? true : false}
+                />
+                Appointment
+              </label>
+              <label>
+                <input
+                  name="type"
+                  value="test"
+                  type="radio"
+                  className="mx-1 ml-6 mb-6"
+                  onChange={async (e) => {
+                    setAppointmentTest(0);
+                  }}
+                  defaultChecked={appointmentTest === 0 ? true : false}
+                />
+                Test
+              </label>
+            </form>
+            {appointmentTest ? (
+              // selected  reschedule Appointment
+              <>
+                <div className=" grid grid-cols-11 gap-3 mt-8 mb-2 shadow-lg text-center">
+                  <h2 className=" col-span-1">ID</h2>
+                  <h2 className=" col-span-2">Patient Name</h2>
+                  <h2 className=" col-span-2">Address</h2>
 
-              <select
-                className=" col-span-2 font-bold text-lg md:text-xl outline-none focus:outline-none"
-                onChange={handleOptionChange}
-                value={selectedOption}
-              >
-                <option value="Contact" className="font-bold">
-                  Contact
-                </option>
-                <option value="Email" className="font-bold">
-                  Email
-                </option>
-              </select>
-              <h2 className=" col-span-2">Past Date</h2>
-              <h2 className=" col-span-2">Actions</h2>
-            </div>
-            <div className=" mb-16 mt-8 flex flex-col gap-3 ">
-              {reschedule?.map((Appointment: any) => (
-                <div
-                  className=" grid grid-cols-11 gap-3"
-                  key={Appointment.appID}
-                >
-                  <div className="card col-span-1 whitespace-nowrap text-center">
-                    {Appointment.ID}
-                  </div>
-                  <div className="card col-span-2 whitespace-nowrap">
-                    {Appointment.Name}
-                  </div>
-
-                  <div className="card col-span-2 whitespace-nowrap">
-                    {Appointment.Address}
-                  </div>
-                  {selectedOption == "Contact" && (
-                    <div className="card col-span-2 whitespace-nowrap">
-                      {Appointment.Contact}
-                    </div>
-                  )}
-                  {selectedOption == "Email" && (
-                    <div className="card col-span-2 whitespace-nowrap">
-                      {Appointment.Email}
-                    </div>
-                  )}
-
-                  <div className="card col-span-2 whitespace-nowrap text-center">
-                    {formatDate(Appointment.Date)}
-                  </div>
-                  <button
-                    onClick={() => {
-                      setAppointmentPopup(Appointment.ID);
-                    }}
-                    className={"col-span-2 orange"}
+                  <select
+                    className=" col-span-2 font-bold text-lg md:text-xl outline-none focus:outline-none"
+                    onChange={handleOptionChange}
+                    value={selectedOption}
                   >
-                    Reschedule
-                  </button>
-                  <ScheduleAppointmentPopUp
-                    patientId={Appointment.ID}
-                    appID={Appointment.appID}
-                    open={Appointment.ID === get3}
-                    onClose={() => {
-                      setAppointmentPopup(null);
-                      fetchRescheduling(user).then((res) => {
-                        setReschedule(res);
-                      });
-                    }}
-                    update={true}
-                  />
+                    <option value="Contact" className="font-bold">
+                      Contact
+                    </option>
+                    <option value="Email" className="font-bold">
+                      Email
+                    </option>
+                  </select>
+                  <h2 className=" col-span-2">Past Date</h2>
+                  <h2 className=" col-span-2">Actions</h2>
                 </div>
-              ))}
-            </div>
-            </>
-            ):
-            (
-            <>
-              <div className=" grid grid-cols-8 gap-3 mt-8 mb-2 shadow-lg text-center">
-              <h2 className=" col-span-1">Test ID</h2>
-              <h2 className=" col-span-1">Test Name</h2>
-              <h2 className=" col-span-2">Test Date</h2>
-              <h2 className=" col-span-1">Patient ID</h2>
-              <h2 className=" col-span-2">Patient Name</h2>
-              <h2 className=" col-span-1">Actions</h2>
-            </div>
-            <div className=" mb-16 mt-8 flex flex-col gap-3 ">
-              {rescheduleTest?.map((Test: any) => (
-                <div
-                  className=" grid grid-cols-8 gap-3"
-                  key={Test.testID}
-                >
-                  <div className="card col-span-1 whitespace-nowrap text-center">
-                    {Test.testID}
-                  </div>
-                  <div className="card col-span-1 whitespace-nowrap">
-                    {Test.testName}
-                  </div>
-                  <div className="card col-span-2 whitespace-nowrap text-center">
-                    {formatDate(Test.Date)}
-                  </div>
-                  <div className="card col-span-1 whitespace-nowrap text-center">
-                    {Test.ID}
-                  </div>
-                  <div className="card col-span-2 whitespace-nowrap text-center">
-                    {Test.Name}
-                  </div>
+                <div className=" mb-16 mt-8 flex flex-col gap-3 ">
+                  {reschedule?.map((Appointment: any) => (
+                    <div
+                      className=" grid grid-cols-11 gap-3"
+                      key={Appointment.appID}
+                    >
+                      <div className="card col-span-1 whitespace-nowrap text-center">
+                        {Appointment.ID}
+                      </div>
+                      <div className="card col-span-2 whitespace-nowrap">
+                        {Appointment.Name}
+                      </div>
 
-                  <button
-                    onClick={() => {
-                      setTestPopup(Test.ID);
-                    }}
-                    className={"col-span-1 orange"}
-                  >
-                    Reschedule Test
-                  </button>
-                  <ScheduleTestPopUp
-                    patientId={Test.ID}
-                    testID={Test.testID}
-                    open={Test.ID === get4}
-                    onClose={() => {
-                      setTestPopup(null);
-                      fetchRescheduleTest(user).then((res) => {
-                        setRescheduleTest(res);
-                      });
-                    }}
-                  />
+                      <div className="card col-span-2 whitespace-nowrap">
+                        {Appointment.Address}
+                      </div>
+                      {selectedOption == "Contact" && (
+                        <div className="card col-span-2 whitespace-nowrap">
+                          {Appointment.Contact}
+                        </div>
+                      )}
+                      {selectedOption == "Email" && (
+                        <div className="card col-span-2 whitespace-nowrap">
+                          {Appointment.Email}
+                        </div>
+                      )}
+
+                      <div className="card col-span-2 whitespace-nowrap text-center">
+                        {formatDate(Appointment.Date)}
+                      </div>
+                      <button
+                        onClick={() => {
+                          setAppointmentPopup(Appointment.ID);
+                        }}
+                        className={"col-span-2 orange"}
+                      >
+                        Reschedule
+                      </button>
+                      <ScheduleAppointmentPopUp
+                        patientId={Appointment.ID}
+                        appID={Appointment.appID}
+                        open={Appointment.ID === get3}
+                        onClose={() => {
+                          setAppointmentPopup(null);
+                          fetchRescheduling(user).then((res) => {
+                            setReschedule(res);
+                          });
+                        }}
+                        update={true}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </>)}
+              </>
+            ) : (
+              // selected  reschedule Test
+              <>
+                <div className=" grid grid-cols-8 gap-3 mt-8 mb-2 shadow-lg text-center">
+                  <h2 className=" col-span-1">Test ID</h2>
+                  <h2 className=" col-span-1">Test Name</h2>
+                  <h2 className=" col-span-2">Test Date</h2>
+                  <h2 className=" col-span-1">Patient ID</h2>
+                  <h2 className=" col-span-2">Patient Name</h2>
+                  <h2 className=" col-span-1">Actions</h2>
+                </div>
+                <div className=" mb-16 mt-8 flex flex-col gap-3 ">
+                  {rescheduleTest?.map((Test: any) => (
+                    <div className=" grid grid-cols-8 gap-3" key={Test.testID}>
+                      <div className="card col-span-1 whitespace-nowrap text-center">
+                        {Test.testID}
+                      </div>
+                      <div className="card col-span-1 whitespace-nowrap">
+                        {Test.testName}
+                      </div>
+                      <div className="card col-span-2 whitespace-nowrap text-center">
+                        {formatDateTime(Test.Date)}
+                      </div>
+                      <div className="card col-span-1 whitespace-nowrap text-center">
+                        {Test.ID}
+                      </div>
+                      <div className="card col-span-2 whitespace-nowrap">
+                        {Test.Name}
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setTestPopup(Test.ID);
+                        }}
+                        className={"col-span-1 orange"}
+                      >
+                        Reschedule Test
+                      </button>
+                      <ScheduleTestPopUp
+                        patientId={Test.ID}
+                        testID={Test.testID}
+                        open={Test.ID === get4}
+                        onClose={() => {
+                          setTestPopup(null);
+                          fetchRescheduleTest(user).then((res) => {
+                            setRescheduleTest(res);
+                          });
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
 
@@ -585,8 +589,8 @@ function FrontDesk() {
         )}
 
         {selectedPanel == 3 && (
-        <>
-
+          // selected  Schedule Test
+          <>
             <div className=" grid grid-cols-8 gap-3 mt-8 mb-2 shadow-lg text-center">
               <h2 className=" col-span-1">Test ID</h2>
               <h2 className=" col-span-2">Test Name</h2>
@@ -596,10 +600,7 @@ function FrontDesk() {
             </div>
             <div className=" mb-16 mt-8 flex flex-col gap-3 ">
               {scheduleTest?.map((Test: any) => (
-                <div
-                  className=" grid grid-cols-8 gap-3"
-                  key={Test.testID}
-                >
+                <div className=" grid grid-cols-8 gap-3" key={Test.testID}>
                   <div className="card col-span-1 whitespace-nowrap text-center">
                     {Test.testID}
                   </div>

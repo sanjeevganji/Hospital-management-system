@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { getTreatments, scheduleAppointment,updateAppointment, scheduleTest} from "../API";
+import { scheduleAppointment, updateAppointment, scheduleTest } from "../API";
 import { getUser } from "../log";
-import moment, { min } from "moment";
+import moment from "moment";
+import AlertPopup from "./AlertPopup";
 
 const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
 };
 
 const formatDateTimeAdd10Mins = (date: Date) => {
   let d = moment(date);
-  d = d.add(10, 'minute').startOf('minute');
-  return d.format("YYYY-MM-DDTHH:mm:ss");
+  // add a 10 min buffer time
+  d = d.add(0, "minute").startOf("minute");
+  return d.format("YYYY-MM-DDTHH:mm");
 };
 
 function ScheduleAppointmentPopUp(props: any) {
   let [user, setUser] = React.useState<any>(null);
   let [tries, setTrys] = useState(0);
   let [priority, setPriority] = useState(5);
-  let { patientId,appID, open, onClose, update } = props;
-
+  let { patientId, appID, open, onClose, update } = props;
+  let [popUpData, setPopUpData] = useState(null);
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
   }, []);
@@ -28,9 +30,8 @@ function ScheduleAppointmentPopUp(props: any) {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-  function priorityChange(e: any){
-    if(e.target.value < 1 || e.target.value > 10)
-    {
+  function priorityChange(e: any) {
+    if (e.target.value < 1 || e.target.value > 10) {
       return;
     }
     setPriority(e.target.value);
@@ -48,26 +49,26 @@ function ScheduleAppointmentPopUp(props: any) {
           className="grid grid-cols-2 gap-x-3"
           onSubmit={async (e) => {
             e.preventDefault();
-            let s = update ? await updateAppointment(
-              user.username,
-              user.password,
-              appID,
-              (e.target as any).scheduleDate.value,
-              (e.target as any).priority.value
-            ):
-            await scheduleAppointment(
-              user.username,
-              user.password,
-              patientId,
-              (e.target as any).scheduleDate.value,
-              (e.target as any).priority.value
-            )
-            ;
+            let s = update
+              ? await updateAppointment(
+                  user.username,
+                  user.password,
+                  appID,
+                  (e.target as any).scheduleDate.value,
+                  (e.target as any).priority.value
+                )
+              : await scheduleAppointment(
+                  user.username,
+                  user.password,
+                  patientId,
+                  (e.target as any).scheduleDate.value,
+                  (e.target as any).priority.value
+                );
             if (s.err) {
               setTrys(tries + 1);
               return;
             }
-            onClose();
+            setPopUpData(s);
           }}
         >
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
@@ -105,19 +106,40 @@ function ScheduleAppointmentPopUp(props: any) {
               cancel
             </span>
             <button type="submit" className="orange w-fit ">
-              {update ? ("Update"): ("Appoint")}
+              {update ? "Update" : "Appoint"}
             </button>
           </div>
         </form>
       </span>
+      <AlertPopup
+        open={popUpData}
+        onClose={() => {
+          popUpData = null;
+          onClose();
+        }}
+      >
+        {popUpData && (
+          <>
+            <h1>Appointment Successful</h1>
+            <h2 className=" inline pr-2">Appointment Id:</h2>
+            {(popUpData as any).AppId}
+            <br />
+            <h2 className=" inline pr-2">Doctor Appointed:</h2>
+            {(popUpData as any).DoctorUsername}
+            <br />
+            <h2 className=" inline pr-2">Doctor Name:</h2>
+            {(popUpData as any).DoctorName}
+          </>
+        )}
+      </AlertPopup>
     </div>
   );
 }
 
-function ScheduleTestPopUp(props: any){
+function ScheduleTestPopUp(props: any) {
   let [user, setUser] = React.useState<any>(null);
   let [tries, setTrys] = useState(0);
-  let { patientId,testID, open, onClose } = props;
+  let { patientId, testID, open, onClose } = props;
 
   useEffect(() => {
     getUser().then((user: any) => setUser(user));
@@ -127,8 +149,7 @@ function ScheduleTestPopUp(props: any){
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
-
-  return(
+  return (
     <div
       className="fixed inset-0 grid place-content-center
     bg-black text-gray-700 px-6 bg-opacity-30 overflow-y-auto
@@ -139,15 +160,13 @@ function ScheduleTestPopUp(props: any){
         <form
           className="grid grid-cols-2 gap-x-3"
           onSubmit={async (e) => {
-
             e.preventDefault();
             let s = await scheduleTest(
               user.username,
               user.password,
               testID,
-              (e.target as any).scheduleDate.value,
-            )
-            ;
+              (e.target as any).scheduleDate.value
+            );
             if (s.err) {
               setTrys(tries + 1);
               return;
@@ -187,7 +206,7 @@ function ScheduleTestPopUp(props: any){
         </form>
       </span>
     </div>
-  )
+  );
 }
 
-export {ScheduleAppointmentPopUp, ScheduleTestPopUp};
+export { ScheduleAppointmentPopUp, ScheduleTestPopUp };

@@ -6,8 +6,8 @@ import moment from "moment";
 import { getUser } from "../log";
 
 const formatDate = (date: Date) => {
-    let d = moment(date);
-    return d.format("YYYY-MM-DD");
+  let d = moment(date);
+  return d.format("YYYY-MM-DD");
 };
 
 function Doctor() {
@@ -26,11 +26,11 @@ function Doctor() {
   const hours = date.getHours();
   let greeting;
   if (hours >= 0 && hours < 12) {
-    greeting = 'Good morning';
+    greeting = "Good morning";
   } else if (hours >= 12 && hours < 18) {
-    greeting = 'Good afternoon';
+    greeting = "Good afternoon";
   } else {
-    greeting = 'Good evening';
+    greeting = "Good evening";
   }
 
   //get the user who is logged in
@@ -191,10 +191,12 @@ function Doctor() {
                             .toLowerCase()
                             .startsWith(searchname.toLowerCase()))) && (
                       <div
-                        className="grid grid-cols-7 gap-3"
+                        className="grid grid-cols-7 gap-3 "
                         key={appointment.appID}
                       >
-                        <div className="card col-span-1">{appointment.pID}</div>
+                        <div className="card col-span-1 text-center">
+                          {appointment.pID}
+                        </div>
                         <div className="card col-span-2">
                           {appointment.pName}
                         </div>
@@ -204,7 +206,7 @@ function Doctor() {
                         <div className="card col-span-2">
                           {appointment.Email}
                         </div>
-                        <div className="card col-span-1">
+                        <div className="card col-span-1 text-center">
                           {formatDate(appointment.date)}
                         </div>
                         {/* <div className="card col-span-2">{appointment.priority}</div> */}
@@ -266,12 +268,18 @@ function Doctor() {
                             .startsWith(searchid2.toString())) &&
                           patient.Name
                             .toLowerCase()
-                            .startsWith(searchname2.toLowerCase()))) && (
+                            .startsWith(searchid2.toString().toLowerCase()) &&
+                          searchname2 != "" &&
+                          patient.Name.toLowerCase().startsWith(
+                            searchname2.toLowerCase()
+                          ))) && (
                         <div
                           className="grid grid-cols-8 gap-3"
                           key={patient.ID}
                         >
-                          <div className="card col-span-1 ">{patient.ID}</div>
+                          <div className="card col-span-1 text-center ">
+                            {patient.ID}
+                          </div>
                           <div className="card col-span-2">{patient.Name}</div>
                           <div className="card col-span-1">
                             {patient.Contact}

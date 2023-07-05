@@ -34,6 +34,14 @@ input[type="date"] {
             focus:outline-2
             focus:outline-gray-500;
 }
+
+input[type="datetime-local"] {
+  @apply outline outline-2 outline-slate-300 rounded-sm px-2
+            focus:outline
+            focus:outline-2
+            focus:outline-gray-500;
+}
+
 input[type="number"] {
   @apply outline outline-2 outline-slate-300 rounded-sm px-2
             focus:outline

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { dischargePatient, getTreatments, scheduleAppointment } from "../API";
+import { dischargePatient } from "../API";
 import { getUser } from "../log";
 
 function DischargePatient(props: any) {
