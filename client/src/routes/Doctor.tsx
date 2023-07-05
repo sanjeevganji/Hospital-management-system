@@ -262,8 +262,11 @@ function Doctor() {
                   patients.map(
                     (patient: any) =>
                       ((searchid2 == 0 && searchname2 == "") ||
-                        (searchid2 != 0 &&
-                          patient.ID.toString()
+                        ((searchid2 == 0 ||
+                          patient.ID
+                            .toString()
+                            .startsWith(searchid2.toString())) &&
+                          patient.Name
                             .toLowerCase()
                             .startsWith(searchid2.toString().toLowerCase()) &&
                           searchname2 != "" &&

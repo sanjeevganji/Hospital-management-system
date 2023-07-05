@@ -4,6 +4,7 @@ import moment from "moment";
 import mysql from "mysql2";
 import isAuth from "./auth.js";
 import mailDoc from "./Nodemailer.js";
+import weeklyMail from "./weekmail.js";
 import fs from "fs";
 import weeklyMail from "./weekMail.js";
 
@@ -13,6 +14,10 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "Hospital",
+  password: "password",
   host: "localhost",
   user: "root",
   database: "Hospital",

@@ -132,7 +132,7 @@ function AddPrescription(props: any) {
           <input
             className="h-10"
             type="text"
-            placeholder="dosage"
+            placeholder="Dosage"
             name="dosage"
             autoComplete="off"
             required

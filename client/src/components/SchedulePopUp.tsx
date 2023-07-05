@@ -9,7 +9,7 @@ const formatDate = (date: Date) => {
   return d.format("YYYY-MM-DD");
 };
 
-const formatDateTime = (date: Date) => {
+const formatDateTimeAdd10Mins = (date: Date) => {
   let d = moment(date);
   // add a 10 min buffer time
   d = d.add(0, "minute").startOf("minute");
@@ -177,7 +177,7 @@ function ScheduleTestPopUp(props: any) {
           <div className="col-span-2 flex flex-col gap-2 py-2 mb-2">
             <label className="text-gray-500">Schedule Date</label>
             <input
-              min={formatDateTime(new Date())}
+              min={formatDateTimeAdd10Mins(new Date())}
               type="datetime-local"
               name="scheduleDate"
               autoComplete="off"
