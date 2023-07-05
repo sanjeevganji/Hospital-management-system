@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import moment from "moment";
 
 function weeklyMail(props) {
   const formatDate = (date) => {
@@ -17,7 +18,7 @@ function weeklyMail(props) {
   // send email every week on Monday at 10:00 AM
   setInterval(() => {
     let now = new Date();
-    console.log({ now });
+    // console.log({ now });
     // get date of last week
     if (now.getDay() === 1 && now.getHours() === 10 && now.getMinutes() === 0) {
       now.setDate(now.getDate() - 7);
@@ -37,7 +38,8 @@ function weeklyMail(props) {
         } else {
           const docs = {};
           for (const row of result) {
-            const value = row[Doctor];
+            console.log(row);
+            const value = row.Doctor;
             if (!docs[value]) {
               docs[value] = [];
             }
@@ -46,7 +48,13 @@ function weeklyMail(props) {
           for (const key in docs) {
             let testResult = "";
             docs[key].forEach((test) => {
-              testResult += `<p>Patient Name: <b>${test.pName}</b>, Patient ID: <b>${test.pID}</b>, Test Name: <b>${test.tName}, Date: <b>${test.Date}</b>, Result: <b>${test.Result}</b></p>\n`;
+              testResult += `<p>Patient Name: <b>${
+                test.pName
+              }</b>, Patient ID: <b>${test.pID}</b>, Test Name: <b>${
+                test.tName
+              }</b>, Date: <b>${formatDate(test.Date)}</b>, Result: <b>${
+                test.Result
+              }</b></p>\n`;
             });
             let mailDetails = {
               from: "rudrakpatratest@gmail.com",
@@ -63,11 +71,10 @@ function weeklyMail(props) {
               }
             });
           }
-          res.json({ status: "ok" });
         }
       });
     }
-  }, 6000); // check every minute
+  }, 60000); // check every minute
 }
 
 export default weeklyMail;
