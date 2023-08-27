@@ -12,6 +12,12 @@ const formatDate = (date) => {
 };
 
 var connection = mysql.createConnection({
+routes
+  host: "10.5.18.71",
+  user: "20CS30008",
+  password: "DakRR#2020",
+  database: "rp",
+
   host: "localhost",
   user: "root",
   database: "Hospital",
@@ -38,6 +44,7 @@ var connection = mysql.createConnection({
   // user: "sql12602698",
   // database: "sql12602698",
   // password: "1KhY5mYxNw",
+master
 });
 
 connection.connect(function (err) {
