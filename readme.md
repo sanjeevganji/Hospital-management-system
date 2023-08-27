@@ -29,16 +29,3 @@ This is a web application developed as a mini project for the course Web Applica
 ## Installation
 
 Refer to the [DBMS_MINI-PROJECT.pdf](https://github.com/rudrakpatra/DBMS_MiniProject/blob/master/DBMS_MINI_PROJECT.pdf)
-
-
-## Contributors
-
--   [Akash Das](https://github.com/Akash-Das2024)
--   [Atishay Jain](https://github.com/ati-jain)
--   [Prakhar Singh]()
--   [Rudrak Patra](https://github.com/rudrakpatra)
--   [Saras Pantulwar](https://github.com/pantulwars)
-
-## References
-
-- [tailwind](https://tailwindcss.com/docs/guides/vite)
